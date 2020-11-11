@@ -1,6 +1,6 @@
 # MediaPlayer
-A smart media player for React, for audio and video content.
-[View demo site](#https://rs1.github.io/media-player/)
+A smart media player for React, for audio and video content.  
+[View demo site](https://rs1.github.io/media-player/)
 
 ### Installation
 ```sh
