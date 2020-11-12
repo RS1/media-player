@@ -9,7 +9,7 @@
  * Unauthorized copying of this file, via any medium is strictly prohibited.
  * Proprietary and confidential.
  *
- * Modified on Thursday, 12th November 2020 2:17:56 pm
+ * Modified on Thursday, 12th November 2020 5:35:35 pm
  * *****************************************************************************
  */
 import merge from 'deepmerge'
@@ -112,13 +112,34 @@ const _options = {
         }
     },
 }
+const overwriteArrays = {
+    arrayMerge: (from, to, opts) => to,
+}
 
 export const reducer = (state, action) => {
     let reduced = state
     Object.entries(action).forEach(([key, value]) => {
         switch (key) {
             case 'config':
-                reduced = merge(reduced, value, _options)
+                reduced = {
+                    ...reduced,
+                    options: merge(
+                        reduced.options,
+                        value.options ?? {},
+                        _options
+                    ),
+                    style: merge(reduced.style, value.style ?? {}, _options),
+                    icons: merge(
+                        reduced.icons,
+                        value.icons ?? {},
+                        overwriteArrays
+                    ),
+                    actions: merge(
+                        reduced.actions,
+                        value.actions ?? {},
+                        _options
+                    ),
+                }
                 break
             case 'reset':
                 reduced = merge(
