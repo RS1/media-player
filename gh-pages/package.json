@@ -21,7 +21,7 @@
     "@babel/preset-react": "^7.10.1",
     "@emotion/core": "^10.0.28",
     "@emotion/styled": "^10.0.27",
-    "@rs1/media-player": "git+https://github.com/RS1/media-player.git",
+    "@rs1/media-player": "^1.1.24",
     "autoprefixer": "^9.8.0",
     "babel-loader": "^8.1.0",
     "babel-plugin-emotion": "^10.0.33",
