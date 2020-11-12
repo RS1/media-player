@@ -9,7 +9,7 @@
  * Unauthorized copying of this file, via any medium is strictly prohibited.
  * Proprietary and confidential.
  *
- * Modified on Thursday, 12th November 2020 5:35:35 pm
+ * Modified on Thursday, 12th November 2020 11:17:06 pm
  * *****************************************************************************
  */
 import merge from 'deepmerge'
@@ -67,6 +67,7 @@ export const defaults = {
     icons: {
         error: faExclamationCircle,
         loading: faSpinner,
+        seeking: faSpinner,
         unmuted: faVolumeMute,
         muted: faVolumeUp,
         fullscreen: faCompressArrowsAlt,

@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Thursday, 12th November 2020 2:18:30 pm
+ * Modified on Thursday, 12th November 2020 11:17:41 pm
  * *****************************************************************************
  */
 
@@ -68,7 +68,7 @@ export default ({
             active: state.playing,
             loading: !state.loaded,
             labels: ['Play', 'Pause', 'Loading...'],
-            icons: [icons.play, icons.pause, icons.loading],
+            icons: [icons.play, icons.pause, icons.seeking],
             action: toggle,
             size: '2x',
         },

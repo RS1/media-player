@@ -138,6 +138,9 @@ There are dozens of settings you can tune based on your needs.
         /* Loading message icon */
         loading: faSpinner,
 
+        /* Seeking indicator icon */
+        seeking: faSpinner,
+
         /* Unmute media player */
         unmuted: faVolumeMute,
 
