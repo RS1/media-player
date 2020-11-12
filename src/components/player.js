@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Thursday, 12th November 2020 12:36:25 pm
+ * Modified on Thursday, 12th November 2020 12:57:37 pm
  * *****************************************************************************
  */
 
@@ -61,6 +61,10 @@ export default ({ config, media: track, ...props }) => {
         config && setSettings({ config: config })
     }, [config])
 
+    useEffect(() => {
+        setSettings({ reset: 'reset' })
+    }, [metadata.src])
+
     const [, resetIdle] = useAutoIdle(wrapper, {
         callback: idle => setSettings({ immersive: idle }),
         wait: options.autoHideControls || 5,
@@ -87,10 +91,6 @@ export default ({ config, media: track, ...props }) => {
         JSON.stringify(options.playerSize),
         JSON.stringify(state.mediaRect),
     ])
-
-    useEffect(() => {
-        setSettings({ reset: 'reset' })
-    }, [metadata.src])
 
     useEffect(() => {
         state.error && actions.onError()
@@ -238,8 +238,6 @@ export default ({ config, media: track, ...props }) => {
 
     const togglePlay = useCallback(
         e => {
-            if (isTouch && state.immersive && e) return
-
             if (state.playing) {
                 media.pause()
                 setFlashIcon(icons.pause)
@@ -373,8 +371,8 @@ export default ({ config, media: track, ...props }) => {
                     poster={metadata.poster}
                     preload='metadata'
                     muted={state.muted}
-                    onClick={togglePlay}
-                    loop={options.loop && !options.isPlaylist}
+                    onClick={(!isTouch || !state.immersive) && togglePlay}
+                    loop={options.loop || options.isPlaylist}
                     playsInline
                 />
                 {state.error ? (
