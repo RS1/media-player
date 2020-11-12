@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Thursday, 12th November 2020 12:57:37 pm
+ * Modified on Thursday, 12th November 2020 1:05:20 pm
  * *****************************************************************************
  */
 
@@ -28,7 +28,7 @@ import {
     useDynamicRef,
     useAutoIdle,
     useListener,
-    useAgentParser,
+    // useAgentParser,
     useRectRef,
     useKeyAction,
 } from '@rs1/react-hooks'
@@ -38,7 +38,7 @@ const rectInRect = ([a, b], [x, y]) =>
     a / b < x / y ? [(a * y) / b, y] : [x, (b * x) / a]
 
 export default ({ config, media: track, ...props }) => {
-    const { isTouch } = useAgentParser()
+    // const { isTouch } = useAgentParser()
     const [flashIcon, setFlashIcon] = useState(false)
     const [settings, setSettings] = useContext(Context)
     const { metadata, state, options, actions, style, icons } = settings
@@ -371,8 +371,8 @@ export default ({ config, media: track, ...props }) => {
                     poster={metadata.poster}
                     preload='metadata'
                     muted={state.muted}
-                    onClick={(!isTouch || !state.immersive) && togglePlay}
-                    loop={options.loop || options.isPlaylist}
+                    onClick={!state.immersive && togglePlay}
+                    loop={options.loop && options.isPlaylist}
                     playsInline
                 />
                 {state.error ? (
