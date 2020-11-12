@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Thursday, 12th November 2020 1:38:54 pm
+ * Modified on Thursday, 12th November 2020 2:12:46 pm
  * *****************************************************************************
  */
 
@@ -63,7 +63,6 @@ export default ({ config, media: track, ...props }) => {
 
     useEffect(() => {
         setSettings({ reset: 'reset' })
-        console.log('new metadata URL received')
     }, [metadata.src])
 
     const [, resetIdle] = useAutoIdle(wrapper, {
@@ -177,11 +176,14 @@ export default ({ config, media: track, ...props }) => {
         media,
         'pause',
         e => {
-            if (state.playing) {
+            if (state.wasPlaying) {
+                setSettings({ wasPlaying: false })
+                media.play()
+            } else if (state.playing) {
                 setSettings({ playing: false })
             }
         },
-        [state.playing]
+        [state.wasPlaying, state.playing]
     )
 
     useListener(
@@ -216,6 +218,7 @@ export default ({ config, media: track, ...props }) => {
         e => {
             const media = e.currentTarget
             if (media.duration && media.currentTime >= media.duration) {
+                setSettings({ wasPlaying: true })
                 next()
                 return
             }
