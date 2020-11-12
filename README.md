@@ -53,7 +53,7 @@ There are dozens of settings you can tune based on your needs.
         isPlaylist: true,
 
         /* Loop over the media
-        * ref: https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/loop */
+         * ref: https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/loop */
         loop: false,
 
         /* Show/hide mute controls */
@@ -63,21 +63,26 @@ There are dozens of settings you can tune based on your needs.
         canFullScreen: true,
 
         /* Seconds to wait before hiding the controls
-        * set to 0 to never hide */
+         * set to 0 to never hide */
         autoHideControls: 5,
 
         /* Show/hide metadata information directly on
-        * the media element when the controls are hidden */
+         * the media element when the controls are hidden */
         metadataOnMedia: true,
 
         /* Fixed player size [width, height] to be used when
-        * autoResize = false or when media is audio.
-        * Set to [0, 0] to fill all available space */
+         * autoResize = false or when media is audio.
+         * Set to [0, 0] to fill all available space */
         playerSize: [0, 0],
 
         /* Whether or not to autoresize the player
-        * based on the media aspect-ratio. (video only) */
+         * based on the media aspect-ratio. (video only) */
         autoResize: true,
+
+        /* Whether or not to play autoatically the new
+         * provided media.
+         * ref: https://developer.mozilla.org/en-US/docs/Web/Media/Autoplay_guide */
+        autoPlay: true,
     }
 }} />
 ```

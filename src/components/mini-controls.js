@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Wednesday, 11th November 2020 2:25:00 pm
+ * Modified on Thursday, 12th November 2020 2:22:08 pm
  * *****************************************************************************
  */
 
@@ -59,6 +59,8 @@ const Metadata = styled.p`
 
 const Info = styled.p`
     margin: 0 15px 0 10px;
+    min-width: 85px;
+    text-align: right;
 `
 
 const Time = styled(_Time)`

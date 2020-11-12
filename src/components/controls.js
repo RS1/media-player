@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Wednesday, 11th November 2020 12:37:04 pm
+ * Modified on Thursday, 12th November 2020 2:18:30 pm
  * *****************************************************************************
  */
 
@@ -247,6 +247,7 @@ const Metadata = styled.div`
         font-size: 11px;
         margin: 0 5px;
         cursor: default;
+        text-align: center;
         @media (max-width: 1023px) {
             font-size: 13px;
         }

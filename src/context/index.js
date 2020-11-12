@@ -9,7 +9,7 @@
  * Unauthorized copying of this file, via any medium is strictly prohibited.
  * Proprietary and confidential.
  *
- * Modified on Thursday, 12th November 2020 2:12:32 pm
+ * Modified on Thursday, 12th November 2020 2:17:56 pm
  * *****************************************************************************
  */
 import merge from 'deepmerge'
@@ -57,7 +57,7 @@ export const defaults = {
         playerSize: [0, 0],
         autoResize: true,
         isPlaylist: true,
-        autoPlay: true,
+        autoPlay: false,
         loop: false,
         canMute: true,
         canFullScreen: true,
