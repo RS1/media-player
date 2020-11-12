@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Thursday, 12th November 2020 12:00:54 pm
+ * Modified on Thursday, 12th November 2020 12:03:42 pm
  * *****************************************************************************
  */
 
@@ -37,7 +37,7 @@ import { AnimatePresence } from 'framer-motion'
 const rectInRect = ([a, b], [x, y]) =>
     a / b < x / y ? [(a * y) / b, y] : [x, (b * x) / a]
 
-export default ({ config = {}, media: track = {}, ...props }) => {
+export default ({ config, media: track, ...props }) => {
     const { isTouch } = useAgentParser()
     const [flashIcon, setFlashIcon] = useState(false)
     const [settings, setSettings] = useContext(Context)
@@ -50,13 +50,15 @@ export default ({ config = {}, media: track = {}, ...props }) => {
     const media = metadata.video ? video : audio
 
     useEffect(() => {
-        setSettings({ metadata: track })
-        updateVideoRef()
-        updateAudioRef()
+        if (track) {
+            setSettings({ metadata: track })
+            updateVideoRef()
+            updateAudioRef()
+        }
     }, [track])
 
     useEffect(() => {
-        setSettings({ config: config })
+        config && setSettings({ config: config })
     }, [config])
 
     const [, resetIdle] = useAutoIdle(wrapper, {
