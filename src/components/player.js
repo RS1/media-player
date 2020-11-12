@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Thursday, 12th November 2020 1:05:20 pm
+ * Modified on Thursday, 12th November 2020 1:11:10 pm
  * *****************************************************************************
  */
 
@@ -220,12 +220,12 @@ export default ({ config, media: track, ...props }) => {
         []
     )
 
-    useListener(media, 'ended', next, [
+    /* useListener(media, 'ended', next, [
         actions.onNext,
         icons.next,
         options.loop,
         options.isPlaylist,
-    ])
+    ]) */
 
     useListener(
         media,
@@ -238,6 +238,7 @@ export default ({ config, media: track, ...props }) => {
 
     const togglePlay = useCallback(
         e => {
+            if (state.immersive && e) return
             if (state.playing) {
                 media.pause()
                 setFlashIcon(icons.pause)
@@ -371,7 +372,8 @@ export default ({ config, media: track, ...props }) => {
                     poster={metadata.poster}
                     preload='metadata'
                     muted={state.muted}
-                    onClick={!state.immersive && togglePlay}
+                    onClick={togglePlay}
+                    onEnded={next}
                     loop={options.loop && options.isPlaylist}
                     playsInline
                 />
