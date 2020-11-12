@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Wednesday, 11th November 2020 2:07:40 pm
+ * Modified on Thursday, 12th November 2020 11:36:47 am
  * *****************************************************************************
  */
 
@@ -17,6 +17,7 @@ import { nodeResolve } from '@rollup/plugin-node-resolve';
 import { string } from "rollup-plugin-string";
 import commonjs from '@rollup/plugin-commonjs';
 import babel from '@rollup/plugin-babel';
+import replace from '@rollup/plugin-replace';
 import { terser } from "rollup-plugin-terser";
 import pkg from './package.json';
 
@@ -27,7 +28,7 @@ export default {
         file: pkg.main,
         format: 'es',
         exports: 'named',
-        sourcemap: false,
+        sourcemap: process.env.NODE_ENV !== 'production',
         strict: false
       }
     ],
@@ -45,6 +46,10 @@ export default {
             exclude: 'node_modules/**',
             babelHelpers: 'bundled',
         }),
+		replace({
+			'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
+            exclude: 'node_modules/**',
+		}),
         terser(),
     ],
     external: [ ...Object.keys(pkg.peerDependencies), ...Object.keys(pkg.dependencies) ],
