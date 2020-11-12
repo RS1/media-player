@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Thursday, 12th November 2020 1:16:43 pm
+ * Modified on Thursday, 12th November 2020 1:27:34 pm
  * *****************************************************************************
  */
 
@@ -266,8 +266,8 @@ export default ({ config, media: track, ...props }) => {
         setFlashIcon(icons.previous)
         setSettings({ time: 0 })
         media.currentTime = 0
-        if (!options.loop && !options.isPlaylist) return
-        if (state.time * state.duration <= 5 && options.isPlaylist) {
+        if (!options.isPlaylist) return
+        if (state.time * state.duration <= 5) {
             setSettings({ reset: 'reset' })
             actions.onPrevious()
         }
@@ -277,7 +277,6 @@ export default ({ config, media: track, ...props }) => {
         state.duration,
         actions.onPrevious,
         icons.previous,
-        options.loop,
         options.isPlaylist,
     ])
     const semiPrevious = useCallback(() => {
@@ -295,7 +294,6 @@ export default ({ config, media: track, ...props }) => {
         actions.onPrevious,
         icons.backward10,
         icons.previous,
-        options.loop,
         options.isPlaylist,
     ])
     useKeyAction(
@@ -308,7 +306,6 @@ export default ({ config, media: track, ...props }) => {
             actions.onPrevious,
             icons.backward10,
             icons.previous,
-            options.loop,
             options.isPlaylist,
         ],
         false
@@ -377,7 +374,8 @@ export default ({ config, media: track, ...props }) => {
                     preload='metadata'
                     muted={state.muted}
                     onClick={togglePlay}
-                    loop={options.loop && options.isPlaylist}
+                    loop={options.loop}
+                    autoPlay={options.autoPlay}
                     playsInline
                 />
                 {state.error ? (
