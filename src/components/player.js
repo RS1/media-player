@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Thursday, 12th November 2020 12:22:10 pm
+ * Modified on Thursday, 12th November 2020 12:36:25 pm
  * *****************************************************************************
  */
 
@@ -51,7 +51,6 @@ export default ({ config, media: track, ...props }) => {
 
     useEffect(() => {
         if (track) {
-            setSettings({ reset: 'reset' })
             setSettings({ metadata: track })
             updateVideoRef()
             updateAudioRef()
@@ -88,6 +87,10 @@ export default ({ config, media: track, ...props }) => {
         JSON.stringify(options.playerSize),
         JSON.stringify(state.mediaRect),
     ])
+
+    useEffect(() => {
+        setSettings({ reset: 'reset' })
+    }, [metadata.src])
 
     useEffect(() => {
         state.error && actions.onError()
