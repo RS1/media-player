@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Thursday, 12th November 2020 1:27:34 pm
+ * Modified on Thursday, 12th November 2020 1:33:22 pm
  * *****************************************************************************
  */
 
@@ -214,7 +214,7 @@ export default ({ config, media: track, ...props }) => {
         'timeupdate',
         e => {
             const media = e.currentTarget
-            if (media.duration && media.currentTime >= media.duration) {
+            if (media.duration && media.currentTime >= media.duration - 0.01) {
                 next()
                 return
             }
