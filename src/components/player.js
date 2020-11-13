@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Thursday, 12th November 2020 2:12:46 pm
+ * Modified on Friday, 13th November 2020 3:26:39 pm
  * *****************************************************************************
  */
 
@@ -289,7 +289,7 @@ export default ({ config, media: track, ...props }) => {
         setSettings({
             time: toTime / state.duration,
         })
-        media.currentTime = toTime
+        media.currentTime = toTime || 0
         setFlashIcon(icons.backward10)
     }, [
         media,
@@ -327,11 +327,11 @@ export default ({ config, media: track, ...props }) => {
     }, [media, actions.onNext, icons.next, options.loop, options.isPlaylist])
     const semiNext = useCallback(() => {
         const toTime = state.time * state.duration + 10
-        if (toTime >= state.duration - 10) return next()
+        if (toTime >= state.duration) return next()
         setSettings({
             time: toTime / state.duration,
         })
-        media.currentTime = toTime
+        media.currentTime = toTime || 0
         setFlashIcon(icons.forward10)
     }, [
         media,

@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Thursday, 12th November 2020 11:17:41 pm
+ * Modified on Friday, 13th November 2020 3:27:26 pm
  * *****************************************************************************
  */
 
@@ -44,7 +44,7 @@ export default ({
         value => {
             if (state.time !== value) {
                 setSettings({ time: value })
-                mediaElem.currentTime = value * mediaElem.duration
+                mediaElem.currentTime = value * mediaElem.duration || 0
             }
         },
         [mediaElem, state.time]
