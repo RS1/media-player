@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Saturday, 14th November 2020 11:19:10 am
+ * Modified on Saturday, 14th November 2020 11:31:15 am
  * *****************************************************************************
  */
 
@@ -108,13 +108,11 @@ export default ({
         },
         currentTime: {
             type: 'time',
-            align: 'left',
             seconds: state.time * state.duration,
             loading: (state.duration || 0) <= 0,
         },
         totalTime: {
             type: 'time',
-            align: 'right',
             seconds: state.duration,
             loading: (state.duration || 0) <= 0,
         },
@@ -129,10 +127,9 @@ export default ({
 
     const rows = options.vinylMode
         ? [
-              ['semiPrevious', 'play', 'semiNext'],
+              ['previous', 'semiPrevious', 'play', 'semiNext', 'next'],
               ['seekbar'],
-              ['currentTime', 'metadata', 'totalTime'],
-              ['previous', 'mute', 'next'],
+              ['currentTime', 'mute', 'metadata', 'fullscreen', 'totalTime'],
           ]
         : [
               ['seekbar'],
@@ -172,10 +169,9 @@ const Row = styled.div`
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     padding: 0 15px;
-    margin: 10px 0;
     &:first-of-type {
         margin-top: 0px;
     }
@@ -213,5 +209,6 @@ const Controls = styled(motion.div)`
     z-index: 10;
     & ${Row} {
         color: ${props => props.styling.controlsColor};
+        margin: ${props => (props.isVinyl ? '10px 0' : '5px 0')};
     }
 `

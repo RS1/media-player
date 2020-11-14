@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Saturday, 14th November 2020 11:19:36 am
+ * Modified on Saturday, 14th November 2020 11:31:47 am
  * *****************************************************************************
  */
 
@@ -36,7 +36,7 @@ export default ({ prop: key = '', item = {}, styling: style = {} }) => {
             return <Text dangerouslySetInnerHTML={{ __html: item.text }} />
         case 'time':
             return (
-                <TimeSpan style={{ textAlign: item.align }}>
+                <TimeSpan>
                     <Time seconds={item.seconds} loading={item.loading} />
                 </TimeSpan>
             )
@@ -98,10 +98,23 @@ const TimeSpan = styled.div`
     flex: 1;
     font-size: 13px;
     cursor: default;
+    padding: 0 10px;
     &::before {
         content: '';
         display: inline-block;
         height: 14px;
+    }
+    &:first-child {
+        padding-left: 0;
+    }
+    &:last-child {
+        padding-right: 0;
+    }
+    &:first-of-type {
+        text-align: left;
+    }
+    &:last-of-type {
+        text-align: right;
     }
 `
 
@@ -114,15 +127,16 @@ const Icon = styled.div`
     cursor: pointer;
     transform: scale(1) translateZ(0);
     transition: all 0.2s ease;
-    flex: 1;
     padding: 0 10px;
     text-align: center;
     &:hover {
         color: ${props => props.hoverColor};
         transform: scale(1.3) translateZ(0);
     }
-    &:first-child,
-    :last-child {
-        padding: 0;
+    &:first-child {
+        padding-left: 0;
+    }
+    &:last-child {
+        padding-right: 0;
     }
 `
