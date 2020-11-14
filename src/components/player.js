@@ -9,11 +9,12 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Friday, 13th November 2020 3:45:31 pm
+ * Modified on Saturday, 14th November 2020 9:48:02 am
  * *****************************************************************************
  */
 
 import React, { useEffect, useContext, useCallback, useState } from 'react'
+import { keyframes } from '@emotion/core'
 import styled from '@emotion/styled'
 
 import Context from '../context'
@@ -76,7 +77,7 @@ export default ({ config, media: track, ...props }) => {
     }, [JSON.stringify(state.playerRect)])
 
     useEffect(() => {
-        if (!options.autoResize) {
+        if (!options.autoResize && !options.vinylMode) {
             setSettings({ playerRect: options.playerSize })
             return
         }
@@ -88,6 +89,7 @@ export default ({ config, media: track, ...props }) => {
     }, [
         container,
         options.autoResize,
+        options.vinylMode,
         JSON.stringify(options.playerSize),
         JSON.stringify(state.mediaRect),
     ])
@@ -202,14 +204,16 @@ export default ({ config, media: track, ...props }) => {
         'loadedmetadata',
         e => {
             const media = e.currentTarget
-            const extra = { mediaRect: options.playerSize }
+            const extra = {
+                mediaRect: options.vinylMode ? [1, 1] : options.playerSize,
+            }
             if (media.tagName === 'VIDEO')
                 extra.mediaRect = [media.videoWidth, media.videoHeight]
             setSettings({ duration: media.duration, loaded: true, ...extra })
             if (state.playing && media.paused) media.play()
             else if (!state.playing && !media.paused) media.pause()
         },
-        [state.playing, JSON.stringify(options.playerSize)]
+        [state.playing, options.vinylMode, JSON.stringify(options.playerSize)]
     )
 
     useListener(
@@ -361,11 +365,14 @@ export default ({ config, media: track, ...props }) => {
     const controlsHidden = { opacity: 0, scaleY: 0, originY: 1 }
     const controlsVisible = { opacity: 1, scaleY: 1, originY: 1 }
 
+    const RecordBG = options.vinylMode ? Vinyl : Poster
+
     return (
         <Container styling={style} ref={containerRef}>
             <Wrapper
                 ref={wrapperRef}
                 isImmersive={state.immersive}
+                isVinyl={options.vinylMode}
                 widthRatio={!state.fullscreen && state.playerRect[0]}
                 heightRatio={!state.fullscreen && state.playerRect[1]}
             >
@@ -388,7 +395,15 @@ export default ({ config, media: track, ...props }) => {
                 ) : (
                     <AnimatePresence>
                         {!metadata.video && (
-                            <Poster onClick={togglePlay} bg={metadata.poster} />
+                            <RecordBG
+                                onClick={togglePlay}
+                                bg={metadata.poster}
+                                isPlaying={state.playing}
+                            >
+                                {options.vinylMode && (
+                                    <div className='inner-border' />
+                                )}
+                            </RecordBG>
                         )}
                         {state.immersive && options.metadataOnMedia && (
                             <MiniControls
@@ -424,6 +439,21 @@ export default ({ config, media: track, ...props }) => {
     )
 }
 
+const playerRotate = keyframes`
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+`
+
+const Media = styled.video`
+    position: absolute;
+    top: 0;
+    left: 0;
+`
+
 const Wrapper = styled.div`
     position: relative;
     display: flex;
@@ -436,15 +466,39 @@ const Wrapper = styled.div`
     width: ${props => (!props.widthRatio ? '100%' : props.widthRatio + 'px')};
     height: ${props =>
         !props.heightRatio ? '100%' : props.heightRatio + 'px'};
+    & ${Media} {
+        width: ${props => (props.isVinyl ? '0' : '100%')};
+        height: ${props => (props.isVinyl ? '0' : '100%')};
+    }
 `
 
-const Media = styled.video`
+const Vinyl = styled.div`
     position: absolute;
     top: 0;
-    left: 0;
     width: 100%;
     height: 100%;
-    border-radius: 0px;
+    box-sizing: border-box;
+    border-radius: 100%;
+    border: 2px solid #eeeeee;
+    background-color: #eeeeee;
+    background-image: url('${props => props.bg}');
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    animation: ${playerRotate} 5s linear infinite;
+    animation-play-state: ${props => (props.isPlaying ? 'running' : 'paused')};
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.25);
+    & div.inner-border {
+        width: 10%;
+        padding-top: 10%;
+        border-radius: 50%;
+        border: 2px solid #eeeeee;
+        box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.25);
+    }
 `
 
 const Poster = styled.div`
@@ -468,7 +522,7 @@ const Container = styled.div`
     align-items: center;
     justify-content: center;
     font-family: '${props => props.styling.fontFamily}', sans-serif;
-    & ${Poster}, ${Media}, ${Wrapper} {
+    & ${Poster}, ${Media}, ${Wrapper}, ${Vinyl} .inner-border {
         background-color: ${props => props.styling.mediaBackground};
     }
 `
