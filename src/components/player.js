@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Saturday, 14th November 2020 12:54:46 pm
+ * Modified on Saturday, 14th November 2020 1:51:17 pm
  * *****************************************************************************
  */
 
@@ -41,6 +41,7 @@ const rectInRect = ([a, b], [x, y]) =>
 export default ({ config, media: track, ...props }) => {
     const { isTouch } = useAgentParser()
     const [flashIcon, setFlashIcon] = useState(false)
+    const [configLoaded, setConfigLoaded] = useState(false)
     const [settings, setSettings] = useContext(Context)
     const { metadata, state, options, actions, style, icons } = settings
 
@@ -59,6 +60,7 @@ export default ({ config, media: track, ...props }) => {
     }, [track])
 
     useEffect(() => {
+        setConfigLoaded(true)
         config && setSettings({ config: config })
     }, [config])
 
@@ -390,7 +392,12 @@ export default ({ config, media: track, ...props }) => {
     const RecordBG = options.vinylMode ? Vinyl : Poster
 
     return (
-        <Container styling={style} ref={containerRef}>
+        <Container
+            styling={style}
+            ref={containerRef}
+            show={configLoaded}
+            hasMedia={!state.error && state.duration > 0}
+        >
             <Wrapper
                 ref={wrapperRef}
                 isImmersive={state.immersive}
@@ -496,12 +503,13 @@ const Wrapper = styled.div`
         props.isVinyl
             ? `
                 border-radius: 100%;
-                box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+                box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
                 box-sizing: border-box;
                 overflow: hidden;
+                transform: translateZ(0);
             `
             : ``}
-    $:after {
+    &:after {
         ${props =>
             props.isVinyl
                 ? `
@@ -542,8 +550,8 @@ const Vinyl = styled(MediaBg)`
         width: 10%;
         padding-top: 10%;
         border-radius: 50%;
-        box-shadow: 0 0 0 5px rgba(238, 238, 238, 0.5),
-            rgba(0, 0, 0, 0.25) 0px 0px 5px inset;
+        box-shadow: 0 0 1px 5px rgba(238, 238, 238, 0.5),
+            rgba(0, 0, 0, 0.1) 0px 0px 15px inset;
     }
 `
 
@@ -560,7 +568,15 @@ const Container = styled.div`
     align-items: center;
     justify-content: center;
     font-family: '${props => props.styling.fontFamily}', sans-serif;
-    & ${Poster}, ${Media}, ${Wrapper} {
+    opacity: ${props => (props.show ? '1' : '0')};
+    transition: all 0.2s linear;
+    & ${Wrapper} {
+        background-color: ${props =>
+            props.hasMedia
+                ? props.styling.mediaBackground
+                : props.styling.playerBackground};
+    }
+    & ${Poster}, ${Media} {
         background-color: ${props => props.styling.mediaBackground};
     }
     & ${Vinyl} .inner-border {
