@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Thursday, 12th November 2020 2:48:21 pm
+ * Modified on Saturday, 14th November 2020 2:31:00 pm
  * *****************************************************************************
  */
 
@@ -44,6 +44,7 @@ const Overlay = styled.div`
     width: 100%;
     box-sizing: border-box;
     padding: 15px;
+    border-radius: 15px;
     & p {
         margin: 0 0 25px 0;
         font-size: 15px;

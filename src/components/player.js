@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Saturday, 14th November 2020 1:51:17 pm
+ * Modified on Saturday, 14th November 2020 2:33:27 pm
  * *****************************************************************************
  */
 
@@ -499,31 +499,6 @@ const Wrapper = styled.div`
         width: ${props => (props.isVinyl ? '0' : '100%')};
         height: ${props => (props.isVinyl ? '0' : '100%')};
     }
-    ${props =>
-        props.isVinyl
-            ? `
-                border-radius: 100%;
-                box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-                box-sizing: border-box;
-                overflow: hidden;
-                transform: translateZ(0);
-            `
-            : ``}
-    &:after {
-        ${props =>
-            props.isVinyl
-                ? `
-                    content: '';
-                    position: absolute;
-                    top: 0px;
-                    left: 0px;
-                    right: 0px;
-                    bottom: 0px;
-                    box-shadow: inset 0 0 1px 3px rgba(238, 238, 238, 0.5);
-                    border-radius: 100%;
-                `
-                : ``}
-    }
 `
 
 const MediaBg = styled.div`
@@ -538,7 +513,6 @@ const MediaBg = styled.div`
 `
 
 const Vinyl = styled(MediaBg)`
-    box-sizing: border-box;
     background-color: #eeeeee;
     animation: ${playerRotate} 5s linear infinite;
     animation-play-state: ${props => (props.isPlaying ? 'running' : 'paused')};
@@ -546,6 +520,12 @@ const Vinyl = styled(MediaBg)`
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    border-radius: 100%;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1),
+        inset 0 0 1px 3px rgba(238, 238, 238, 0.5);
+    box-sizing: border-box;
+    overflow: hidden;
+    transform: translateZ(0);
     & div.inner-border {
         width: 10%;
         padding-top: 10%;
@@ -570,13 +550,10 @@ const Container = styled.div`
     font-family: '${props => props.styling.fontFamily}', sans-serif;
     opacity: ${props => (props.show ? '1' : '0')};
     transition: all 0.2s linear;
-    & ${Wrapper} {
-        background-color: ${props =>
-            props.hasMedia
-                ? props.styling.mediaBackground
-                : props.styling.playerBackground};
+    & ${Error}, ${Loading} {
+        background: ${props => props.styling.playerBackground};
     }
-    & ${Poster}, ${Media} {
+    & ${Poster}, ${Media}, ${Wrapper} {
         background-color: ${props => props.styling.mediaBackground};
     }
     & ${Vinyl} .inner-border {

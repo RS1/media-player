@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Saturday, 14th November 2020 12:29:12 pm
+ * Modified on Saturday, 14th November 2020 2:03:40 pm
  * *****************************************************************************
  */
 
@@ -137,7 +137,7 @@ const Icon = styled.div`
     cursor: pointer;
     transform: scale(1) translateZ(0);
     transition: all 0.2s ease;
-    padding: 0 10px;
+    padding: ${props => (props.compact ? '0 5px' : '0 10px')};
     text-align: center;
     & .fa-spin {
         animation: ${props =>
