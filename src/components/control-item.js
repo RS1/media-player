@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Saturday, 14th November 2020 10:46:04 am
+ * Modified on Saturday, 14th November 2020 10:58:52 am
  * *****************************************************************************
  */
 
@@ -18,8 +18,7 @@ import styled from '@emotion/styled'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Time from './time'
 
-export default ({ prop: key = '', items = {}, styling: style = {} }) => {
-    const item = items[key] ?? {}
+export default ({ prop: key = '', item = {}, styling: style = {} }) => {
     switch (item.type) {
         case 'spacer':
             return <Spacer />
@@ -28,7 +27,7 @@ export default ({ prop: key = '', items = {}, styling: style = {} }) => {
         case 'time':
             return (
                 <TimeSpan style={{ textAlign: item.align }}>
-                    <Time seconds={items.seconds} loading={item.loading} />
+                    <Time seconds={item.seconds} loading={item.loading} />
                 </TimeSpan>
             )
         case 'icon':

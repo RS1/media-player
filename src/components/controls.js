@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Saturday, 14th November 2020 10:52:18 am
+ * Modified on Saturday, 14th November 2020 10:58:28 am
  * *****************************************************************************
  */
 
@@ -143,11 +143,11 @@ export default ({
             <SeekBar settings={settings} onChange={updateTime} />
             {rows.map((row, idx) => (
                 <Row key={idx}>
-                    {row.map(key => (
+                    {row.map((key, idx) => (
                         <ControlItem
-                            key={key}
+                            key={`${key}_${idx}`}
                             prop={key}
-                            items={items}
+                            item={items[key]}
                             styling={style}
                         />
                     ))}
