@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Saturday, 14th November 2020 11:31:15 am
+ * Modified on Saturday, 14th November 2020 11:42:30 am
  * *****************************************************************************
  */
 
@@ -127,9 +127,10 @@ export default ({
 
     const rows = options.vinylMode
         ? [
-              ['previous', 'semiPrevious', 'play', 'semiNext', 'next'],
               ['seekbar'],
-              ['currentTime', 'mute', 'metadata', 'fullscreen', 'totalTime'],
+              ['currentTime', 'semiPrevious', 'play', 'semiNext', 'totalTime'],
+              ['previous', 'mute', 'fullscreen', 'next'],
+              ['metadata'],
           ]
         : [
               ['seekbar'],
@@ -171,7 +172,6 @@ const Row = styled.div`
     align-items: center;
     justify-content: center;
     align-items: center;
-    padding: 0 15px;
     &:first-of-type {
         margin-top: 0px;
     }
@@ -186,9 +186,9 @@ const Controls = styled(motion.div)`
             ? `
         position: relative;
         width: 50%;
-        height: 50%;
-        border-radius: 100%;
+        border-radius: 15px;
         box-sizing: border-box;
+        padding: 15px;
     `
             : `
         position: absolute;
@@ -196,6 +196,7 @@ const Controls = styled(motion.div)`
         right: 10px;
         bottom: 10px;
         border-radius: 5px;
+        padding: 10px 15px;
     `}
     display: flex;
     transition: all 0.1s ease;
@@ -205,7 +206,6 @@ const Controls = styled(motion.div)`
     flex-direction: column;
     justify-content: center;
     align-items: stretch;
-    padding: 10px 0;
     z-index: 10;
     & ${Row} {
         color: ${props => props.styling.controlsColor};

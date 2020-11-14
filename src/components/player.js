@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Saturday, 14th November 2020 10:47:24 am
+ * Modified on Saturday, 14th November 2020 11:42:36 am
  * *****************************************************************************
  */
 
@@ -362,8 +362,16 @@ export default ({ config, media: track, ...props }) => {
         false
     )
 
-    const controlsHidden = { opacity: 0, scaleY: 0, originY: 1 }
-    const controlsVisible = { opacity: 1, scaleY: 1, originY: 1 }
+    const controlsHidden = {
+        opacity: 0,
+        scaleY: 0,
+        originY: options.vinylMode ? 0.5 : 1,
+    }
+    const controlsVisible = {
+        opacity: 1,
+        scaleY: 1,
+        originY: options.vinylMode ? 0.5 : 1,
+    }
 
     const RecordBG = options.vinylMode ? Vinyl : Poster
 
