@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Saturday, 14th November 2020 11:49:06 am
+ * Modified on Saturday, 14th November 2020 12:09:30 pm
  * *****************************************************************************
  */
 
@@ -49,7 +49,9 @@ export default ({
         default:
             return (
                 <Icon
-                    onClick={item.action ?? (() => {})}
+                    onClick={
+                        item.visible ? item.action ?? (() => {}) : () => {}
+                    }
                     mainColor={
                         item.active && key !== 'play'
                             ? style.accentColor
@@ -135,6 +137,12 @@ const Icon = styled.div`
     transition: all 0.2s ease;
     padding: ${props => (props.compact ? '0 5px' : '0 10px')};
     text-align: center;
+    & .fa-spin {
+        animation: ${props =>
+            props.compact
+                ? 'fa-spin 5s infinite linear'
+                : 'fa-spin 2s infinite linear'};
+    }
     &:hover {
         color: ${props => props.hoverColor};
         transform: scale(1.3) translateZ(0);

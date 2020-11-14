@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Saturday, 14th November 2020 11:42:36 am
+ * Modified on Saturday, 14th November 2020 12:06:59 pm
  * *****************************************************************************
  */
 
@@ -362,15 +362,29 @@ export default ({ config, media: track, ...props }) => {
         false
     )
 
-    const controlsHidden = {
-        opacity: 0,
-        scaleY: 0,
-        originY: options.vinylMode ? 0.5 : 1,
+    const controlsAnim = {
+        hide: {
+            opacity: 0,
+            [options.vinylMode ? 'scale' : 'scaleY']: 0,
+            originY: options.vinylMode ? 0.5 : 1,
+        },
+        show: {
+            opacity: 1,
+            [options.vinylMode ? 'scale' : 'scaleY']: 1,
+            originY: options.vinylMode ? 0.5 : 1,
+        },
     }
-    const controlsVisible = {
-        opacity: 1,
-        scaleY: 1,
-        originY: options.vinylMode ? 0.5 : 1,
+    const metadataAnim = {
+        hide: {
+            opacity: 0,
+            scaleY: 0,
+            originY: 1,
+        },
+        show: {
+            opacity: 1,
+            scaleY: 1,
+            originY: 1,
+        },
     }
 
     const RecordBG = options.vinylMode ? Vinyl : Poster
@@ -417,9 +431,9 @@ export default ({ config, media: track, ...props }) => {
                             <MiniControls
                                 key='mini-player-controls'
                                 settings={settings}
-                                initial={controlsHidden}
-                                animate={controlsVisible}
-                                exit={controlsHidden}
+                                initial={metadataAnim.hide}
+                                animate={metadataAnim.show}
+                                exit={metadataAnim.hide}
                             />
                         )}
                         {!state.immersive && (
@@ -434,9 +448,9 @@ export default ({ config, media: track, ...props }) => {
                                 semiNext={semiNext}
                                 container={wrapper}
                                 mediaElem={media}
-                                initial={controlsHidden}
-                                animate={controlsVisible}
-                                exit={controlsHidden}
+                                initial={controlsAnim.hide}
+                                animate={controlsAnim.show}
+                                exit={controlsAnim.hide}
                             />
                         )}
                     </AnimatePresence>
