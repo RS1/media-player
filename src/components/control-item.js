@@ -9,19 +9,29 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Saturday, 14th November 2020 10:58:52 am
+ * Modified on Saturday, 14th November 2020 11:19:36 am
  * *****************************************************************************
  */
 
 import React from 'react'
 import styled from '@emotion/styled'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import SeekBar from './seekbar'
 import Time from './time'
 
 export default ({ prop: key = '', item = {}, styling: style = {} }) => {
     switch (item.type) {
         case 'spacer':
             return <Spacer />
+        case 'seekbar':
+            return (
+                <SeekBar
+                    value={item.value}
+                    progress={item.progress}
+                    onChange={item.action}
+                    styling={style}
+                />
+            )
         case 'text':
             return <Text dangerouslySetInnerHTML={{ __html: item.text }} />
         case 'time':
@@ -106,6 +116,7 @@ const Icon = styled.div`
     transition: all 0.2s ease;
     flex: 1;
     padding: 0 10px;
+    text-align: center;
     &:hover {
         color: ${props => props.hoverColor};
         transform: scale(1.3) translateZ(0);

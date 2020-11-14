@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Saturday, 14th November 2020 11:04:58 am
+ * Modified on Saturday, 14th November 2020 11:19:10 am
  * *****************************************************************************
  */
 
@@ -17,7 +17,6 @@ import React, { useCallback, useEffect } from 'react'
 import styled from '@emotion/styled'
 import { useFullScreen } from '@rs1/react-hooks'
 import { motion } from 'framer-motion'
-import SeekBar from './seekbar'
 import ControlItem from './control-item'
 
 export default ({
@@ -120,17 +119,23 @@ export default ({
             loading: (state.duration || 0) <= 0,
         },
         spacer: { type: 'spacer' },
+        seekbar: {
+            type: 'seekbar',
+            value: state.time,
+            progress: state.progress,
+            action: updateTime,
+        },
     }
 
     const rows = options.vinylMode
         ? [
               ['semiPrevious', 'play', 'semiNext'],
-              'seekbar',
+              ['seekbar'],
               ['currentTime', 'metadata', 'totalTime'],
               ['previous', 'mute', 'next'],
           ]
         : [
-              'seekbar',
+              ['seekbar'],
               [
                   'currentTime',
                   'spacer',
@@ -147,22 +152,18 @@ export default ({
 
     return (
         <Controls styling={style} isVinyl={options.vinylMode} {...props}>
-            {rows.map((row, idx) =>
-                row === 'seekbar' ? (
-                    <SeekBar settings={settings} onChange={updateTime} />
-                ) : (
-                    <Row key={idx}>
-                        {row.map((key, idx) => (
-                            <ControlItem
-                                key={`${key}_${idx}`}
-                                prop={key}
-                                item={items[key]}
-                                styling={style}
-                            />
-                        ))}
-                    </Row>
-                )
-            )}
+            {rows.map((row, idx) => (
+                <Row key={idx}>
+                    {row.map((key, idx) => (
+                        <ControlItem
+                            key={`${key}_${idx}`}
+                            prop={key}
+                            item={items[key]}
+                            styling={style}
+                        />
+                    ))}
+                </Row>
+            ))}
         </Controls>
     )
 }
@@ -174,9 +175,12 @@ const Row = styled.div`
     justify-content: space-between;
     align-items: center;
     padding: 0 15px;
-    margin-bottom: 10px;
+    margin: 10px 0;
+    &:first-of-type {
+        margin-top: 0px;
+    }
     &:last-of-type {
-        margin-bottom: 5px;
+        margin-bottom: 0px;
     }
 `
 

@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Tuesday, 10th November 2020 7:03:33 pm
+ * Modified on Saturday, 14th November 2020 11:16:05 am
  * *****************************************************************************
  */
 
@@ -17,8 +17,13 @@ import styled from '@emotion/styled'
 import React, { useEffect } from 'react'
 import { useAgentParser, useSliderRef } from '@rs1/react-hooks'
 
-export default ({ settings: { state, style }, onChange }) => {
-    const [value, sliderRef] = useSliderRef(null, state.time)
+export default ({
+    value: _value = 0,
+    progress = 0,
+    styling: style = {},
+    onChange = () => {},
+}) => {
+    const [value, sliderRef] = useSliderRef(null, _value)
     const { isTouch } = useAgentParser()
 
     useEffect(() => {
@@ -26,14 +31,12 @@ export default ({ settings: { state, style }, onChange }) => {
     }, [value])
 
     return (
-        <Wrapper styling={style}>
-            <Slider ref={sliderRef} fatBar={isTouch}>
-                <Background value={state.progress} />
-                <Progress value={state.progress} />
-                <Bar value={state.time} />
-                <Handle value={state.time} />
-            </Slider>
-        </Wrapper>
+        <Slider ref={sliderRef} fatBar={isTouch} styling={style}>
+            <Background />
+            <Progress value={progress} />
+            <Bar value={_value} />
+            <Handle value={_value} />
+        </Slider>
     )
 }
 
@@ -77,6 +80,7 @@ const Slider = styled.div`
     position: relative;
     transition: all 0.1s ease-in-out;
     height: ${props => (props.fatBar ? '8px' : '4px')};
+    color: ${props => props.styling.controlsColor};
     & ${Background}, ${Progress}, ${Bar} {
         height: ${props => (props.fatBar ? '8px' : '4px')};
         border-radius: ${props => (props.fatBar ? '8px' : '4px')};
@@ -87,13 +91,6 @@ const Slider = styled.div`
         margin-top: ${props => (props.fatBar ? '-2px' : '-1px')};
         margin-left: ${props => (props.fatBar ? '-6px' : '-2px')};
     }
-`
-
-const Wrapper = styled.div`
-    display: block;
-    color: ${props => props.styling.controlsColor};
-    padding: 0 15px;
-    margin-bottom: 10px;
     &:hover ${Handle} {
         transform: scale(1.3);
     }
