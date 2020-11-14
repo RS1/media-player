@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Saturday, 14th November 2020 2:41:20 pm
+ * Modified on Saturday, 14th November 2020 2:43:44 pm
  * *****************************************************************************
  */
 
@@ -392,12 +392,7 @@ export default ({ config, media: track, ...props }) => {
     const RecordBG = options.vinylMode ? Vinyl : Poster
 
     return (
-        <Container
-            styling={style}
-            ref={containerRef}
-            show={configLoaded}
-            hasMedia={!state.error && state.duration > 0}
-        >
+        <Container styling={style} ref={containerRef} show={configLoaded}>
             <Wrapper
                 ref={wrapperRef}
                 isImmersive={state.immersive}

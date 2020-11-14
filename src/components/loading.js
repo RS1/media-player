@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Saturday, 14th November 2020 2:39:41 pm
+ * Modified on Saturday, 14th November 2020 2:44:26 pm
  * *****************************************************************************
  */
 
@@ -34,7 +34,6 @@ const Overlay = styled.div`
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    color: ${props => props.styling.loaderColor};
     font-size: 50px;
     text-shadow: 0 0 3px rgba(0, 0, 0, 0.25);
     z-index: 15;
