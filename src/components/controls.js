@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Saturday, 14th November 2020 2:55:31 pm
+ * Modified on Saturday, 14th November 2020 4:04:53 pm
  * *****************************************************************************
  */
 
@@ -169,10 +169,13 @@ const Controls = styled(motion.div)`
         props.isVinyl
             ? `
         position: relative;
-        width: 75%;
-        border-radius: 15px;
+        width: 80%;
+        height: calc(20% - 10px);
+        margin-top: 10px;
+        border-radius: 0;
         box-sizing: border-box;
-        padding: 15px;
+        padding: 0;
+        background: none;
     `
             : `
         position: absolute;
@@ -181,12 +184,12 @@ const Controls = styled(motion.div)`
         bottom: 10px;
         border-radius: 5px;
         padding: 10px 15px;
+        background: rgba(0, 0, 0, 0.75);
+        backdrop-filter: blur(5px);
+        box-shadow: 0 0 3px rgba(0, 0, 0, 0.25);
     `}
     display: flex;
     transition: all 0.1s ease;
-    background: rgba(0, 0, 0, 0.75);
-    backdrop-filter: blur(5px);
-    box-shadow: 0 0 3px rgba(0, 0, 0, 0.25);
     flex-direction: column;
     justify-content: center;
     align-items: stretch;

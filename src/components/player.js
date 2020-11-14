@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Saturday, 14th November 2020 3:04:14 pm
+ * Modified on Saturday, 14th November 2020 4:03:30 pm
  * *****************************************************************************
  */
 
@@ -507,6 +507,10 @@ const MediaBg = styled.div`
 `
 
 const Vinyl = styled(MediaBg)`
+    position: relative;
+    top: unset;
+    width: 80%;
+    height: 80%;
     background-color: #eeeeee;
     animation: ${playerRotate} 5s linear infinite;
     animation-play-state: ${props => (props.isPlaying ? 'running' : 'paused')};
@@ -521,6 +525,11 @@ const Vinyl = styled(MediaBg)`
     overflow: hidden;
     transform: translateZ(0);
     & div.inner-border {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin-left: -5%;
+        margin-top: -5%;
         width: 10%;
         padding-top: 10%;
         border-radius: 50%;
