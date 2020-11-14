@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Saturday, 14th November 2020 11:49:45 am
+ * Modified on Saturday, 14th November 2020 2:55:31 pm
  * *****************************************************************************
  */
 
@@ -58,9 +58,9 @@ export default ({
             action: previous,
             visible: options.isPlaylist,
         },
-        semiPrevious: {
+        backward10: {
             type: 'icon',
-            labels: ['10 seconds backward'],
+            labels: ['Back 10 seconds'],
             icons: [icons.backward10],
             action: semiPrevious,
         },
@@ -73,9 +73,9 @@ export default ({
             action: toggle,
             size: '2x',
         },
-        semiNext: {
+        forward10: {
             type: 'icon',
-            labels: ['10 seconds forward'],
+            labels: ['Skip 10 seconds'],
             icons: [icons.forward10],
             action: semiNext,
         },
@@ -106,12 +106,12 @@ export default ({
             action: () => fsAPI.toggle(container, mediaElem),
             visible: !options.vinylMode && options.canFullScreen && supportFS,
         },
-        currentTime: {
+        time: {
             type: 'time',
             seconds: state.time * state.duration,
             loading: (state.duration || 0) <= 0,
         },
-        totalTime: {
+        duration: {
             type: 'time',
             seconds: state.duration,
             loading: (state.duration || 0) <= 0,
@@ -125,35 +125,25 @@ export default ({
         },
     }
 
-    const rows = [
-        ['seekbar'],
-        [
-            'currentTime',
-            'spacer',
-            'previous',
-            'semiPrevious',
-            'play',
-            'semiNext',
-            'next',
-            'spacer',
-            'totalTime',
-        ],
-        ['mute', 'metadata', 'fullscreen'],
-    ]
-
     return (
         <Controls styling={style} isVinyl={options.vinylMode} {...props}>
-            {rows.map((row, idx) => (
+            {options.controlsSetup.map((row, idx) => (
                 <Row key={idx}>
-                    {row.map((key, idx) => (
-                        <ControlItem
-                            key={`${key}_${idx}`}
-                            prop={key}
-                            item={items[key]}
-                            styling={style}
-                            compact={options.vinylMode}
-                        />
-                    ))}
+                    {row.map(
+                        (key, idx) =>
+                            Object.prototype.hasOwnProperty.call(
+                                items,
+                                key
+                            ) && (
+                                <ControlItem
+                                    key={`${key}_${idx}`}
+                                    prop={key}
+                                    item={items[key]}
+                                    styling={style}
+                                    compact={options.vinylMode}
+                                />
+                            )
+                    )}
                 </Row>
             ))}
         </Controls>

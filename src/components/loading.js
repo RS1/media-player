@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Saturday, 14th November 2020 2:44:26 pm
+ * Modified on Saturday, 14th November 2020 3:03:47 pm
  * *****************************************************************************
  */
 
@@ -18,7 +18,7 @@ import styled from '@emotion/styled'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 export default ({ settings, ...props }) => (
-    <Overlay {...props}>
+    <Overlay isVinyl={settings.options.vinylMode} {...props}>
         <FontAwesomeIcon icon={settings.icons.loading} spin />
         <p
             dangerouslySetInnerHTML={{
@@ -35,12 +35,20 @@ const Overlay = styled.div`
     justify-content: center;
     align-items: center;
     font-size: 50px;
-    text-shadow: 0 0 3px rgba(0, 0, 0, 0.25);
     z-index: 15;
     width: 100%;
     box-sizing: border-box;
     padding: 15px;
-    border-radius: 15px;
+    ${props =>
+        props.isVinyl
+            ? `
+                width: 75%;
+                background: rgba(0, 0, 0, 0.75);
+                backdrop-filter: blur(5px);
+                box-shadow: 0 0 3px rgba(0, 0, 0, 0.25);
+                border-radius: 15px;
+            `
+            : ``}
     & p {
         margin: 25px 0 0 0;
         font-size: 15px;

@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Saturday, 14th November 2020 2:43:44 pm
+ * Modified on Saturday, 14th November 2020 3:04:14 pm
  * *****************************************************************************
  */
 
@@ -389,8 +389,6 @@ export default ({ config, media: track, ...props }) => {
         },
     }
 
-    const RecordBG = options.vinylMode ? Vinyl : Poster
-
     return (
         <Container styling={style} ref={containerRef} show={configLoaded}>
             <Wrapper
@@ -412,22 +410,23 @@ export default ({ config, media: track, ...props }) => {
                     autoPlay={options.autoPlay}
                     playsInline
                 />
+                {!metadata.video && options.vinylMode && (
+                    <Vinyl
+                        onClick={togglePlay}
+                        bg={metadata.poster}
+                        isPlaying={state.playing}
+                    >
+                        {options.vinylMode && <div className='inner-border' />}
+                    </Vinyl>
+                )}
                 {state.error ? (
                     <MediaError settings={settings} />
                 ) : state.duration === 0 ? (
                     <MediaLoading settings={settings} />
                 ) : (
                     <AnimatePresence>
-                        {!metadata.video && (
-                            <RecordBG
-                                onClick={togglePlay}
-                                bg={metadata.poster}
-                                isPlaying={state.playing}
-                            >
-                                {options.vinylMode && (
-                                    <div className='inner-border' />
-                                )}
-                            </RecordBG>
+                        {!metadata.video && !options.vinylMode && (
+                            <Poster onClick={togglePlay} bg={metadata.poster} />
                         )}
                         {state.immersive && options.metadataOnMedia && (
                             <MiniControls
@@ -551,11 +550,9 @@ const Container = styled.div`
     transition: all 0.2s linear;
     & ${MediaError} {
         color: ${props => props.styling.errorColor};
-        background: ${props => props.styling.playerBackground};
     }
     & ${MediaLoading} {
         color: ${props => props.styling.loaderColor};
-        background: ${props => props.styling.playerBackground};
     }
     & ${Poster}, ${Media}, ${Wrapper} {
         background-color: ${props => props.styling.mediaBackground};

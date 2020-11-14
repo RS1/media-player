@@ -9,7 +9,7 @@
  * Unauthorized copying of this file, via any medium is strictly prohibited.
  * Proprietary and confidential.
  *
- * Modified on Saturday, 14th November 2020 2:33:02 pm
+ * Modified on Saturday, 14th November 2020 2:56:07 pm
  * *****************************************************************************
  */
 import merge from 'deepmerge'
@@ -64,6 +64,21 @@ export const defaults = {
         autoHideControls: 5,
         metadataOnMedia: true,
         vinylMode: false,
+        controlsSetup: [
+            ['seekbar'],
+            [
+                'time',
+                'spacer',
+                'previous',
+                'backward10',
+                'play',
+                'forward10',
+                'next',
+                'spacer',
+                'durations',
+            ],
+            ['mute', 'metadata', 'fullscreen'],
+        ],
     },
     icons: {
         error: faExclamationCircle,
@@ -111,7 +126,11 @@ const _state = (key, value) => ({ state: { [key]: value } })
 const _metadata = value => ({ metadata: { ...value } })
 const _options = {
     customMerge: key => {
-        if (['mediaRect', 'playerRect', 'playerSize'].includes(key)) {
+        if (
+            ['mediaRect', 'playerRect', 'playerSize', 'controlsSetup'].includes(
+                key
+            )
+        ) {
             return (a, b) => [...b]
         }
     },
@@ -167,8 +186,7 @@ export const reducer = (state, action) => {
                 reduced = merge(reduced, _state(value, !state.state[value]))
                 break
             default:
-                // eslint-disable-next-line no-prototype-builtins
-                if (state.state.hasOwnProperty(key)) {
+                if (Object.prototype.hasOwnProperty.call(state.state, key)) {
                     reduced = merge(reduced, _state(key, value), _options)
                 }
         }
