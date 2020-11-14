@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Saturday, 14th November 2020 11:42:30 am
+ * Modified on Saturday, 14th November 2020 11:49:45 am
  * *****************************************************************************
  */
 
@@ -104,7 +104,7 @@ export default ({
             labels: ['Full screen', 'Exit full screen'],
             icons: [icons.exit_fullscreen, icons.fullscreen],
             action: () => fsAPI.toggle(container, mediaElem),
-            visible: options.canFullScreen && supportFS,
+            visible: !options.vinylMode && options.canFullScreen && supportFS,
         },
         currentTime: {
             type: 'time',
@@ -125,28 +125,21 @@ export default ({
         },
     }
 
-    const rows = options.vinylMode
-        ? [
-              ['seekbar'],
-              ['currentTime', 'semiPrevious', 'play', 'semiNext', 'totalTime'],
-              ['previous', 'mute', 'fullscreen', 'next'],
-              ['metadata'],
-          ]
-        : [
-              ['seekbar'],
-              [
-                  'currentTime',
-                  'spacer',
-                  'previous',
-                  'semiPrevious',
-                  'play',
-                  'semiNext',
-                  'next',
-                  'spacer',
-                  'totalTime',
-              ],
-              ['mute', 'metadata', 'fullscreen'],
-          ]
+    const rows = [
+        ['seekbar'],
+        [
+            'currentTime',
+            'spacer',
+            'previous',
+            'semiPrevious',
+            'play',
+            'semiNext',
+            'next',
+            'spacer',
+            'totalTime',
+        ],
+        ['mute', 'metadata', 'fullscreen'],
+    ]
 
     return (
         <Controls styling={style} isVinyl={options.vinylMode} {...props}>
@@ -158,6 +151,7 @@ export default ({
                             prop={key}
                             item={items[key]}
                             styling={style}
+                            compact={options.vinylMode}
                         />
                     ))}
                 </Row>
@@ -185,7 +179,7 @@ const Controls = styled(motion.div)`
         props.isVinyl
             ? `
         position: relative;
-        width: 50%;
+        width: 75%;
         border-radius: 15px;
         box-sizing: border-box;
         padding: 15px;
@@ -209,6 +203,6 @@ const Controls = styled(motion.div)`
     z-index: 10;
     & ${Row} {
         color: ${props => props.styling.controlsColor};
-        margin: ${props => (props.isVinyl ? '10px 0' : '5px 0')};
+        margin: ${props => (props.isVinyl ? '5px 0' : '5px 0')};
     }
 `
