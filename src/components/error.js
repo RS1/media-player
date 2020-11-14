@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Saturday, 14th November 2020 2:31:00 pm
+ * Modified on Saturday, 14th November 2020 2:39:32 pm
  * *****************************************************************************
  */
 
@@ -17,8 +17,8 @@ import React from 'react'
 import styled from '@emotion/styled'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
-export default ({ settings }) => (
-    <Overlay styling={settings.style}>
+export default ({ settings, ...props }) => (
+    <Overlay {...props}>
         <p
             dangerouslySetInnerHTML={{
                 __html:
@@ -37,7 +37,6 @@ const Overlay = styled.div`
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    color: ${props => props.styling.errorColor};
     font-size: 50px;
     text-shadow: 0 0 3px rgba(0, 0, 0, 0.25);
     z-index: 15;

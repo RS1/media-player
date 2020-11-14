@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Saturday, 14th November 2020 2:31:04 pm
+ * Modified on Saturday, 14th November 2020 2:39:41 pm
  * *****************************************************************************
  */
 
@@ -17,8 +17,8 @@ import React from 'react'
 import styled from '@emotion/styled'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
-export default ({ settings }) => (
-    <Overlay styling={settings.style}>
+export default ({ settings, ...props }) => (
+    <Overlay {...props}>
         <FontAwesomeIcon icon={settings.icons.loading} spin />
         <p
             dangerouslySetInnerHTML={{

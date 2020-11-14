@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Saturday, 14th November 2020 2:33:27 pm
+ * Modified on Saturday, 14th November 2020 2:41:20 pm
  * *****************************************************************************
  */
 
@@ -19,7 +19,7 @@ import styled from '@emotion/styled'
 
 import Context from '../context'
 
-import Error from './error'
+import ErrorMessage from './error'
 import Loading from './loading'
 import Controls from './controls'
 import MiniControls from './mini-controls'
@@ -418,9 +418,9 @@ export default ({ config, media: track, ...props }) => {
                     playsInline
                 />
                 {state.error ? (
-                    <Error settings={settings} />
+                    <MediaError settings={settings} />
                 ) : state.duration === 0 ? (
-                    <Loading settings={settings} />
+                    <MediaLoading settings={settings} />
                 ) : (
                     <AnimatePresence>
                         {!metadata.video && (
@@ -531,7 +531,7 @@ const Vinyl = styled(MediaBg)`
         padding-top: 10%;
         border-radius: 50%;
         box-shadow: 0 0 1px 5px rgba(238, 238, 238, 0.5),
-            rgba(0, 0, 0, 0.1) 0px 0px 15px inset;
+            inset 0px 0px 15px rgba(0, 0, 0, 0.1);
     }
 `
 
@@ -539,6 +539,10 @@ const Poster = styled(MediaBg)`
     left: 0;
     border-radius: 0px;
 `
+
+const MediaError = styled(ErrorMessage)``
+
+const MediaLoading = styled(Loading)``
 
 const Container = styled.div`
     width: 100%;
@@ -550,7 +554,12 @@ const Container = styled.div`
     font-family: '${props => props.styling.fontFamily}', sans-serif;
     opacity: ${props => (props.show ? '1' : '0')};
     transition: all 0.2s linear;
-    & ${Error}, ${Loading} {
+    & ${MediaError} {
+        color: ${props => props.styling.errorColor};
+        background: ${props => props.styling.playerBackground};
+    }
+    & ${MediaLoading} {
+        color: ${props => props.styling.loaderColor};
         background: ${props => props.styling.playerBackground};
     }
     & ${Poster}, ${Media}, ${Wrapper} {
