@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Saturday, 14th November 2020 10:58:28 am
+ * Modified on Saturday, 14th November 2020 11:04:58 am
  * *****************************************************************************
  */
 
@@ -122,37 +122,47 @@ export default ({
         spacer: { type: 'spacer' },
     }
 
-    const firstRow = [
-        'currentTime',
-        'spacer',
-        'previous',
-        'semiPrevious',
-        'play',
-        'semiNext',
-        'next',
-        'spacer',
-        'totalTime',
-    ]
-
-    const secondRow = ['mute', 'metadata', 'fullscreen']
-
-    const rows = [firstRow, secondRow]
+    const rows = options.vinylMode
+        ? [
+              ['semiPrevious', 'play', 'semiNext'],
+              'seekbar',
+              ['currentTime', 'metadata', 'totalTime'],
+              ['previous', 'mute', 'next'],
+          ]
+        : [
+              'seekbar',
+              [
+                  'currentTime',
+                  'spacer',
+                  'previous',
+                  'semiPrevious',
+                  'play',
+                  'semiNext',
+                  'next',
+                  'spacer',
+                  'totalTime',
+              ],
+              ['mute', 'metadata', 'fullscreen'],
+          ]
 
     return (
         <Controls styling={style} isVinyl={options.vinylMode} {...props}>
-            <SeekBar settings={settings} onChange={updateTime} />
-            {rows.map((row, idx) => (
-                <Row key={idx}>
-                    {row.map((key, idx) => (
-                        <ControlItem
-                            key={`${key}_${idx}`}
-                            prop={key}
-                            item={items[key]}
-                            styling={style}
-                        />
-                    ))}
-                </Row>
-            ))}
+            {rows.map((row, idx) =>
+                row === 'seekbar' ? (
+                    <SeekBar settings={settings} onChange={updateTime} />
+                ) : (
+                    <Row key={idx}>
+                        {row.map((key, idx) => (
+                            <ControlItem
+                                key={`${key}_${idx}`}
+                                prop={key}
+                                item={items[key]}
+                                styling={style}
+                            />
+                        ))}
+                    </Row>
+                )
+            )}
         </Controls>
     )
 }
