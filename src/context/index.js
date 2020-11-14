@@ -9,7 +9,7 @@
  * Unauthorized copying of this file, via any medium is strictly prohibited.
  * Proprietary and confidential.
  *
- * Modified on Thursday, 12th November 2020 11:17:06 pm
+ * Modified on Saturday, 14th November 2020 9:11:29 am
  * *****************************************************************************
  */
 import merge from 'deepmerge'
@@ -63,6 +63,7 @@ export const defaults = {
         canFullScreen: true,
         autoHideControls: 5,
         metadataOnMedia: true,
+        vinylMode: false,
     },
     icons: {
         error: faExclamationCircle,
