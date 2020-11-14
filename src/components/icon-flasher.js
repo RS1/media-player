@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Wednesday, 11th November 2020 11:48:46 am
+ * Modified on Saturday, 14th November 2020 4:29:46 pm
  * *****************************************************************************
  */
 import React, { useEffect, useRef, useState } from 'react'
@@ -17,7 +17,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import styled from '@emotion/styled'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
-export default ({ icon: _icon = false, onEnd = () => {} }) => {
+export default ({ size = 100, icon: _icon = false, onEnd = () => {} }) => {
     const [icon, setIcon] = useState(false)
     const hide = useRef()
 
@@ -36,7 +36,7 @@ export default ({ icon: _icon = false, onEnd = () => {} }) => {
     }, [_icon])
 
     return (
-        <Container>
+        <Container size={size}>
             <AnimatePresence>
                 {icon && (
                     <Flash initial={entry} animate={normal} exit={exit}>
@@ -51,9 +51,8 @@ export default ({ icon: _icon = false, onEnd = () => {} }) => {
 const Container = styled.div`
     position: absolute;
     top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    width: ${props => props.size}%;
+    height: ${props => props.size}%;
     display: flex;
     align-items: center;
     justify-content: center;

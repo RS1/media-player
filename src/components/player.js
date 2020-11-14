@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Saturday, 14th November 2020 4:03:30 pm
+ * Modified on Saturday, 14th November 2020 4:28:19 pm
  * *****************************************************************************
  */
 
@@ -71,7 +71,8 @@ export default ({ config, media: track, ...props }) => {
     const [, resetIdle] = useAutoIdle(wrapper, {
         callback: idle => setSettings({ immersive: idle }),
         wait: options.autoHideControls || 5,
-        condition: state.playing && options.autoHideControls > 0,
+        condition:
+            state.playing && options.autoHideControls > 0 && !options.vinylMode,
     })
 
     useEffect(() => {
@@ -456,7 +457,11 @@ export default ({ config, media: track, ...props }) => {
                         )}
                     </AnimatePresence>
                 )}
-                <IconFlasher icon={flashIcon} onEnd={setFlashIcon} />
+                <IconFlasher
+                    size={options.vinylMode ? 80 : 100}
+                    icon={flashIcon}
+                    onEnd={setFlashIcon}
+                />
             </Wrapper>
         </Container>
     )
@@ -482,7 +487,7 @@ const Wrapper = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: ${props => (props.isVinyl ? 'flex-start' : 'center')};
     transition: all 0.3s ease-in-out;
     user-select: none;
     cursor: ${props => (props.isImmersive ? 'none' : 'default')};
@@ -510,7 +515,7 @@ const Vinyl = styled(MediaBg)`
     position: relative;
     top: unset;
     width: 80%;
-    height: 80%;
+    padding-top: 80%;
     background-color: #eeeeee;
     animation: ${playerRotate} 5s linear infinite;
     animation-play-state: ${props => (props.isPlaying ? 'running' : 'paused')};
@@ -534,7 +539,7 @@ const Vinyl = styled(MediaBg)`
         padding-top: 10%;
         border-radius: 50%;
         box-shadow: 0 0 1px 5px rgba(238, 238, 238, 0.5),
-            inset 0px 0px 15px rgba(0, 0, 0, 0.1);
+            inset 0px 0px 15px rgba(0, 0, 0, 0.25);
     }
 `
 
