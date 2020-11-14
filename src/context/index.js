@@ -9,7 +9,7 @@
  * Unauthorized copying of this file, via any medium is strictly prohibited.
  * Proprietary and confidential.
  *
- * Modified on Saturday, 14th November 2020 2:56:07 pm
+ * Modified on Saturday, 14th November 2020 3:06:00 pm
  * *****************************************************************************
  */
 import merge from 'deepmerge'
@@ -75,7 +75,7 @@ export const defaults = {
                 'forward10',
                 'next',
                 'spacer',
-                'durations',
+                'duration',
             ],
             ['mute', 'metadata', 'fullscreen'],
         ],

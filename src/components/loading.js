@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Saturday, 14th November 2020 3:03:47 pm
+ * Modified on Saturday, 14th November 2020 3:12:50 pm
  * *****************************************************************************
  */
 
@@ -34,7 +34,7 @@ const Overlay = styled.div`
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    font-size: 50px;
+    font-size: ${props => (props.isVinyl ? '30px' : '50px')};
     z-index: 15;
     width: 100%;
     box-sizing: border-box;
@@ -50,7 +50,7 @@ const Overlay = styled.div`
             `
             : ``}
     & p {
-        margin: 25px 0 0 0;
+        margin: ${props => (props.isVinyl ? '15px 0 0 0' : '25px 0 0 0')};
         font-size: 15px;
         text-align: center;
     }
