@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Saturday, 14th November 2020 4:28:19 pm
+ * Modified on Saturday, 14th November 2020 4:32:07 pm
  * *****************************************************************************
  */
 
@@ -515,6 +515,7 @@ const Vinyl = styled(MediaBg)`
     position: relative;
     top: unset;
     width: 80%;
+    height: unset;
     padding-top: 80%;
     background-color: #eeeeee;
     animation: ${playerRotate} 5s linear infinite;
