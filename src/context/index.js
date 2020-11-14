@@ -9,7 +9,7 @@
  * Unauthorized copying of this file, via any medium is strictly prohibited.
  * Proprietary and confidential.
  *
- * Modified on Saturday, 14th November 2020 9:11:29 am
+ * Modified on Saturday, 14th November 2020 12:40:30 pm
  * *****************************************************************************
  */
 import merge from 'deepmerge'
@@ -88,6 +88,7 @@ export const defaults = {
         errorColor: '#ed4337',
         fontFamily: 'Verdana',
         mediaBackground: '#000000',
+        vinylBackground: '#ffffff',
     },
     actions: {
         onError: () => {},

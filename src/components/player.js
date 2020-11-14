@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Saturday, 14th November 2020 12:06:59 pm
+ * Modified on Saturday, 14th November 2020 12:54:46 pm
  * *****************************************************************************
  */
 
@@ -492,48 +492,64 @@ const Wrapper = styled.div`
         width: ${props => (props.isVinyl ? '0' : '100%')};
         height: ${props => (props.isVinyl ? '0' : '100%')};
     }
+    ${props =>
+        props.isVinyl
+            ? `
+                border-radius: 100%;
+                box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+                box-sizing: border-box;
+                overflow: hidden;
+            `
+            : ``}
+    $:after {
+        ${props =>
+            props.isVinyl
+                ? `
+                    content: '';
+                    position: absolute;
+                    top: 0px;
+                    left: 0px;
+                    right: 0px;
+                    bottom: 0px;
+                    box-shadow: inset 0 0 1px 3px rgba(238, 238, 238, 0.5);
+                    border-radius: 100%;
+                `
+                : ``}
+    }
 `
 
-const Vinyl = styled.div`
+const MediaBg = styled.div`
     position: absolute;
     top: 0;
     width: 100%;
     height: 100%;
-    box-sizing: border-box;
-    border-radius: 100%;
-    border: 2px solid #eeeeee;
-    background-color: #eeeeee;
     background-image: url('${props => props.bg}');
     background-position: center;
     background-size: contain;
     background-repeat: no-repeat;
+`
+
+const Vinyl = styled(MediaBg)`
+    box-sizing: border-box;
+    background-color: #eeeeee;
     animation: ${playerRotate} 5s linear infinite;
     animation-play-state: ${props => (props.isPlaying ? 'running' : 'paused')};
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.25);
     & div.inner-border {
         width: 10%;
         padding-top: 10%;
         border-radius: 50%;
-        border: 2px solid #eeeeee;
-        box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.25);
+        box-shadow: 0 0 0 5px rgba(238, 238, 238, 0.5),
+            rgba(0, 0, 0, 0.25) 0px 0px 5px inset;
     }
 `
 
-const Poster = styled.div`
-    position: absolute;
-    top: 0;
+const Poster = styled(MediaBg)`
     left: 0;
-    width: 100%;
-    height: 100%;
     border-radius: 0px;
-    background-image: url('${props => props.bg}');
-    background-position: center;
-    background-size: contain;
-    background-repeat: no-repeat;
 `
 
 const Container = styled.div`
@@ -544,7 +560,10 @@ const Container = styled.div`
     align-items: center;
     justify-content: center;
     font-family: '${props => props.styling.fontFamily}', sans-serif;
-    & ${Poster}, ${Media}, ${Wrapper}, ${Vinyl} .inner-border {
+    & ${Poster}, ${Media}, ${Wrapper} {
         background-color: ${props => props.styling.mediaBackground};
+    }
+    & ${Vinyl} .inner-border {
+        background-color: ${props => props.styling.vinylBackground};
     }
 `
