@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Saturday, 14th November 2020 4:04:53 pm
+ * Modified on Saturday, 14th November 2020 4:13:05 pm
  * *****************************************************************************
  */
 
@@ -170,8 +170,7 @@ const Controls = styled(motion.div)`
             ? `
         position: relative;
         width: 80%;
-        height: calc(20% - 10px);
-        margin-top: 10px;
+        margin-top: 25px;
         border-radius: 0;
         box-sizing: border-box;
         padding: 0;
