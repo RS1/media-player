@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Saturday, 14th November 2020 4:13:05 pm
+ * Modified on Sunday, 15th November 2020 11:14:08 am
  * *****************************************************************************
  */
 
@@ -18,6 +18,7 @@ import styled from '@emotion/styled'
 import { useFullScreen } from '@rs1/react-hooks'
 import { motion } from 'framer-motion'
 import ControlItem from './control-item'
+import metaFormatter from './metadata'
 
 export default ({
     settings,
@@ -96,7 +97,11 @@ export default ({
         },
         metadata: {
             type: 'text',
-            text: metadata.title + ' / ' + metadata.artist,
+            text: metaFormatter(
+                options.metadataVisible,
+                metadata,
+                options.metadataSeparator
+            ),
         },
         fullscreen: {
             type: 'icon',

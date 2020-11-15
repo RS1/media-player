@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Thursday, 12th November 2020 2:22:08 pm
+ * Modified on Sunday, 15th November 2020 11:14:08 am
  * *****************************************************************************
  */
 
@@ -17,12 +17,20 @@ import React from 'react'
 import styled from '@emotion/styled'
 import { motion } from 'framer-motion'
 import _Time from './time'
+import metaFormatter from './metadata'
 
-export default ({ settings: { state, metadata, style }, ...props }) => (
+export default ({
+    settings: { state, metadata, style, options },
+    ...props
+}) => (
     <Controls styling={style} {...props}>
         <Metadata
             dangerouslySetInnerHTML={{
-                __html: metadata.title + ' / ' + metadata.artist,
+                __html: metaFormatter(
+                    options.metadataVisible,
+                    metadata,
+                    options.metadataSeparator
+                ),
             }}
         />
         <Spacer />

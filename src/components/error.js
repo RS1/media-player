@@ -9,13 +9,14 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Saturday, 14th November 2020 4:16:22 pm
+ * Modified on Sunday, 15th November 2020 11:14:08 am
  * *****************************************************************************
  */
 
 import React from 'react'
 import styled from '@emotion/styled'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import metaFormatter from './metadata'
 
 export default ({ settings, ...props }) => (
     <Overlay isVinyl={settings.options.vinylMode} {...props}>
@@ -24,9 +25,11 @@ export default ({ settings, ...props }) => (
             dangerouslySetInnerHTML={{
                 __html:
                     'An error occured while loading this media element.<br />' +
-                    settings.metadata.title +
-                    ' / ' +
-                    settings.metadata.artist,
+                    metaFormatter(
+                        settings.options.metadataVisible,
+                        settings.metadata,
+                        settings.options.metadataSeparator
+                    ),
             }}
         />
     </Overlay>

@@ -9,10 +9,11 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Saturday, 14th November 2020 3:19:19 pm
+ * Modified on Sunday, 15th November 2020 11:13:45 am
  * *****************************************************************************
  */
 
 export { default as makeIcon } from './icons'
 export { default as PlayerTime } from './components/time'
+export { default as metaFormatter } from './components/metadata'
 export { default } from './components'

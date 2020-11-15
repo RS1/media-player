@@ -9,21 +9,25 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Saturday, 14th November 2020 4:16:18 pm
+ * Modified on Sunday, 15th November 2020 11:14:08 am
  * *****************************************************************************
  */
 
 import React from 'react'
 import styled from '@emotion/styled'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import metaFormatter from './metadata'
 
 export default ({ settings, ...props }) => (
     <Overlay isVinyl={settings.options.vinylMode} {...props}>
         <FontAwesomeIcon icon={settings.icons.loading} spin />
         <p
             dangerouslySetInnerHTML={{
-                __html:
-                    settings.metadata.title + ' / ' + settings.metadata.artist,
+                __html: metaFormatter(
+                    settings.options.metadataVisible,
+                    settings.metadata,
+                    settings.options.metadataSeparator
+                ),
             }}
         />
     </Overlay>

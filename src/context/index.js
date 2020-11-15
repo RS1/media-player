@@ -9,7 +9,7 @@
  * Unauthorized copying of this file, via any medium is strictly prohibited.
  * Proprietary and confidential.
  *
- * Modified on Saturday, 14th November 2020 3:06:00 pm
+ * Modified on Sunday, 15th November 2020 11:07:38 am
  * *****************************************************************************
  */
 import merge from 'deepmerge'
@@ -33,6 +33,8 @@ import forward10svg from '../icons/10sec-forward.svg'
 
 export const defaults = {
     metadata: {
+        side: '',
+        position: '',
         title: '',
         artist: '',
         src: '',
@@ -64,6 +66,8 @@ export const defaults = {
         autoHideControls: 5,
         metadataOnMedia: true,
         vinylMode: false,
+        metadataSeparator: ' / ',
+        metadataVisible: ['title', 'artist'],
         controlsSetup: [
             ['seekbar'],
             [
