@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Sunday, 15th November 2020 6:04:18 pm
+ * Modified on Sunday, 15th November 2020 6:08:08 pm
  * *****************************************************************************
  */
 
@@ -166,7 +166,6 @@ const VinylExtra = styled.div`
     width: 25px;
     height: 25px;
     top: 0;
-    left: 0;
     margin-top: -50px;
     border-radius: 50%;
     display: flex;
@@ -175,6 +174,7 @@ const VinylExtra = styled.div`
     justify-content: center;
     font-size: 13px;
     font-weight: 900;
+    line-height: 1;
 `
 
 const VinylSide = styled(VinylExtra)`
@@ -232,7 +232,7 @@ const Controls = styled(motion.div)`
         color: ${props => props.styling.controlsColor};
         margin: ${props => (props.isVinyl ? '5px 0' : '5px 0')};
     }
-    & ${VinylExtra} {
+    & ${VinylSide}, ${VinylPosition} {
         background: ${props => props.styling.controlsColor};
         color: ${props => props.styling.vinylBackground};
     }
