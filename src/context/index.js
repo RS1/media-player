@@ -9,7 +9,7 @@
  * Unauthorized copying of this file, via any medium is strictly prohibited.
  * Proprietary and confidential.
  *
- * Modified on Sunday, 15th November 2020 11:07:38 am
+ * Modified on Sunday, 15th November 2020 11:17:18 am
  * *****************************************************************************
  */
 import merge from 'deepmerge'
@@ -131,9 +131,13 @@ const _metadata = value => ({ metadata: { ...value } })
 const _options = {
     customMerge: key => {
         if (
-            ['mediaRect', 'playerRect', 'playerSize', 'controlsSetup'].includes(
-                key
-            )
+            [
+                'mediaRect',
+                'playerRect',
+                'playerSize',
+                'controlsSetup',
+                'metadataVisible',
+            ].includes(key)
         ) {
             return (a, b) => [...b]
         }
