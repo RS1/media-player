@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Sunday, 15th November 2020 11:29:01 am
+ * Modified on Sunday, 15th November 2020 6:04:18 pm
  * *****************************************************************************
  */
 
@@ -135,6 +135,9 @@ export default ({
             {options.vinylMode && metadata.side && (
                 <VinylSide>{metadata.side}</VinylSide>
             )}
+            {options.vinylMode && metadata.position && (
+                <VinylPosition>{metadata.position}</VinylPosition>
+            )}
             {options.controlsSetup.map((row, idx) => (
                 <Row key={idx}>
                     {row.map(
@@ -158,7 +161,7 @@ export default ({
     )
 }
 
-const VinylSide = styled.div`
+const VinylExtra = styled.div`
     position: absolute;
     width: 25px;
     height: 25px;
@@ -172,6 +175,14 @@ const VinylSide = styled.div`
     justify-content: center;
     font-size: 13px;
     font-weight: 900;
+`
+
+const VinylSide = styled(VinylExtra)`
+    left: 0;
+`
+
+const VinylPosition = styled(VinylExtra)`
+    right: 0;
 `
 
 const Row = styled.div`
@@ -221,7 +232,7 @@ const Controls = styled(motion.div)`
         color: ${props => props.styling.controlsColor};
         margin: ${props => (props.isVinyl ? '5px 0' : '5px 0')};
     }
-    & ${VinylSide} {
+    & ${VinylExtra} {
         background: ${props => props.styling.controlsColor};
         color: ${props => props.styling.vinylBackground};
     }
