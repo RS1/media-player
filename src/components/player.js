@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Tuesday, 17th November 2020 10:40:47 am
+ * Modified on Tuesday, 17th November 2020 10:52:32 am
  * *****************************************************************************
  */
 
@@ -47,6 +47,7 @@ export default ({ config, media: track, ...props }) => {
 
     const [container, containerRef] = useRectRef()
     const [wrapper, wrapperRef, updateWrapperRef] = useDynamicRef()
+    const [vinyl, vinylRef] = useRectRef()
     const [video, videoRef, updateVideoRef] = useDynamicRef()
     const [audio, audioRef, updateAudioRef] = useDynamicRef()
     const media = metadata.video ? video : audio
@@ -401,9 +402,11 @@ export default ({ config, media: track, ...props }) => {
                 />
                 {!metadata.video && options.vinylMode && (
                     <Vinyl
+                        ref={vinylRef}
                         onClick={togglePlay}
                         bg={metadata.poster}
                         isPlaying={state.playing}
+                        aspectRatio={vinyl.width / vinyl.height}
                     >
                         <img src={metadata.poster} />
                         <div className='inner-border' />
@@ -518,8 +521,16 @@ const Vinyl = styled(MediaBg)`
     flex: 80%;
     & img {
         position: absolute;
-        top: 0;
-        height: 100%;
+        ${props =>
+            props.aspectRatio > 1
+                ? `
+                    top: 0;
+                    height: 100%;
+                `
+                : `
+                    left: 0;
+                    width: 100%;
+                `}
         background-color: #eeeeee;
         border-radius: 100%;
         box-shadow: 0 0 15px rgba(0, 0, 0, 0.1),

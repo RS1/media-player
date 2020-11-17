@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Sunday, 15th November 2020 11:14:08 am
+ * Modified on Tuesday, 17th November 2020 10:47:33 am
  * *****************************************************************************
  */
 
@@ -52,6 +52,7 @@ const Overlay = styled.div`
                 width: 80%;
                 padding: 0;
                 margin-top: 25px;
+                flex: 20%;
             `
             : ``}
     & p {
