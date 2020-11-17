@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Tuesday, 17th November 2020 10:52:32 am
+ * Modified on Tuesday, 17th November 2020 10:59:04 am
  * *****************************************************************************
  */
 
@@ -407,6 +407,7 @@ export default ({ config, media: track, ...props }) => {
                         bg={metadata.poster}
                         isPlaying={state.playing}
                         aspectRatio={vinyl.width / vinyl.height}
+                        vinylSize={Math.min(vinyl.width, vinyl.height)}
                     >
                         <img src={metadata.poster} />
                         <div className='inner-border' />
@@ -450,7 +451,7 @@ export default ({ config, media: track, ...props }) => {
                     </AnimatePresence>
                 )}
                 <IconFlasher
-                    size={options.vinylMode ? 80 : 100}
+                    size={options.vinylMode ? vinyl.height : 0}
                     icon={flashIcon}
                     onEnd={setFlashIcon}
                 />
@@ -540,10 +541,10 @@ const Vinyl = styled(MediaBg)`
         position: absolute;
         top: 50%;
         left: 50%;
-        margin-left: -5%;
-        margin-top: -5%;
-        width: 10%;
-        padding-top: 10%;
+        margin-left: -${props => props.vinylSize * 0.05}%;
+        margin-top: -${props => props.vinylSize * 0.05}%;
+        width: ${props => props.vinylSize * 0.1}%;
+        height: ${props => props.vinylSize * 0.1}%;
         border-radius: 50%;
         box-shadow: 0 0 1px 5px rgba(238, 238, 238, 0.5),
             inset 0px 0px 15px rgba(0, 0, 0, 0.25);

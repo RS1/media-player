@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Saturday, 14th November 2020 4:29:46 pm
+ * Modified on Tuesday, 17th November 2020 11:00:00 am
  * *****************************************************************************
  */
 import React, { useEffect, useRef, useState } from 'react'
@@ -51,8 +51,8 @@ export default ({ size = 100, icon: _icon = false, onEnd = () => {} }) => {
 const Container = styled.div`
     position: absolute;
     top: 0;
-    width: ${props => props.size}%;
-    height: ${props => props.size}%;
+    width: 100%;
+    height: ${props => (props.size ? `${props.size}px` : '100%')};
     display: flex;
     align-items: center;
     justify-content: center;
