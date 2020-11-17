@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Tuesday, 17th November 2020 10:34:00 am
+ * Modified on Tuesday, 17th November 2020 10:40:47 am
  * *****************************************************************************
  */
 
@@ -376,8 +376,16 @@ export default ({ config, media: track, ...props }) => {
                 ref={wrapperRef}
                 isImmersive={state.immersive}
                 isVinyl={options.vinylMode}
-                widthRatio={!state.fullscreen && state.playerRect[0]}
-                heightRatio={!state.fullscreen && state.playerRect[1]}
+                widthRatio={
+                    !state.fullscreen &&
+                    !options.vinylMode &&
+                    state.playerRect[0]
+                }
+                heightRatio={
+                    !state.fullscreen &&
+                    !options.vinylMode &&
+                    state.playerRect[1]
+                }
             >
                 <Media
                     ref={metadata.video ? videoRef : audioRef}
@@ -507,6 +515,7 @@ const Vinyl = styled(MediaBg)`
     box-sizing: border-box;
     /* overflow: hidden; */
     transform: translateZ(0);
+    flex: 80%;
     & img {
         position: absolute;
         top: 0;
