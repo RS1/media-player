@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Sunday, 15th November 2020 11:31:55 am
+ * Modified on Tuesday, 17th November 2020 10:34:00 am
  * *****************************************************************************
  */
 
@@ -397,7 +397,8 @@ export default ({ config, media: track, ...props }) => {
                         bg={metadata.poster}
                         isPlaying={state.playing}
                     >
-                        {options.vinylMode && <div className='inner-border' />}
+                        <img src={metadata.poster} />
+                        <div className='inner-border' />
                     </Vinyl>
                 )}
                 {state.error ? (
@@ -496,20 +497,25 @@ const Vinyl = styled(MediaBg)`
     top: unset;
     width: 80%;
     height: unset;
-    padding-top: 80%;
-    background-color: #eeeeee;
+    background: none;
     animation: ${playerRotate} 5s linear infinite;
     animation-play-state: ${props => (props.isPlaying ? 'running' : 'paused')};
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    border-radius: 100%;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1),
-        inset 0 0 1px 3px rgba(238, 238, 238, 0.5);
     box-sizing: border-box;
-    overflow: hidden;
+    /* overflow: hidden; */
     transform: translateZ(0);
+    & img {
+        position: absolute;
+        top: 0;
+        height: 100%;
+        background-color: #eeeeee;
+        border-radius: 100%;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.1),
+            inset 0 0 1px 3px rgba(238, 238, 238, 0.5);
+    }
     & div.inner-border {
         position: absolute;
         top: 50%;
