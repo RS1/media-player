@@ -1,6 +1,6 @@
 {
   "name": "@rs1/media-player",
-  "version": "1.1.30-alpha0.33",
+  "version": "1.1.30-alpha0.34",
   "description": "A smart media player for React, for audio and video content, by RS1",
   "author": "RS1 Project",
   "license": "Apache-2.0",
@@ -36,7 +36,7 @@
     "@rollup/plugin-commonjs": "^16.0.0",
     "@rollup/plugin-node-resolve": "^10.0.0",
     "@rollup/plugin-replace": "^2.3.4",
-    "@rs1/react-hooks": "^1.1.12",
+    "@rs1/react-hooks": "^1.1.13",
     "babel-eslint": "^10.0.3",
     "babel-plugin-emotion": "^10.0.33",
     "core-js": "^3.6.5",
