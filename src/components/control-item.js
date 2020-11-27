@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Saturday, 14th November 2020 2:03:40 pm
+ * Modified on Friday, 27th November 2020 12:22:35 pm
  * *****************************************************************************
  */
 
@@ -23,7 +23,7 @@ export default ({
     prop: key = '',
     item = {},
     styling: style = {},
-    compact = false,
+    vinyl = false,
 }) => {
     switch (item.type) {
         case 'spacer':
@@ -69,7 +69,10 @@ export default ({
                     }
                     disabled={Boolean(item.loading ?? false)}
                     show={Boolean(item.visible ?? true)}
-                    compact={compact}
+                    vinyl={vinyl}
+                    spinSpeed={
+                        vinyl && key === 'play' && !item.loading ? '7s' : '2s'
+                    }
                 >
                     <FontAwesomeIcon
                         icon={
@@ -137,13 +140,10 @@ const Icon = styled.div`
     cursor: pointer;
     transform: scale(1) translateZ(0);
     transition: all 0.2s ease;
-    padding: ${props => (props.compact ? '0 5px' : '0 10px')};
+    padding: ${props => (props.vinyl ? '0 5px' : '0 10px')};
     text-align: center;
     & .fa-spin {
-        animation: ${props =>
-            props.compact
-                ? 'fa-spin 5s infinite linear'
-                : 'fa-spin 2s infinite linear'};
+        animation: fa-spin ${props => props.spinSpeed} infinite linear;
     }
     &:hover {
         color: ${props => props.hoverColor};

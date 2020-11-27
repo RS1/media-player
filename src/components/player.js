@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Friday, 27th November 2020 12:07:43 pm
+ * Modified on Friday, 27th November 2020 12:23:46 pm
  * *****************************************************************************
  */
 
@@ -406,7 +406,7 @@ export default ({ config, media: track, ...props }) => {
                         ref={vinylRef}
                         onClick={togglePlay}
                         bg={metadata.poster}
-                        isPlaying={state.playing}
+                        isPlaying={state.playing && state.loaded}
                         aspectRatio={vinyl.width / vinyl.height}
                         vinylSize={Math.min(vinyl.width, vinyl.height)}
                     >
@@ -512,7 +512,7 @@ const Vinyl = styled(MediaBg)`
     width: 80%;
     height: unset;
     background: none;
-    animation: ${playerRotate} 5s linear infinite;
+    animation: ${playerRotate} 7s linear infinite;
     animation-play-state: ${props => (props.isPlaying ? 'running' : 'paused')};
     display: flex;
     flex-direction: column;
@@ -547,7 +547,7 @@ const Vinyl = styled(MediaBg)`
         width: ${props => props.vinylSize}px;
         height: ${props => props.vinylSize}px;
         border-radius: 50%;
-        box-shadow: inset 0px 0px 1px 3px rgba(238, 238, 238, 0.5);
+        box-shadow: inset 0px 0px 0px 2px rgba(238, 238, 238, 0.5);
     }
     & div.inner-border {
         position: absolute;
@@ -558,7 +558,7 @@ const Vinyl = styled(MediaBg)`
         width: ${props => props.vinylSize * 0.1}px;
         height: ${props => props.vinylSize * 0.1}px;
         border-radius: 50%;
-        box-shadow: 0 0 1px 5px rgba(238, 238, 238, 0.5),
+        box-shadow: 0 0 0px 6px rgba(238, 238, 238, 0.5),
             inset 0px 0px 15px rgba(0, 0, 0, 0.25);
     }
 `

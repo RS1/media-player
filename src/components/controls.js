@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Tuesday, 17th November 2020 10:46:48 am
+ * Modified on Friday, 27th November 2020 12:19:54 pm
  * *****************************************************************************
  */
 
@@ -151,7 +151,7 @@ export default ({
                                     prop={key}
                                     item={items[key]}
                                     styling={style}
-                                    compact={options.vinylMode}
+                                    vinyl={options.vinylMode}
                                 />
                             )
                     )}
