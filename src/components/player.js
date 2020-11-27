@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Tuesday, 17th November 2020 12:01:21 pm
+ * Modified on Friday, 27th November 2020 12:07:43 pm
  * *****************************************************************************
  */
 
@@ -411,6 +411,7 @@ export default ({ config, media: track, ...props }) => {
                         vinylSize={Math.min(vinyl.width, vinyl.height)}
                     >
                         <img src={metadata.poster} />
+                        <div className='outer-border' />
                         <div className='inner-border' />
                     </Vinyl>
                 )}
@@ -535,8 +536,18 @@ const Vinyl = styled(MediaBg)`
                 `}
         background-color: #eeeeee;
         border-radius: 100%;
-        box-shadow: 0 0 15px rgba(0, 0, 0, 0.1),
-            inset 0 0 1px 3px rgba(238, 238, 238, 0.5);
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    }
+    & div.outer-border {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin-left: -${props => props.vinylSize * 0.5}px;
+        margin-top: -${props => props.vinylSize * 0.5}px;
+        width: ${props => props.vinylSize}px;
+        height: ${props => props.vinylSize}px;
+        border-radius: 50%;
+        box-shadow: inset 0px 0px 1px 3px rgba(238, 238, 238, 0.5);
     }
     & div.inner-border {
         position: absolute;
