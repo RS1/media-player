@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Friday, 27th November 2020 12:19:54 pm
+ * Modified on Monday, 30th November 2020 10:04:50 am
  * *****************************************************************************
  */
 
@@ -236,5 +236,13 @@ const Controls = styled(motion.div)`
     & ${VinylSide}, ${VinylPosition} {
         background: ${props => props.styling.controlsColor};
         color: ${props => props.styling.vinylBackground};
+    }
+    @media (max-width: 768px) and (max-aspect-ratio: 1/1) {
+        ${props =>
+            props.isVinyl
+                ? `
+                    width: 100%;
+                  `
+                : ``}
     }
 `

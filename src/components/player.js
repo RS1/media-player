@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Friday, 27th November 2020 12:23:46 pm
+ * Modified on Monday, 30th November 2020 10:03:20 am
  * *****************************************************************************
  */
 
@@ -560,6 +560,9 @@ const Vinyl = styled(MediaBg)`
         border-radius: 50%;
         box-shadow: 0 0 0px 6px rgba(238, 238, 238, 0.5),
             inset 0px 0px 15px rgba(0, 0, 0, 0.25);
+    }
+    @media (max-width: 768px) and (max-aspect-ratio: 1/1) {
+        width: 100%;
     }
 `
 
