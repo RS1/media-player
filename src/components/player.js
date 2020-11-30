@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Monday, 30th November 2020 10:03:20 am
+ * Modified on Monday, 30th November 2020 4:37:50 pm
  * *****************************************************************************
  */
 
@@ -47,7 +47,10 @@ export default ({ config, media: track, ...props }) => {
 
     const [container, containerRef] = useRectRef()
     const [wrapper, wrapperRef, updateWrapperRef] = useDynamicRef()
-    const [vinyl, vinylRef, updateVinyl] = useRectRef({ useOffset: true })
+    const [vinyl, vinylRef, updateVinyl] = useRectRef({
+        useOffset: true,
+        delay: 500,
+    })
     const [video, videoRef, updateVideoRef] = useDynamicRef()
     const [audio, audioRef, updateAudioRef] = useDynamicRef()
     const media = metadata.video ? video : audio
