@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Monday, 30th November 2020 10:04:50 am
+ * Modified on Friday, 4th December 2020 12:00:26 pm
  * *****************************************************************************
  */
 
@@ -191,6 +191,7 @@ const Row = styled.div`
     align-items: center;
     justify-content: center;
     align-items: center;
+    min-height: min-content;
     &:first-of-type {
         margin-top: 0px;
     }
@@ -229,6 +230,7 @@ const Controls = styled(motion.div)`
     justify-content: center;
     align-items: stretch;
     z-index: 10;
+    min-height: min-content;
     & ${Row} {
         color: ${props => props.styling.controlsColor};
         margin: ${props => (props.isVinyl ? '5px 0' : '5px 0')};
