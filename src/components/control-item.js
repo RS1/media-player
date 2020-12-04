@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Friday, 27th November 2020 12:22:35 pm
+ * Modified on Friday, 4th December 2020 11:56:01 am
  * *****************************************************************************
  */
 
@@ -135,6 +135,8 @@ const Icon = styled.div`
     opacity: ${props => (props.show ? '1' : '0')};
     visibility: ${props => (props.show ? 'visible' : 'hidden')};
     pointer-events: ${props =>
+        props.disabled || !props.show ? 'none' : 'initial'};
+    touch-events: ${props =>
         props.disabled || !props.show ? 'none' : 'initial'};
     color: ${props => props.mainColor};
     cursor: pointer;

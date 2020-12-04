@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Tuesday, 17th November 2020 11:00:00 am
+ * Modified on Friday, 4th December 2020 11:56:03 am
  * *****************************************************************************
  */
 import React, { useEffect, useRef, useState } from 'react'
@@ -57,6 +57,7 @@ const Container = styled.div`
     align-items: center;
     justify-content: center;
     pointer-events: none;
+    touch-events: none;
 `
 
 const Flash = styled(motion.div)`
@@ -71,4 +72,5 @@ const Flash = styled(motion.div)`
     align-items: center;
     justify-content: center;
     pointer-events: none;
+    touch-events: none;
 `

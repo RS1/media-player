@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Saturday, 14th November 2020 11:16:05 am
+ * Modified on Friday, 4th December 2020 11:55:16 am
  * *****************************************************************************
  */
 
@@ -75,7 +75,7 @@ const Handle = styled.div`
 `
 
 const Slider = styled.div`
-    width: 100%;
+    width: calc(100% - ${props => (props.fatBar ? '12px' : '6px')});
     cursor: pointer;
     position: relative;
     transition: all 0.1s ease-in-out;
