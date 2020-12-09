@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Friday, 4th December 2020 11:56:01 am
+ * Modified on Wednesday, 9th December 2020 6:25:08 pm
  * *****************************************************************************
  */
 
@@ -156,5 +156,14 @@ const Icon = styled.div`
     }
     &:last-child {
         padding-right: 0;
+    }
+    @media (max-width: 414px) {
+        padding: 0 5px;
+        &:first-child {
+            padding-left: 0;
+        }
+        &:last-child {
+            padding-right: 0;
+        }
     }
 `

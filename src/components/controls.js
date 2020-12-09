@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Friday, 4th December 2020 12:00:26 pm
+ * Modified on Wednesday, 9th December 2020 6:23:45 pm
  * *****************************************************************************
  */
 
@@ -246,5 +246,14 @@ const Controls = styled(motion.div)`
                     width: 100%;
                   `
                 : ``}
+    }
+    @media (max-width: 414px) {
+        ${props =>
+            props.isVinyl
+                ? ``
+                : `left: 5px;
+                   right: 5px;
+                   bottom: 5px;
+                   padding: 10px;`}
     }
 `
