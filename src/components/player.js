@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Friday, 4th December 2020 12:02:26 pm
+ * Modified on Friday, 18th December 2020 10:13:22 am
  * *****************************************************************************
  */
 
@@ -585,7 +585,7 @@ const Container = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: '${props => props.styling.fontFamily}', sans-serif;
+    font-family: ${props => props.styling.fontFamily};
     opacity: ${props => (props.show ? '1' : '0')};
     transition: all 0.2s linear;
     & ${MediaError} {

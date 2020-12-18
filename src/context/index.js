@@ -9,7 +9,7 @@
  * Unauthorized copying of this file, via any medium is strictly prohibited.
  * Proprietary and confidential.
  *
- * Modified on Sunday, 15th November 2020 11:17:18 am
+ * Modified on Friday, 18th December 2020 10:16:43 am
  * *****************************************************************************
  */
 import merge from 'deepmerge'
@@ -105,7 +105,8 @@ export const defaults = {
         accentColor: '#009fe3',
         loaderColor: '#ffffff',
         errorColor: '#ed4337',
-        fontFamily: 'Verdana',
+        fontFamily: '"Verdana", sans-serif',
+        timeFontFamily: '"Courier", monospace',
         playerBackground: '#000000',
         mediaBackground: '#000000',
         vinylBackground: '#ffffff',

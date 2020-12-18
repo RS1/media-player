@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Wednesday, 9th December 2020 6:25:08 pm
+ * Modified on Friday, 18th December 2020 10:17:42 am
  * *****************************************************************************
  */
 
@@ -41,7 +41,7 @@ export default ({
             return <Text dangerouslySetInnerHTML={{ __html: item.text }} />
         case 'time':
             return (
-                <TimeSpan>
+                <TimeSpan fontFamily={style.timeFontFamily}>
                     <Time seconds={item.seconds} loading={item.loading} />
                 </TimeSpan>
             )
@@ -112,6 +112,7 @@ const TimeSpan = styled.div`
     font-size: 13px;
     cursor: default;
     padding: 0 10px;
+    font-family: ${props => props.fontFamily};
     &::before {
         content: '';
         display: inline-block;
