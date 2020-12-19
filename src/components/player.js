@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Friday, 18th December 2020 11:36:12 am
+ * Modified on Saturday, 19th December 2020 11:50:16 am
  * *****************************************************************************
  */
 
@@ -540,6 +540,11 @@ const Vinyl = styled(MediaBg)`
         background-color: #eeeeee;
         border-radius: 100%;
         box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        mask-image: radial-gradient(
+            ${props => Math.floor(props.vinylSize * 0.05)}px at 50% 50%,
+            transparent 99%,
+            black 100%
+        );
     }
     & div.outer-border {
         position: absolute;
@@ -556,10 +561,10 @@ const Vinyl = styled(MediaBg)`
         position: absolute;
         top: 50%;
         left: 50%;
-        margin-left: -${props => props.vinylSize * 0.05}px;
-        margin-top: -${props => props.vinylSize * 0.05}px;
-        width: ${props => props.vinylSize * 0.1}px;
-        height: ${props => props.vinylSize * 0.1}px;
+        margin-left: -${props => Math.floor(props.vinylSize * 0.05)}px;
+        margin-top: -${props => Math.floor(props.vinylSize * 0.05)}px;
+        width: ${props => Math.floor(props.vinylSize * 0.05) * 2}px;
+        height: ${props => Math.floor(props.vinylSize * 0.05) * 2}px;
         border-radius: 50%;
         box-shadow: 0 0 0px 6px rgba(238, 238, 238, 0.5),
             inset 0px 0px 15px rgba(0, 0, 0, 0.25);
