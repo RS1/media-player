@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Saturday, 19th December 2020 11:50:16 am
+ * Modified on Saturday, 19th December 2020 11:55:38 am
  * *****************************************************************************
  */
 
@@ -541,7 +541,7 @@ const Vinyl = styled(MediaBg)`
         border-radius: 100%;
         box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
         mask-image: radial-gradient(
-            ${props => Math.floor(props.vinylSize * 0.05)}px at 50% 50%,
+            ${props => Math.floor(props.vinylSize * 0.05)}.1px at 50% 50%,
             transparent 99%,
             black 100%
         );
