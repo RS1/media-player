@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Saturday, 2nd January 2021 6:16:17 pm
+ * Modified on Saturday, 2nd January 2021 6:23:54 pm
  * *****************************************************************************
  */
 
@@ -77,7 +77,10 @@ export default ({ config, media: track, ...props }) => {
         callback: idle => setSettings({ immersive: idle }),
         wait: options.autoHideControls || 5,
         condition:
-            state.playing && options.autoHideControls > 0 && !options.vinylMode,
+            state.playing &&
+            state.loaded &&
+            options.autoHideControls > 0 &&
+            !options.vinylMode,
     })
 
     useEffect(() => {
@@ -252,6 +255,7 @@ export default ({ config, media: track, ...props }) => {
         'seeking',
         e => {
             setSettings({ loaded: false })
+            resetIdle()
         },
         []
     )
@@ -261,6 +265,7 @@ export default ({ config, media: track, ...props }) => {
         'waiting',
         e => {
             setSettings({ loaded: false })
+            resetIdle()
         },
         []
     )

@@ -1,6 +1,6 @@
 {
   "name": "@rs1/media-player",
-  "version": "1.1.30-alpha0.50",
+  "version": "1.1.30-alpha0.51",
   "description": "A smart media player for React, for audio and video content, by RS1",
   "author": "RS1 Project",
   "license": "Apache-2.0",
