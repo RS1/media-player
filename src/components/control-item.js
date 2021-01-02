@@ -5,11 +5,11 @@
  * =============================================================
  * Created on Saturday, 14th November 2020 10:29:54 am
  *
- * Copyright (c) 2020 RS1 Project
+ * Copyright (c) 2020 - 2021 RS1 Project
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Friday, 18th December 2020 10:17:42 am
+ * Modified on Saturday, 2nd January 2021 5:09:09 pm
  * *****************************************************************************
  */
 
@@ -42,7 +42,11 @@ export default ({
         case 'time':
             return (
                 <TimeSpan fontFamily={style.timeFontFamily}>
-                    <Time seconds={item.seconds} loading={item.loading} />
+                    <Time
+                        seconds={item.seconds}
+                        loading={item.loading}
+                        roundTop={item.roundTop}
+                    />
                 </TimeSpan>
             )
         case 'icon':

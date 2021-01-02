@@ -5,11 +5,11 @@
  * =============================================================
  * Created on Tuesday, 10th November 2020 5:54:42 pm
  *
- * Copyright (c) 2020 RS1 Project
+ * Copyright (c) 2020 - 2021 RS1 Project
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Wednesday, 9th December 2020 6:23:45 pm
+ * Modified on Saturday, 2nd January 2021 5:08:53 pm
  * *****************************************************************************
  */
 
@@ -115,11 +115,13 @@ export default ({
             type: 'time',
             seconds: state.time * state.duration,
             loading: (state.duration || 0) <= 0,
+            roundTop: false,
         },
         duration: {
             type: 'time',
             seconds: state.duration,
             loading: (state.duration || 0) <= 0,
+            roundTop: true,
         },
         spacer: { type: 'spacer' },
         seekbar: {

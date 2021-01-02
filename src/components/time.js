@@ -5,11 +5,11 @@
  * =============================================================
  * Created on Tuesday, 10th November 2020 5:54:42 pm
  *
- * Copyright (c) 2020 RS1 Project
+ * Copyright (c) 2020 - 2021 RS1 Project
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Tuesday, 10th November 2020 7:07:39 pm
+ * Modified on Saturday, 2nd January 2021 5:08:23 pm
  * *****************************************************************************
  */
 
@@ -20,14 +20,14 @@ import { faSpinner } from '@fortawesome/free-solid-svg-icons'
 
 const padZero = digit => `${digit < 10 ? '0' : ''}${digit}`
 
-export default ({ seconds, loading, ...props }) => {
+export default ({ seconds, loading = false, roundTop = false, ...props }) => {
     const formatted = () => {
         const prefix = seconds < 0 ? '-' : ''
-        const absSeconds = Math.abs(seconds)
+        const absSeconds = Math[roundTop ? 'ceil' : 'floor'](Math.abs(seconds))
 
         const hh = Math.floor(absSeconds / 3600)
         const ii = Math.floor((absSeconds % 3600) / 60)
-        const ss = Math.floor(absSeconds) % 60
+        const ss = absSeconds % 60
 
         return hh > 0
             ? `${prefix}${hh}:${padZero(ii)}:${padZero(ss)}`
