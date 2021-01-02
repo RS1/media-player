@@ -5,11 +5,11 @@
  * =============================================================
  * Created on Tuesday, 10th November 2020 5:54:42 pm
  *
- * Copyright (c) 2020 RS1 Project
+ * Copyright (c) 2020 - 2021 RS1 Project
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Saturday, 19th December 2020 11:55:38 am
+ * Modified on Saturday, 2nd January 2021 6:16:17 pm
  * *****************************************************************************
  */
 
@@ -250,6 +250,15 @@ export default ({ config, media: track, ...props }) => {
     useListener(
         media,
         'seeking',
+        e => {
+            setSettings({ loaded: false })
+        },
+        []
+    )
+
+    useListener(
+        media,
+        'waiting',
         e => {
             setSettings({ loaded: false })
         },
