@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Saturday, 2nd January 2021 6:23:54 pm
+ * Modified on Saturday, 2nd January 2021 6:31:39 pm
  * *****************************************************************************
  */
 
@@ -255,7 +255,6 @@ export default ({ config, media: track, ...props }) => {
         'seeking',
         e => {
             setSettings({ loaded: false })
-            resetIdle()
         },
         []
     )
