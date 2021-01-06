@@ -612,7 +612,10 @@ const Container = styled.div`
     & ${MediaLoading} {
         color: ${props => props.styling.loaderColor};
     }
-    & ${Poster}, ${Media}, ${Wrapper} {
+    & ${Wrapper} {
+        background-color: ${props => props.styling.playerBackground};
+    }
+    & ${Poster}, ${Media} {
         background-color: ${props => props.styling.mediaBackground};
     }
     & ${Vinyl} .inner-border {
