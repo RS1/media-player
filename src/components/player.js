@@ -389,7 +389,12 @@ export default ({ config, media: track, ...props }) => {
     }
 
     return (
-        <Container styling={style} ref={containerRef} show={configLoaded}>
+        <Container
+            styling={style}
+            ref={containerRef}
+            show={configLoaded}
+            id='rs1-media-player-container'
+        >
             <Wrapper
                 ref={wrapperRef}
                 isImmersive={state.immersive}
@@ -404,6 +409,7 @@ export default ({ config, media: track, ...props }) => {
                     !options.vinylMode &&
                     state.playerRect[1]
                 }
+                id='rs1-media-player-wrapper'
             >
                 <Media
                     ref={metadata.video ? videoRef : audioRef}
@@ -416,6 +422,7 @@ export default ({ config, media: track, ...props }) => {
                     loop={options.loop}
                     autoPlay={options.autoPlay}
                     playsInline
+                    id='rs1-media-player-element'
                 />
                 {!metadata.video && options.vinylMode && (
                     <Vinyl
@@ -425,6 +432,7 @@ export default ({ config, media: track, ...props }) => {
                         isPlaying={state.playing && state.loaded}
                         aspectRatio={vinyl.width / vinyl.height}
                         vinylSize={Math.min(vinyl.width, vinyl.height)}
+                        id='rs1-media-player-vinyl'
                     >
                         <img src={metadata.poster} />
                         <div className='outer-border' />
@@ -432,13 +440,23 @@ export default ({ config, media: track, ...props }) => {
                     </Vinyl>
                 )}
                 {state.error ? (
-                    <MediaError settings={settings} />
+                    <MediaError
+                        settings={settings}
+                        id='rs1-media-player-error'
+                    />
                 ) : state.duration === 0 ? (
-                    <MediaLoading settings={settings} />
+                    <MediaLoading
+                        settings={settings}
+                        id='rs1-media-player-loading'
+                    />
                 ) : (
                     <AnimatePresence>
                         {!metadata.video && !options.vinylMode && (
-                            <Poster onClick={togglePlay} bg={metadata.poster} />
+                            <Poster
+                                onClick={togglePlay}
+                                bg={metadata.poster}
+                                id='rs1-media-player-poster'
+                            />
                         )}
                         {state.immersive && options.metadataOnMedia && (
                             <MiniControls
@@ -447,6 +465,7 @@ export default ({ config, media: track, ...props }) => {
                                 initial={controlsAnim.hide}
                                 animate={controlsAnim.show}
                                 exit={controlsAnim.hide}
+                                id='rs1-media-player-minicontrols'
                             />
                         )}
                         {!state.immersive && (
@@ -464,6 +483,7 @@ export default ({ config, media: track, ...props }) => {
                                 initial={controlsAnim.hide}
                                 animate={controlsAnim.show}
                                 exit={controlsAnim.hide}
+                                id='rs1-media-player-controls'
                             />
                         )}
                     </AnimatePresence>
@@ -472,6 +492,7 @@ export default ({ config, media: track, ...props }) => {
                     size={options.vinylMode ? vinyl.height : 0}
                     icon={flashIcon}
                     onEnd={setFlashIcon}
+                    id='rs1-media-player-iconflasher'
                 />
             </Wrapper>
         </Container>

@@ -17,7 +17,12 @@ import { motion, AnimatePresence } from 'framer-motion'
 import styled from '@emotion/styled'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
-export default ({ size = 100, icon: _icon = false, onEnd = () => {} }) => {
+export default ({
+    size = 100,
+    icon: _icon = false,
+    onEnd = () => {},
+    ...props
+}) => {
     const [icon, setIcon] = useState(false)
     const hide = useRef()
 
@@ -36,7 +41,7 @@ export default ({ size = 100, icon: _icon = false, onEnd = () => {} }) => {
     }, [_icon])
 
     return (
-        <Container size={size}>
+        <Container size={size} {...props}>
             <AnimatePresence>
                 {icon && (
                     <Flash initial={entry} animate={normal} exit={exit}>
