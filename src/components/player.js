@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Friday, 15th January 2021 1:09:54 pm
+ * Modified on Friday, 15th January 2021 7:01:59 pm
  * *****************************************************************************
  */
 
@@ -285,6 +285,7 @@ export default ({ config, media: track, ...props }) => {
                     setSettings({
                         analyser: new Analyser({
                             mediaElem: 'rs1-media-player-element',
+                            ...options.analyserSetup,
                         }),
                     })
                 }
@@ -302,6 +303,7 @@ export default ({ config, media: track, ...props }) => {
             icons.play,
             state.analyser,
             options.hasAnalyser,
+            options.analyserSetup,
         ]
     )
     useKeyAction(

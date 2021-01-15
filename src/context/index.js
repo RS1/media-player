@@ -9,7 +9,7 @@
  * Unauthorized copying of this file, via any medium is strictly prohibited.
  * Proprietary and confidential.
  *
- * Modified on Friday, 15th January 2021 2:26:48 pm
+ * Modified on Friday, 15th January 2021 7:01:35 pm
  * *****************************************************************************
  */
 import merge from 'deepmerge'
@@ -69,6 +69,12 @@ export const defaults = {
         metadataOnMedia: true,
         vinylMode: false,
         hasAnalyser: false,
+        analyserSetup: {
+            smoothingTimeConstant: 0.95,
+            fftSize: 32,
+            minDecibels: -100,
+            maxDecibels: -30,
+        },
         metadataSeparator: ' / ',
         metadataVisible: ['title', 'artist'],
         controlsSetup: [
