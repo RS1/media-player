@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Friday, 15th January 2021 8:28:26 pm
+ * Modified on Friday, 15th January 2021 8:34:08 pm
  * *****************************************************************************
  */
 
@@ -445,7 +445,7 @@ export default ({ config, media: track, ...props }) => {
                     loop={options.loop}
                     autoPlay={options.autoPlay}
                     playsInline
-                    crossOrigin='anonymous'
+                    crossOrigin='use-credentials'
                     id='rs1-media-player-element'
                 />
                 {!metadata.video && options.vinylMode && (
