@@ -5,11 +5,11 @@
  * =============================================================
  * Created on Tuesday, 10th November 2020 5:54:42 pm
  *
- * Copyright (c) 2020 - 2021 RS1 Project
+ * Copyright (c) 2020-2021 Andrea Corsini T/A RS1 Project - All rights reserved.
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Saturday, 2nd January 2021 6:31:39 pm
+ * Modified on Friday, 15th January 2021 1:09:54 pm
  * *****************************************************************************
  */
 
@@ -18,6 +18,7 @@ import { keyframes } from '@emotion/core'
 import styled from '@emotion/styled'
 
 import Context from '../context'
+import Analyser from './analyser'
 
 import ErrorMessage from './error'
 import Loading from './loading'
@@ -136,6 +137,9 @@ export default ({ config, media: track, ...props }) => {
         actions.onFullScreenChanged(state.fullscreen)
     }, [state.fullscreen, actions.onFullScreenChanged])
     useEffect(() => {
+        actions.onAnalyserInitialized(state.analyser)
+    }, [state.analyser, actions.onAnalyserInitialized])
+    useEffect(() => {
         actions.onStateChanged({
             error: state.error,
             time: state.time * state.duration || 0,
@@ -146,6 +150,7 @@ export default ({ config, media: track, ...props }) => {
             seeking: !state.loaded && state.duration,
             muted: state.muted,
             fullscreen: state.fullscreen,
+            analyser: state.analyser,
         })
     }, [
         state.error,
@@ -156,6 +161,7 @@ export default ({ config, media: track, ...props }) => {
         state.loaded,
         state.muted,
         state.fullscreen,
+        state.analyser,
     ])
 
     useListener(
@@ -275,13 +281,28 @@ export default ({ config, media: track, ...props }) => {
                 media.pause()
                 setFlashIcon(icons.pause)
             } else {
+                if (state.analyser === false && options.hasAnalyser) {
+                    setSettings({
+                        analyser: new Analyser({
+                            mediaElem: 'rs1-media-player-element',
+                        }),
+                    })
+                }
                 media.play()
                 setFlashIcon(icons.play)
             }
             resetIdle()
             // setSettings({ toggle: 'playing' });
         },
-        [media, state.playing, state.immersive, icons.pause, icons.play]
+        [
+            media,
+            state.playing,
+            state.immersive,
+            icons.pause,
+            icons.play,
+            state.analyser,
+            options.hasAnalyser,
+        ]
     )
     useKeyAction(
         32 /* __ space */,

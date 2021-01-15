@@ -5,14 +5,15 @@
  * =============================================================
  * Created on Monday, 19th October 2020 9:56:49 am
  *
- * Copyright (c) 2020 RS1 Project
+ * Copyright (c) 2020-2021 Andrea Corsini T/A RS1 Project - All rights reserved.
  * Unauthorized copying of this file, via any medium is strictly prohibited.
  * Proprietary and confidential.
  *
- * Modified on Friday, 18th December 2020 10:16:43 am
+ * Modified on Friday, 15th January 2021 2:26:48 pm
  * *****************************************************************************
  */
 import merge from 'deepmerge'
+import { isPlainObject } from 'is-plain-object'
 import { createContext } from 'react'
 import makeIcon from '../icons'
 import {
@@ -54,6 +55,7 @@ export const defaults = {
         progress: 0,
         mediaRect: [0, 0],
         playerRect: [0, 0],
+        analyser: false,
     },
     options: {
         playerSize: [0, 0],
@@ -66,6 +68,7 @@ export const defaults = {
         autoHideControls: 5,
         metadataOnMedia: true,
         vinylMode: false,
+        hasAnalyser: false,
         metadataSeparator: ' / ',
         metadataVisible: ['title', 'artist'],
         controlsSetup: [
@@ -123,6 +126,7 @@ export const defaults = {
         onDurationChanged: duration => {},
         onMuteChanged: muted => {},
         onFullScreenChanged: fullscreen => {},
+        onAnalyserInitialized: analyser => {},
         onStateChanged: state => {},
     },
 }
@@ -143,6 +147,7 @@ const _options = {
             return (a, b) => [...b]
         }
     },
+    isMergeableObject: isPlainObject,
 }
 const overwriteArrays = {
     arrayMerge: (from, to, opts) => to,
