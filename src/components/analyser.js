@@ -2,7 +2,7 @@ export default class {
     constructor({
         mediaElem = '',
         smoothingTimeConstant = 0.95,
-        fftSize = 32,
+        fftSize = 64,
         minDecibels = -100,
         maxDecibels = -30,
     } = {}) {

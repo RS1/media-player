@@ -9,7 +9,7 @@
  * Unauthorized copying of this file, via any medium is strictly prohibited.
  * Proprietary and confidential.
  *
- * Modified on Friday, 15th January 2021 7:01:35 pm
+ * Modified on Friday, 15th January 2021 7:07:47 pm
  * *****************************************************************************
  */
 import merge from 'deepmerge'
@@ -71,7 +71,7 @@ export const defaults = {
         hasAnalyser: false,
         analyserSetup: {
             smoothingTimeConstant: 0.95,
-            fftSize: 32,
+            fftSize: 64,
             minDecibels: -100,
             maxDecibels: -30,
         },
