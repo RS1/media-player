@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Saturday, 16th January 2021 6:53:53 pm
+ * Modified on Saturday, 16th January 2021 7:38:11 pm
  * *****************************************************************************
  */
 
@@ -282,11 +282,12 @@ export default ({ config, media: track, ...props }) => {
                 setFlashIcon(icons.pause)
             } else {
                 if (state.analyser === false && options.hasAnalyser) {
-                    const analyser = new Analyser({
-                        mediaElem: 'rs1-media-player-element',
-                        ...options.analyserSetup,
+                    setSettings({
+                        analyser: new Analyser({
+                            mediaElem: 'rs1-media-player-element',
+                            ...options.analyserSetup,
+                        }),
                     })
-                    setSettings({ analyser: analyser })
                 }
                 media.play()
                 setFlashIcon(icons.play)
