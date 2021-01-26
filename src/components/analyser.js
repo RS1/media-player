@@ -1,6 +1,7 @@
 export default class {
     constructor({
         mediaElem = '',
+        mediaType = 'audio',
         smoothingTimeConstant = 0.95,
         fftSize = 64,
         minDecibels = -100,
@@ -23,10 +24,20 @@ export default class {
         this.byteTimeDomainData = new Uint8Array(this.bufferLength)
 
         this.isAnalysing = false
+        this.audioSource = null
+
+        this.updateSource(mediaType)
+    }
+
+    updateSource(mediaType = 'audio') {
+        if (this.audioSource) {
+            this.audioSource.disconnect()
+        }
         const elem = document.getElementById(this.mediaElem)
         if (elem) {
-            const source = this.ctx.createMediaElementSource(elem)
-            source.connect(this.analyser)
+            this.mediaSourceType = mediaType
+            this.audioSource = this.ctx.createMediaElementSource(elem)
+            this.audioSource.connect(this.analyser)
             this.analyser.connect(this.ctx.destination)
             this.isAnalysing = true
         }

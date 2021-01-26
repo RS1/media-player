@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Saturday, 16th January 2021 7:38:11 pm
+ * Modified on Monday, 25th January 2021 7:14:30 pm
  * *****************************************************************************
  */
 
@@ -72,6 +72,14 @@ export default ({ config, media: track, ...props }) => {
 
     useEffect(() => {
         setSettings({ reset: 'reset' })
+        if (
+            state.analyser !== false &&
+            (metadata.video ? 'video' : 'audio') !==
+                state.analyser?.mediaSourceType
+        ) {
+            state.analyser?.updateSource &&
+                state.analyser.updateSource(metadata.video ? 'video' : 'audio')
+        }
     }, [metadata.src])
 
     const [, resetIdle] = useAutoIdle(wrapper, {
@@ -285,6 +293,7 @@ export default ({ config, media: track, ...props }) => {
                     setSettings({
                         analyser: new Analyser({
                             mediaElem: 'rs1-media-player-element',
+                            mediaType: metadata.video ? 'video' : 'audio',
                             ...options.analyserSetup,
                         }),
                     })
@@ -304,6 +313,7 @@ export default ({ config, media: track, ...props }) => {
             state.analyser,
             options.hasAnalyser,
             options.analyserSetup,
+            metadata.video,
         ]
     )
     useKeyAction(
@@ -445,7 +455,11 @@ export default ({ config, media: track, ...props }) => {
                     loop={options.loop}
                     autoPlay={options.autoPlay}
                     playsInline
-                    crossOrigin={options.crossOriginMedia}
+                    crossOrigin={
+                        options.crossOriginMedia
+                            ? options.crossOriginMedia
+                            : undefined
+                    }
                     id='rs1-media-player-element'
                 />
                 {!metadata.video && options.vinylMode && (
