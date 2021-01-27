@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Monday, 25th January 2021 7:14:30 pm
+ * Modified on Wednesday, 27th January 2021 11:31:25 am
  * *****************************************************************************
  */
 
@@ -218,10 +218,25 @@ export default ({ config, media: track, ...props }) => {
         'play',
         e => {
             if (!state.playing) {
-                setSettings({ playing: true })
+                if (
+                    (state.analyser === false ||
+                        Object.keys(state.analyser).length === 0) &&
+                    options.hasAnalyser
+                ) {
+                    setSettings({
+                        analyser: new Analyser({
+                            mediaElem: 'rs1-media-player-element',
+                            mediaType: metadata.video ? 'video' : 'audio',
+                            ...options.analyserSetup,
+                        }),
+                        playing: true,
+                    })
+                } else {
+                    setSettings({ playing: true })
+                }
             }
         },
-        [state.playing]
+        [state.playing, state.analyser, options.hasAnalyser, metadata.video]
     )
 
     useListener(
@@ -289,7 +304,11 @@ export default ({ config, media: track, ...props }) => {
                 media.pause()
                 setFlashIcon(icons.pause)
             } else {
-                if (state.analyser === false && options.hasAnalyser) {
+                if (
+                    (state.analyser === false ||
+                        Object.keys(state.analyser).length === 0) &&
+                    options.hasAnalyser
+                ) {
                     setSettings({
                         analyser: new Analyser({
                             mediaElem: 'rs1-media-player-element',
