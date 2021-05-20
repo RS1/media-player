@@ -9,7 +9,7 @@
  * Unauthorized copying of this file, via any medium is strictly prohibited.
  * Proprietary and confidential.
  *
- * Modified on Thursday, 20th May 2021 6:11:33 pm
+ * Modified on Thursday, 20th May 2021 6:23:12 pm
  * *****************************************************************************
  */
 import merge from 'deepmerge'
@@ -76,6 +76,7 @@ export const defaults = {
             maxDecibels: -30,
         },
         touchToPause: false,
+        singleMediaTag: false,
         crossOriginMedia: false,
         metadataSeparator: ' / ',
         metadataVisible: ['title', 'artist'],

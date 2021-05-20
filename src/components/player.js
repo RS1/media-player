@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Thursday, 20th May 2021 6:12:27 pm
+ * Modified on Thursday, 20th May 2021 6:23:43 pm
  * *****************************************************************************
  */
 
@@ -465,7 +465,10 @@ export default ({ config, media: track, ...props }) => {
             >
                 <Media
                     ref={metadata.video ? videoRef : audioRef}
-                    as={metadata.video ? 'video' : 'audio'}
+                    as={
+                        options.singleMediaTag ||
+                        (metadata.video ? 'video' : 'audio')
+                    }
                     src={metadata.src}
                     poster={metadata.poster}
                     preload='metadata'
