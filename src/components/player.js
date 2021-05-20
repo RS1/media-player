@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Wednesday, 27th January 2021 11:31:25 am
+ * Modified on Thursday, 20th May 2021 6:12:27 pm
  * *****************************************************************************
  */
 
@@ -470,7 +470,11 @@ export default ({ config, media: track, ...props }) => {
                     poster={metadata.poster}
                     preload='metadata'
                     muted={state.muted}
-                    onClick={!isTouch ? togglePlay : undefined}
+                    onClick={
+                        !isTouch || options.touchToPause
+                            ? togglePlay
+                            : undefined
+                    }
                     loop={options.loop}
                     autoPlay={options.autoPlay}
                     playsInline

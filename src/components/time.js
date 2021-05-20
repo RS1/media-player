@@ -5,11 +5,11 @@
  * =============================================================
  * Created on Tuesday, 10th November 2020 5:54:42 pm
  *
- * Copyright (c) 2020 - 2021 RS1 Project
+ * Copyright (c) 2020-2021 Andrea Corsini T/A RS1 Project - All rights reserved.
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Saturday, 2nd January 2021 5:08:23 pm
+ * Modified on Wednesday, 27th January 2021 12:02:22 pm
  * *****************************************************************************
  */
 
@@ -37,7 +37,7 @@ export default ({ seconds, loading = false, roundTop = false, ...props }) => {
     return loading || Number.isNaN(seconds) ? (
         <FontAwesomeIcon icon={faSpinner} fixedWidth spin />
     ) : (
-        <Time {...props}>{formatted()}</Time>
+        <Time {...props} dangerouslySetInnerHTML={{ __html: formatted() }} />
     )
 }
 
