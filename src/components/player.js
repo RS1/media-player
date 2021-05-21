@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Thursday, 20th May 2021 6:23:43 pm
+ * Modified on Friday, 21st May 2021 11:36:11 am
  * *****************************************************************************
  */
 
@@ -337,7 +337,10 @@ export default ({ config, media: track, ...props }) => {
     )
     useKeyAction(
         32 /* __ space */,
-        togglePlay,
+        e => {
+            e && e.preventDefault()
+            togglePlay()
+        },
         [media, state.playing, state.immersive, icons.pause, icons.play],
         false
     )
@@ -378,7 +381,10 @@ export default ({ config, media: track, ...props }) => {
     ])
     useKeyAction(
         37 /* <- left */,
-        semiPrevious,
+        e => {
+            e && e.preventDefault()
+            semiPrevious()
+        },
         [
             media,
             state.time,
@@ -421,7 +427,10 @@ export default ({ config, media: track, ...props }) => {
     ])
     useKeyAction(
         39 /* -> right */,
-        semiNext,
+        e => {
+            e && e.preventDefault()
+            semiNext()
+        },
         [
             media,
             state.time,
