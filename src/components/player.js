@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Friday, 21st May 2021 11:36:11 am
+ * Modified on Monday, 24th May 2021 4:54:02 pm
  * *****************************************************************************
  */
 
@@ -700,6 +700,7 @@ const Container = styled.div`
     font-family: ${props => props.styling.fontFamily};
     opacity: ${props => (props.show ? '1' : '0')};
     transition: all 0.2s linear;
+    min-height: 250px;
     & ${MediaError} {
         color: ${props => props.styling.errorColor};
     }
