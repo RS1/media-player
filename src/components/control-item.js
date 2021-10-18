@@ -5,11 +5,11 @@
  * =============================================================
  * Created on Saturday, 14th November 2020 10:29:54 am
  *
- * Copyright (c) 2020 - 2021 RS1 Project
+ * Copyright (c) 2020-2021 Andrea Corsini T/A RS1 Project - All rights reserved.
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Saturday, 2nd January 2021 5:09:09 pm
+ * Modified on Monday, 18th October 2021 9:29:40 am
  * *****************************************************************************
  */
 
@@ -24,10 +24,11 @@ export default ({
     item = {},
     styling: style = {},
     vinyl = false,
+    identifier = '',
 }) => {
     switch (item.type) {
         case 'spacer':
-            return <Spacer />
+            return <Spacer id={identifier} />
         case 'seekbar':
             return (
                 <SeekBar
@@ -35,13 +36,19 @@ export default ({
                     progress={item.progress}
                     onChange={item.action}
                     styling={style}
+                    id={identifier}
                 />
             )
         case 'text':
-            return <Text dangerouslySetInnerHTML={{ __html: item.text }} />
+            return (
+                <Text
+                    dangerouslySetInnerHTML={{ __html: item.text }}
+                    id={identifier}
+                />
+            )
         case 'time':
             return (
-                <TimeSpan fontFamily={style.timeFontFamily}>
+                <TimeSpan fontFamily={style.timeFontFamily} id={identifier}>
                     <Time
                         seconds={item.seconds}
                         loading={item.loading}
@@ -77,6 +84,7 @@ export default ({
                     spinSpeed={
                         vinyl && key === 'play' && !item.loading ? '7s' : '2s'
                     }
+                    id={identifier}
                 >
                     <FontAwesomeIcon
                         icon={

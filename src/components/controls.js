@@ -5,11 +5,11 @@
  * =============================================================
  * Created on Tuesday, 10th November 2020 5:54:42 pm
  *
- * Copyright (c) 2020 - 2021 RS1 Project
+ * Copyright (c) 2020-2021 Andrea Corsini T/A RS1 Project - All rights reserved.
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Saturday, 2nd January 2021 5:08:53 pm
+ * Modified on Monday, 18th October 2021 9:28:06 am
  * *****************************************************************************
  */
 
@@ -154,6 +154,7 @@ export default ({
                                     item={items[key]}
                                     styling={style}
                                     vinyl={options.vinylMode}
+                                    identifier={`rs1-media-player-controls-${key}`}
                                 />
                             )
                     )}

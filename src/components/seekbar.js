@@ -5,11 +5,11 @@
  * =============================================================
  * Created on Tuesday, 10th November 2020 5:54:42 pm
  *
- * Copyright (c) 2020 RS1 Project
+ * Copyright (c) 2020-2021 Andrea Corsini T/A RS1 Project - All rights reserved.
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Friday, 4th December 2020 11:55:16 am
+ * Modified on Monday, 18th October 2021 9:30:14 am
  * *****************************************************************************
  */
 
@@ -22,6 +22,7 @@ export default ({
     progress = 0,
     styling: style = {},
     onChange = () => {},
+    identifier = '',
 }) => {
     const [value, sliderRef] = useSliderRef(null, _value)
     const { isTouch } = useAgentParser()
@@ -31,7 +32,12 @@ export default ({
     }, [value])
 
     return (
-        <Slider ref={sliderRef} fatBar={isTouch} styling={style}>
+        <Slider
+            ref={sliderRef}
+            fatBar={isTouch}
+            styling={style}
+            id={identifier}
+        >
             <Background />
             <Progress value={progress} />
             <Bar value={_value} />
