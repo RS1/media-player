@@ -5,11 +5,11 @@
  * =============================================================
  * Created on Monday, 19th October 2020 9:56:49 am
  *
- * Copyright (c) 2020-2021 Andrea Corsini T/A RS1 Project - All rights reserved.
+ * Copyright (c) 2020-2022 Andrea Corsini T/A RS1 Project - All rights reserved.
  * Unauthorized copying of this file, via any medium is strictly prohibited.
  * Proprietary and confidential.
  *
- * Modified on Monday, 18th October 2021 9:25:58 am
+ * Modified on Thursday, 27th January 2022 2:26:26 pm
  * *****************************************************************************
  */
 import merge from 'deepmerge'
@@ -68,6 +68,7 @@ export const defaults = {
         autoHideControls: 5,
         metadataOnMedia: true,
         vinylMode: false,
+        autoHideVinyl: false,
         hasAnalyser: false,
         analyserSetup: {
             smoothingTimeConstant: 0.95,
@@ -136,6 +137,7 @@ export const defaults = {
         onMuteChanged: muted => {},
         onFullScreenChanged: fullscreen => {},
         onAnalyserInitialized: analyser => {},
+        onImmersiveChanged: immersive => {},
         onStateChanged: state => {},
     },
 }

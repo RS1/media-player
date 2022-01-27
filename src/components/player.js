@@ -5,11 +5,11 @@
  * =============================================================
  * Created on Tuesday, 10th November 2020 5:54:42 pm
  *
- * Copyright (c) 2020-2021 Andrea Corsini T/A RS1 Project - All rights reserved.
+ * Copyright (c) 2020-2022 Andrea Corsini T/A RS1 Project - All rights reserved.
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Friday, 6th August 2021 3:57:14 pm
+ * Modified on Thursday, 27th January 2022 3:10:31 pm
  * *****************************************************************************
  */
 
@@ -82,6 +82,10 @@ export default ({ config, media: track, ...props }) => {
         }
     }, [metadata.src])
 
+    useEffect(() => {
+        !state.immersive && resetIdle()
+    }, [state.immersive])
+
     const [, resetIdle] = useAutoIdle(wrapper, {
         callback: idle => setSettings({ immersive: idle }),
         wait: options.autoHideControls || 5,
@@ -89,7 +93,7 @@ export default ({ config, media: track, ...props }) => {
             state.playing &&
             state.loaded &&
             options.autoHideControls > 0 &&
-            !options.vinylMode,
+            (!options.vinylMode || options.autoHideVinyl),
     })
 
     useEffect(() => {
@@ -148,6 +152,9 @@ export default ({ config, media: track, ...props }) => {
         actions.onAnalyserInitialized(state.analyser)
     }, [state.analyser, actions.onAnalyserInitialized])
     useEffect(() => {
+        actions.onImmersiveChanged(state.immersive)
+    }, [state.immersive, actions.onImmersiveChanged])
+    useEffect(() => {
         actions.onStateChanged({
             error: state.error,
             time: state.time * state.duration || 0,
@@ -159,6 +166,7 @@ export default ({ config, media: track, ...props }) => {
             muted: state.muted,
             fullscreen: state.fullscreen,
             analyser: state.analyser,
+            immersive: state.immersive,
         })
     }, [
         state.error,
@@ -170,6 +178,7 @@ export default ({ config, media: track, ...props }) => {
         state.muted,
         state.fullscreen,
         state.analyser,
+        state.immersive,
     ])
 
     useListener(
@@ -504,6 +513,7 @@ export default ({ config, media: track, ...props }) => {
                         ref={vinylRef}
                         onClick={togglePlay}
                         bg={metadata.poster}
+                        isImmersive={state.immersive}
                         isPlaying={state.playing && state.loaded}
                         aspectRatio={vinyl.width / vinyl.height}
                         vinylSize={Math.min(vinyl.width, vinyl.height)}
@@ -533,17 +543,19 @@ export default ({ config, media: track, ...props }) => {
                                 id='rs1-media-player-poster'
                             />
                         )}
-                        {state.immersive && options.metadataOnMedia && (
-                            <MiniControls
-                                key='mini-player-controls'
-                                settings={settings}
-                                initial={controlsAnim.hide}
-                                animate={controlsAnim.show}
-                                exit={controlsAnim.hide}
-                                id='rs1-media-player-minicontrols'
-                            />
-                        )}
-                        {!state.immersive && (
+                        {state.immersive &&
+                            options.metadataOnMedia &&
+                            !options.vinylMode && (
+                                <MiniControls
+                                    key='mini-player-controls'
+                                    settings={settings}
+                                    initial={controlsAnim.hide}
+                                    animate={controlsAnim.show}
+                                    exit={controlsAnim.hide}
+                                    id='rs1-media-player-minicontrols'
+                                />
+                            )}
+                        {(!state.immersive || options.vinylMode) && (
                             <Controls
                                 key='full-player-controls'
                                 settings={settings}
@@ -631,6 +643,8 @@ const Vinyl = styled(MediaBg)`
     align-items: center;
     justify-content: center;
     box-sizing: border-box;
+    opacity: ${props => (props.isImmersive ? '0' : '1')};
+    transition: opacity 0.3s linear;
     /* overflow: hidden; */
     transform: translateZ(0);
     flex: 80%;
@@ -654,6 +668,11 @@ const Vinyl = styled(MediaBg)`
             transparent 99%,
             black 100%
         );
+        transition: transform 0.3s linear;
+        transform: ${props =>
+            props.isImmersive
+                ? 'scale(0) translateZ(0)'
+                : 'scale(1) translateZ(0)'};
     }
     & div.outer-border {
         position: absolute;
@@ -665,6 +684,11 @@ const Vinyl = styled(MediaBg)`
         height: ${props => props.vinylSize}px;
         border-radius: 50%;
         box-shadow: inset 0px 0px 0px 2px rgba(238, 238, 238, 0.5);
+        transition: transform 0.3s linear;
+        transform: ${props =>
+            props.isImmersive
+                ? 'scale(0) translateZ(0)'
+                : 'scale(1) translateZ(0)'};
     }
     & div.inner-border {
         position: absolute;
@@ -677,6 +701,11 @@ const Vinyl = styled(MediaBg)`
         border-radius: 50%;
         box-shadow: 0 0 0px 6px rgba(238, 238, 238, 0.5),
             inset 0px 0px 15px rgba(0, 0, 0, 0.25);
+        transition: transform 0.3s linear;
+        transform: ${props =>
+            props.isImmersive
+                ? 'scale(0) translateZ(0)'
+                : 'scale(1) translateZ(0)'};
     }
     @media (max-width: 768px) and (max-aspect-ratio: 1/1) {
         width: 100%;
