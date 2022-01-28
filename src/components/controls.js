@@ -5,11 +5,11 @@
  * =============================================================
  * Created on Tuesday, 10th November 2020 5:54:42 pm
  *
- * Copyright (c) 2020-2021 Andrea Corsini T/A RS1 Project - All rights reserved.
+ * Copyright (c) 2020-2022 Andrea Corsini T/A RS1 Project - All rights reserved.
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Monday, 18th October 2021 9:28:06 am
+ * Modified on Friday, 28th January 2022 10:40:35 am
  * *****************************************************************************
  */
 
@@ -135,10 +135,14 @@ export default ({
     return (
         <Controls styling={style} isVinyl={options.vinylMode} {...props}>
             {options.vinylMode && metadata.side && (
-                <VinylSide>{metadata.side}</VinylSide>
+                <VinylSide id='rs1-media-player-vinyl-side'>
+                    {metadata.side}
+                </VinylSide>
             )}
             {options.vinylMode && metadata.position && (
-                <VinylPosition>{metadata.position}</VinylPosition>
+                <VinylPosition id='rs1-media-player-vinyl-position'>
+                    {metadata.position}
+                </VinylPosition>
             )}
             {options.controlsSetup.map((row, idx) => (
                 <Row key={idx}>
