@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Thursday, 27th January 2022 3:10:31 pm
+ * Modified on Friday, 28th January 2022 10:12:38 am
  * *****************************************************************************
  */
 
@@ -543,19 +543,17 @@ export default ({ config, media: track, ...props }) => {
                                 id='rs1-media-player-poster'
                             />
                         )}
-                        {state.immersive &&
-                            options.metadataOnMedia &&
-                            !options.vinylMode && (
-                                <MiniControls
-                                    key='mini-player-controls'
-                                    settings={settings}
-                                    initial={controlsAnim.hide}
-                                    animate={controlsAnim.show}
-                                    exit={controlsAnim.hide}
-                                    id='rs1-media-player-minicontrols'
-                                />
-                            )}
-                        {(!state.immersive || options.vinylMode) && (
+                        {state.immersive && options.metadataOnMedia && (
+                            <MiniControls
+                                key='mini-player-controls'
+                                settings={settings}
+                                initial={controlsAnim.hide}
+                                animate={controlsAnim.show}
+                                exit={controlsAnim.hide}
+                                id='rs1-media-player-minicontrols'
+                            />
+                        )}
+                        {!state.immersive && (
                             <Controls
                                 key='full-player-controls'
                                 settings={settings}
