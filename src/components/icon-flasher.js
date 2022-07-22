@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Wednesday, 11th November 2020 11:48:46 am
+ * Modified on Friday, 4th December 2020 11:56:03 am
  * *****************************************************************************
  */
 import React, { useEffect, useRef, useState } from 'react'
@@ -17,7 +17,12 @@ import { motion, AnimatePresence } from 'framer-motion'
 import styled from '@emotion/styled'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
-export default ({ icon: _icon = false, onEnd = () => {} }) => {
+export default ({
+    size = 100,
+    icon: _icon = false,
+    onEnd = () => {},
+    ...props
+}) => {
     const [icon, setIcon] = useState(false)
     const hide = useRef()
 
@@ -36,7 +41,7 @@ export default ({ icon: _icon = false, onEnd = () => {} }) => {
     }, [_icon])
 
     return (
-        <Container>
+        <Container size={size} {...props}>
             <AnimatePresence>
                 {icon && (
                     <Flash initial={entry} animate={normal} exit={exit}>
@@ -51,13 +56,13 @@ export default ({ icon: _icon = false, onEnd = () => {} }) => {
 const Container = styled.div`
     position: absolute;
     top: 0;
-    left: 0;
     width: 100%;
-    height: 100%;
+    height: ${props => (props.size ? `${props.size}px` : '100%')};
     display: flex;
     align-items: center;
     justify-content: center;
     pointer-events: none;
+    touch-events: none;
 `
 
 const Flash = styled(motion.div)`
@@ -72,4 +77,5 @@ const Flash = styled(motion.div)`
     align-items: center;
     justify-content: center;
     pointer-events: none;
+    touch-events: none;
 `

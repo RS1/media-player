@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Thursday, 12th November 2020 2:22:08 pm
+ * Modified on Friday, 18th December 2020 10:21:36 am
  * *****************************************************************************
  */
 
@@ -17,12 +17,20 @@ import React from 'react'
 import styled from '@emotion/styled'
 import { motion } from 'framer-motion'
 import _Time from './time'
+import metaFormatter from './metadata'
 
-export default ({ settings: { state, metadata, style }, ...props }) => (
+export default ({
+    settings: { state, metadata, style, options },
+    ...props
+}) => (
     <Controls styling={style} {...props}>
         <Metadata
             dangerouslySetInnerHTML={{
-                __html: metadata.title + ' / ' + metadata.artist,
+                __html: metaFormatter(
+                    options.metadataVisible,
+                    metadata,
+                    options.metadataSeparator
+                ),
             }}
         />
         <Spacer />
@@ -32,22 +40,6 @@ export default ({ settings: { state, metadata, style }, ...props }) => (
         </Info>
     </Controls>
 )
-
-const Controls = styled(motion.div)`
-    position: absolute;
-    bottom: 0;
-    display: flex;
-    width: 100%;
-    transition: all 0.1s ease;
-    text-shadow: 0 0 3px rgba(0, 0, 0, 0.25);
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    color: ${props => props.styling.metadataOnMediaColor};
-    font-size: 11px;
-    padding: 10px 0;
-    z-index: 9;
-`
 
 const Spacer = styled.div`
     flex: 999;
@@ -68,5 +60,24 @@ const Time = styled(_Time)`
         content: '';
         display: inline-block;
         height: 12px;
+    }
+`
+
+const Controls = styled(motion.div)`
+    position: absolute;
+    bottom: 0;
+    display: flex;
+    width: 100%;
+    transition: all 0.1s ease;
+    text-shadow: 0 0 3px rgba(0, 0, 0, 0.25);
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    color: ${props => props.styling.metadataOnMediaColor};
+    font-size: 11px;
+    padding: 10px 0;
+    z-index: 9;
+    & ${Time} {
+        font-family: ${props => props.styling.timeFontFamily};
     }
 `

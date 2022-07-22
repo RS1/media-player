@@ -5,16 +5,18 @@
  * =============================================================
  * Created on Monday, 9th November 2020 6:47:26 pm
  * 
- * Copyright (c) 2020 RS1 Project
+ * Copyright (c) 2020-2022 Andrea Corsini T/A RS1 Project - All rights reserved.
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Modified on Tuesday, 10th November 2020 7:31:18 pm
+ * Modified on Wednesday, 20th July 2022 4:22:37 pm
  * *****************************************************************************
  */
 
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap');
 
-html, body {
+html,
+body {
+    background: #171717;
     font-family: 'IBM Plex Sans', sans-serif;
 }

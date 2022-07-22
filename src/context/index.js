@@ -5,14 +5,15 @@
  * =============================================================
  * Created on Monday, 19th October 2020 9:56:49 am
  *
- * Copyright (c) 2020 RS1 Project
+ * Copyright (c) 2020-2022 Andrea Corsini T/A RS1 Project - All rights reserved.
  * Unauthorized copying of this file, via any medium is strictly prohibited.
  * Proprietary and confidential.
  *
- * Modified on Thursday, 12th November 2020 11:17:06 pm
+ * Modified on Friday, 22nd July 2022 11:11:43 am
  * *****************************************************************************
  */
 import merge from 'deepmerge'
+import { isPlainObject } from 'is-plain-object'
 import { createContext } from 'react'
 import makeIcon from '../icons'
 import {
@@ -33,6 +34,9 @@ import forward10svg from '../icons/10sec-forward.svg'
 
 export const defaults = {
     metadata: {
+        side: '',
+        position: '',
+        album: '',
         title: '',
         artist: '',
         src: '',
@@ -52,6 +56,7 @@ export const defaults = {
         progress: 0,
         mediaRect: [0, 0],
         playerRect: [0, 0],
+        analyser: false,
     },
     options: {
         playerSize: [0, 0],
@@ -63,6 +68,35 @@ export const defaults = {
         canFullScreen: true,
         autoHideControls: 5,
         metadataOnMedia: true,
+        vinylMode: false,
+        autoHideVinyl: false,
+        hasAnalyser: false,
+        analyserSetup: {
+            smoothingTimeConstant: 0.95,
+            fftSize: 64,
+            minDecibels: -100,
+            maxDecibels: -30,
+        },
+        touchToPause: false,
+        singleMediaTag: false,
+        crossOriginMedia: false,
+        metadataSeparator: ' / ',
+        metadataVisible: ['title', 'artist'],
+        controlsSetup: [
+            ['seekbar'],
+            [
+                'time',
+                'spacer',
+                'previous',
+                'backward10',
+                'play',
+                'forward10',
+                'next',
+                'spacer',
+                'duration',
+            ],
+            ['mute', 'metadata', 'fullscreen'],
+        ],
     },
     icons: {
         error: faExclamationCircle,
@@ -85,8 +119,11 @@ export const defaults = {
         accentColor: '#009fe3',
         loaderColor: '#ffffff',
         errorColor: '#ed4337',
-        fontFamily: 'Verdana',
+        fontFamily: `'Verdana', sans-serif`,
+        timeFontFamily: `'Courier', monospace`,
+        playerBackground: '#000000',
         mediaBackground: '#000000',
+        vinylBackground: '#ffffff',
     },
     actions: {
         onError: () => {},
@@ -100,6 +137,8 @@ export const defaults = {
         onDurationChanged: duration => {},
         onMuteChanged: muted => {},
         onFullScreenChanged: fullscreen => {},
+        onAnalyserInitialized: analyser => {},
+        onImmersiveChanged: immersive => {},
         onStateChanged: state => {},
     },
 }
@@ -108,10 +147,19 @@ const _state = (key, value) => ({ state: { [key]: value } })
 const _metadata = value => ({ metadata: { ...value } })
 const _options = {
     customMerge: key => {
-        if (['mediaRect', 'playerRect', 'playerSize'].includes(key)) {
+        if (
+            [
+                'mediaRect',
+                'playerRect',
+                'playerSize',
+                'controlsSetup',
+                'metadataVisible',
+            ].includes(key)
+        ) {
             return (a, b) => [...b]
         }
     },
+    isMergeableObject: isPlainObject,
 }
 const overwriteArrays = {
     arrayMerge: (from, to, opts) => to,
@@ -164,8 +212,7 @@ export const reducer = (state, action) => {
                 reduced = merge(reduced, _state(value, !state.state[value]))
                 break
             default:
-                // eslint-disable-next-line no-prototype-builtins
-                if (state.state.hasOwnProperty(key)) {
+                if (Object.prototype.hasOwnProperty.call(state.state, key)) {
                     reduced = merge(reduced, _state(key, value), _options)
                 }
         }

@@ -5,48 +5,63 @@
  * =============================================================
  * Created on Tuesday, 10th November 2020 5:54:42 pm
  *
- * Copyright (c) 2020 RS1 Project
+ * Copyright (c) 2020-2022 Andrea Corsini T/A RS1 Project - All rights reserved.
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Thursday, 12th November 2020 2:48:21 pm
+ * Modified on Wednesday, 20th July 2022 10:03:12 am
  * *****************************************************************************
  */
 
 import React from 'react'
 import styled from '@emotion/styled'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import metaFormatter from './metadata'
+import { useVinylMode } from '../lib/helper'
 
-export default ({ settings }) => (
-    <Overlay styling={settings.style}>
-        <p
-            dangerouslySetInnerHTML={{
-                __html:
-                    'An error occured while loading this media element.<br />' +
-                    settings.metadata.title +
-                    ' / ' +
-                    settings.metadata.artist,
-            }}
-        />
-        <FontAwesomeIcon icon={settings.icons.error} />
-    </Overlay>
-)
+export default ({ settings, ...props }) => {
+    const isVinyl = useVinylMode(settings)
+    return (
+        <Overlay isVinyl={isVinyl} {...props}>
+            <FontAwesomeIcon icon={settings.icons.error} />
+            <p
+                dangerouslySetInnerHTML={{
+                    __html:
+                        'An error occured while loading this media element.<br />' +
+                        metaFormatter(
+                            settings.options.metadataVisible,
+                            settings.metadata,
+                            settings.options.metadataSeparator
+                        ),
+                }}
+            />
+        </Overlay>
+    )
+}
 
 const Overlay = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    color: ${props => props.styling.errorColor};
-    font-size: 50px;
-    text-shadow: 0 0 3px rgba(0, 0, 0, 0.25);
+    font-size: ${props => (props.isVinyl ? '30px' : '50px')};
     z-index: 15;
     width: 100%;
     box-sizing: border-box;
     padding: 15px;
+    ${props =>
+        props.isVinyl
+            ? `
+                flex-direction: row;
+                width: 80%;
+                padding: 0;
+                margin-top: 25px;
+                flex: 20%;
+            `
+            : ``}
     & p {
-        margin: 0 0 25px 0;
+        margin: ${props => (props.isVinyl ? '0 0 0 15px' : '25px 0 0 0')};
         font-size: 15px;
-        text-align: center;
+        text-align: ${props => (props.isVinyl ? 'left' : 'center')};
     }
 `

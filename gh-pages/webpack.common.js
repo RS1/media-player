@@ -5,75 +5,75 @@
  * =============================================================
  * Created on Tuesday, 10th November 2020 4:48:54 pm
  *
- * Copyright (c) 2020 RS1 Project
+ * Copyright (c) 2020-2022 Andrea Corsini T/A RS1 Project - All rights reserved.
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Tuesday, 10th November 2020 7:31:30 pm
+ * Modified on Sunday, 17th July 2022 9:49:44 pm
  * *****************************************************************************
  */
 
-const path                    = require('path');
-const HtmlWebPackPlugin       = require('html-webpack-plugin');
-const TerserPlugin            = require('terser-webpack-plugin');
-const MiniCSSExtractPlugin    = require('mini-css-extract-plugin');
-const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const path = require('path')
+const HtmlWebPackPlugin = require('html-webpack-plugin')
+const TerserPlugin = require('terser-webpack-plugin')
+const MiniCSSExtractPlugin = require('mini-css-extract-plugin')
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin')
 
 module.exports = {
-  entry: {
-    index: './src/index.js',
-  },
-  output: {
-    filename: '[name].js',
-    path: path.resolve(__dirname, '..', 'docs'),
-  },
-  plugins: [
-    new HtmlWebPackPlugin({
-      title: '@rs1/media-player',
-      filename: 'index.html',
-      template: './src/index.html',
-      hash: true,
-    }),
-    new MiniCSSExtractPlugin({
-      filename: '[name].css',
-    }),
-  ],
-  module: {
-    rules: [
-      {
-        test: /\.(js|jsx)$/,
-        exclude: /node_modules/,
-        use: {
-          loader: "babel-loader",
-        },
-      },
-      {
-        test: /\.md$/,
-        use: 'raw-loader',
-      },
-      {
-        test: /\.css$/,
-        use: [
-          'style-loader',
-          { loader: MiniCSSExtractPlugin.loader },
-          { loader: 'css-loader', options: { importLoaders: 1 } },
-          'postcss-loader',
+    entry: {
+        index: './src/index.js',
+    },
+    output: {
+        filename: '[name].js',
+        path: path.resolve(__dirname, '..', 'docs'),
+    },
+    plugins: [
+        new HtmlWebPackPlugin({
+            title: '@rs1/media-player',
+            filename: 'index.html',
+            template: './src/index.html',
+            hash: true,
+        }),
+        new MiniCSSExtractPlugin({
+            filename: '[name].css',
+        }),
+    ],
+    module: {
+        rules: [
+            {
+                test: /\.(js|jsx)$/,
+                exclude: /node_modules/,
+                use: {
+                    loader: 'babel-loader',
+                },
+            },
+            {
+                test: /\.md$/,
+                use: 'raw-loader',
+            },
+            {
+                test: /\.css$/,
+                use: [
+                    'style-loader',
+                    { loader: MiniCSSExtractPlugin.loader },
+                    { loader: 'css-loader', options: { importLoaders: 1 } },
+                    'postcss-loader',
+                ],
+            },
         ],
-      },
-    ],
-  },
-  optimization: {
-    minimize: true,
-    minimizer: [
-      new TerserPlugin({
-        terserOptions: {
-          output: {
-            comments: false,
-          },
-        },
-        extractComments: false,
-      }),
-      new OptimizeCSSAssetsPlugin({}),
-    ],
-  },
-};
+    },
+    optimization: {
+        minimize: true,
+        minimizer: [
+            new TerserPlugin({
+                terserOptions: {
+                    output: {
+                        comments: false,
+                    },
+                },
+                extractComments: false,
+            }),
+            new OptimizeCSSAssetsPlugin({}),
+        ],
+    },
+}
