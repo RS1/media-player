@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Friday, 22nd July 2022 11:25:40 am
+ * Modified on Friday, 22nd July 2022 1:55:35 pm
  * *****************************************************************************
  */
 
@@ -113,8 +113,11 @@ export default ({ config, media: track, ...props }) => {
         if (hasVinylMode && !Object.keys(vinyl).length) {
             updateVinyl()
         }
-        resetIdle()
     }, [hasVinylMode, JSON.stringify(vinyl)])
+
+    useEffect(() => {
+        resetIdle()
+    }, [hasVinylMode])
 
     useLayoutEffect(() => {
         if (!options.autoResize && !hasVinylMode) {

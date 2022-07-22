@@ -9,7 +9,7 @@
  * Unauthorized copying of this file, via any medium is strictly prohibited.
  * Proprietary and confidential.
  *
- * Modified on Friday, 22nd July 2022 12:12:55 pm
+ * Modified on Friday, 22nd July 2022 1:41:23 pm
  * *****************************************************************************
  */
 
@@ -276,9 +276,13 @@ function MediaElement(
             playing: true,
         }))
     )
-    useRefListener(mediaElem.current, ['error'], () =>
+    useRefListener(mediaElem.current, ['error'], () => {
+        console.error(
+            `Media Error: ${mediaElem.current.error.message} (${mediaElem.current.error.code})
+            src: ${mediaElem.current.src}`
+        )
         setState(s => ({ ...s, error: true }))
-    )
+    })
     useRefListener(mediaElem.current, ['seeking'], () =>
         setState(s => ({ ...s, seeking: true }))
     )
@@ -301,7 +305,13 @@ function MediaElement(
         setState(s => ({ ...s, loaded: true, loadedmetadata: true }))
     )
     useRefListener(mediaElem.current, ['abort', 'emptied'], () =>
-        setState(s => ({ ...s, waiting: false, seeking: false, loaded: true }))
+        setState(s => ({
+            ...s,
+            error: false,
+            waiting: false,
+            seeking: false,
+            loaded: true,
+        }))
     )
     useRefListener(mediaElem.current, ['timeupdate'], () => {
         const limit = 0.5
@@ -372,7 +382,7 @@ function MediaElement(
             ref={mediaElem}
             src={src}
             title={[title, artist, album].filter(Boolean).join(' — ')}
-            poster={poster || artwork}
+            poster={poster}
             preload='metadata'
             {...props}
             autoPlay={props?.autoPlay || state.wasPlaying}
