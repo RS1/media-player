@@ -9,7 +9,7 @@
  * Unauthorized copying of this file, via any medium is strictly prohibited.
  * Proprietary and confidential.
  *
- * Modified on Thursday, 27th January 2022 2:26:26 pm
+ * Modified on Friday, 22nd July 2022 11:11:43 am
  * *****************************************************************************
  */
 import merge from 'deepmerge'
@@ -36,6 +36,7 @@ export const defaults = {
     metadata: {
         side: '',
         position: '',
+        album: '',
         title: '',
         artist: '',
         src: '',

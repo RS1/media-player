@@ -5,11 +5,11 @@
  * =============================================================
  * Created on Tuesday, 10th November 2020 5:54:42 pm
  *
- * Copyright (c) 2020 RS1 Project
+ * Copyright (c) 2020-2022 Andrea Corsini T/A RS1 Project - All rights reserved.
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Tuesday, 17th November 2020 10:47:33 am
+ * Modified on Wednesday, 20th July 2022 10:03:12 am
  * *****************************************************************************
  */
 
@@ -17,23 +17,27 @@ import React from 'react'
 import styled from '@emotion/styled'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import metaFormatter from './metadata'
+import { useVinylMode } from '../lib/helper'
 
-export default ({ settings, ...props }) => (
-    <Overlay isVinyl={settings.options.vinylMode} {...props}>
-        <FontAwesomeIcon icon={settings.icons.error} />
-        <p
-            dangerouslySetInnerHTML={{
-                __html:
-                    'An error occured while loading this media element.<br />' +
-                    metaFormatter(
-                        settings.options.metadataVisible,
-                        settings.metadata,
-                        settings.options.metadataSeparator
-                    ),
-            }}
-        />
-    </Overlay>
-)
+export default ({ settings, ...props }) => {
+    const isVinyl = useVinylMode(settings)
+    return (
+        <Overlay isVinyl={isVinyl} {...props}>
+            <FontAwesomeIcon icon={settings.icons.error} />
+            <p
+                dangerouslySetInnerHTML={{
+                    __html:
+                        'An error occured while loading this media element.<br />' +
+                        metaFormatter(
+                            settings.options.metadataVisible,
+                            settings.metadata,
+                            settings.options.metadataSeparator
+                        ),
+                }}
+            />
+        </Overlay>
+    )
+}
 
 const Overlay = styled.div`
     display: flex;

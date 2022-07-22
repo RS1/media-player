@@ -1,52 +1,54 @@
 {
-  "name": "@rs1/media-player-pages",
-  "version": "1.0.0",
-  "description": "Documentation for the @rs1/media-player package",
-  "author": "RS1 Project",
-  "license": "Apache-2.0",
-  "repository": "https://github.com/RS1/media-player/gh-pages",
-  "source": "src/index.js",
-  "engines": {
-    "node": ">=10"
-  },
-  "private": true,
-  "scripts": {
-    "webpack:watch": "webpack-dev-server --config webpack.dev.js",
-    "webpack:build": "webpack --config webpack.prod.js"
-  },
-  "browserslist": "since 2005",
-  "devDependencies": {
-    "@babel/core": "^7.10.2",
-    "@babel/preset-env": "^7.10.2",
-    "@babel/preset-react": "^7.10.1",
-    "@emotion/core": "^10.0.28",
-    "@emotion/styled": "^10.0.27",
-    "@rs1/media-player": "^1.1.24",
-    "autoprefixer": "^9.8.0",
-    "babel-loader": "^8.1.0",
-    "babel-plugin-emotion": "^10.0.33",
-    "clean-webpack-plugin": "^3.0.0",
-    "core-js": "^3.6.5",
-    "css-loader": "^3.5.3",
-    "file-loader": "^6.0.0",
-    "framer-motion": "^2.9.4",
-    "html-webpack-plugin": "^4.5.0",
-    "mini-css-extract-plugin": "^0.9.0",
-    "normalize.css": "^8.0.1",
-    "optimize-css-assets-webpack-plugin": "^5.0.3",
-    "postcss-loader": "^3.0.0",
-    "raw-loader": "^4.0.2",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
-    "style-loader": "^1.2.1",
-    "url-loader": "^4.1.0",
-    "webpack": "^4.43.0",
-    "webpack-cli": "^3.3.11",
-    "webpack-dev-server": "^3.11.0",
-    "webpack-merge": "^4.2.2"
-  },
-  "dependencies": {
-    "react-markdown": "^5.0.2",
-    "react-syntax-highlighter": "^15.3.0"
-  }
+    "name": "@rs1/media-player-pages",
+    "version": "1.0.0",
+    "description": "Documentation for the @rs1/media-player package",
+    "author": "RS1 Project",
+    "license": "Apache-2.0",
+    "repository": "https://github.com/RS1/media-player/gh-pages",
+    "source": "src/index.js",
+    "engines": {
+        "node": ">=10"
+    },
+    "private": true,
+    "scripts": {
+        "webpack:watch": "webpack-dev-server --config webpack.dev.js",
+        "webpack:build": "webpack --config webpack.prod.js"
+    },
+    "browserslist": "since 2005",
+    "peerDependencies": {
+        "react": "^16.13.1",
+        "react-dom": "^16.13.1"
+    },
+    "devDependencies": {
+        "@babel/core": "^7.10.2",
+        "@babel/preset-env": "^7.10.2",
+        "@babel/preset-react": "^7.10.1",
+        "@emotion/core": "^10.0.28",
+        "@emotion/styled": "^10.0.27",
+        "@rs1/media-player": "github:RS1/media-player#dev",
+        "autoprefixer": "^9.8.0",
+        "babel-loader": "^8.1.0",
+        "babel-plugin-emotion": "^10.0.33",
+        "clean-webpack-plugin": "^3.0.0",
+        "core-js": "^3.6.5",
+        "css-loader": "^3.5.3",
+        "file-loader": "^6.0.0",
+        "framer-motion": "^2.9.4",
+        "html-webpack-plugin": "^4.5.0",
+        "mini-css-extract-plugin": "^0.9.0",
+        "normalize.css": "^8.0.1",
+        "optimize-css-assets-webpack-plugin": "^5.0.3",
+        "postcss-loader": "^3.0.0",
+        "raw-loader": "^4.0.2",
+        "style-loader": "^1.2.1",
+        "url-loader": "^4.1.0",
+        "webpack": "^4.43.0",
+        "webpack-cli": "^3.3.11",
+        "webpack-dev-server": "^3.11.0",
+        "webpack-merge": "^4.2.2"
+    },
+    "dependencies": {
+        "react-markdown": "^5.0.2",
+        "react-syntax-highlighter": "^15.3.0"
+    }
 }

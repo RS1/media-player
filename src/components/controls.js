@@ -9,7 +9,7 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Friday, 28th January 2022 10:40:35 am
+ * Modified on Friday, 22nd July 2022 9:53:01 am
  * *****************************************************************************
  */
 
@@ -19,6 +19,7 @@ import { useFullScreen } from '@rs1/react-hooks'
 import { motion } from 'framer-motion'
 import ControlItem from './control-item'
 import metaFormatter from './metadata'
+import { useVinylMode } from '../lib/helper'
 
 export default ({
     settings,
@@ -33,6 +34,7 @@ export default ({
     ...props
 }) => {
     const { state, metadata, options, icons, style } = settings
+    const isVinyl = useVinylMode(settings)
     const fsAPI = useFullScreen({})
 
     useEffect(() => {
@@ -43,13 +45,13 @@ export default ({
         value => {
             if (state.time !== value) {
                 setSettings({ time: value })
-                mediaElem.currentTime = value * mediaElem.duration || 0
+                mediaElem.seekTo(value * state.duration || 0)
             }
         },
-        [mediaElem, state.time]
+        [state.time, state.duration]
     )
 
-    const supportFS = fsAPI.isSupported(container, mediaElem)
+    const supportFS = fsAPI.isSupported(container, mediaElem.node)
 
     const items = {
         previous: {
@@ -108,8 +110,8 @@ export default ({
             active: state.fullscreen,
             labels: ['Full screen', 'Exit full screen'],
             icons: [icons.exit_fullscreen, icons.fullscreen],
-            action: () => fsAPI.toggle(container, mediaElem),
-            visible: !options.vinylMode && options.canFullScreen && supportFS,
+            action: () => fsAPI.toggle(container, mediaElem.node),
+            visible: !isVinyl && options.canFullScreen && supportFS,
         },
         time: {
             type: 'time',
@@ -133,13 +135,13 @@ export default ({
     }
 
     return (
-        <Controls styling={style} isVinyl={options.vinylMode} {...props}>
-            {options.vinylMode && metadata.side && (
+        <Controls styling={style} isVinyl={isVinyl} {...props}>
+            {isVinyl && metadata.side && (
                 <VinylSide id='rs1-media-player-vinyl-side'>
                     {metadata.side}
                 </VinylSide>
             )}
-            {options.vinylMode && metadata.position && (
+            {isVinyl && metadata.position && (
                 <VinylPosition id='rs1-media-player-vinyl-position'>
                     {metadata.position}
                 </VinylPosition>
@@ -157,7 +159,7 @@ export default ({
                                     prop={key}
                                     item={items[key]}
                                     styling={style}
-                                    vinyl={options.vinylMode}
+                                    vinyl={isVinyl}
                                     identifier={`rs1-media-player-controls-${key}`}
                                 />
                             )

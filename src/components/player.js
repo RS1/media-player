@@ -9,11 +9,18 @@
  * License: Apache License 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Modified on Friday, 28th January 2022 10:12:38 am
+ * Modified on Friday, 22nd July 2022 11:25:40 am
  * *****************************************************************************
  */
 
-import React, { useEffect, useContext, useCallback, useState } from 'react'
+import React, {
+    useLayoutEffect,
+    useEffect,
+    useContext,
+    useCallback,
+    useState,
+    useRef,
+} from 'react'
 import { keyframes } from '@emotion/core'
 import styled from '@emotion/styled'
 
@@ -29,12 +36,14 @@ import IconFlasher from './icon-flasher'
 import {
     useDynamicRef,
     useAutoIdle,
-    useListener,
     useAgentParser,
     useRectRef,
     useKeyAction,
 } from '@rs1/react-hooks'
 import { AnimatePresence } from 'framer-motion'
+import { useVinylMode } from '../lib/helper'
+
+import MediaElement from './media-element'
 
 const rectInRect = ([a, b], [x, y]) =>
     a / b < x / y ? [(a * y) / b, y] : [x, (b * x) / a]
@@ -46,21 +55,20 @@ export default ({ config, media: track, ...props }) => {
     const [settings, setSettings] = useContext(Context)
     const { metadata, state, options, actions, style, icons } = settings
 
+    const hasVinylMode = useVinylMode(settings)
+
     const [container, containerRef] = useRectRef()
-    const [wrapper, wrapperRef, updateWrapperRef] = useDynamicRef()
+    const [wrapper, wrapperRef, updateWrapperRef] = useDynamicRef(null, false)
     const [vinyl, vinylRef, updateVinyl] = useRectRef({
         useOffset: true,
         delay: 0,
     })
-    const [video, videoRef, updateVideoRef] = useDynamicRef()
-    const [audio, audioRef, updateAudioRef] = useDynamicRef()
-    const media = metadata.video ? video : audio
+
+    const media = useRef(null)
 
     useEffect(() => {
         if (track) {
             setSettings({ metadata: track })
-            updateVideoRef()
-            updateAudioRef()
         }
     }, [track])
 
@@ -93,15 +101,23 @@ export default ({ config, media: track, ...props }) => {
             state.playing &&
             state.loaded &&
             options.autoHideControls > 0 &&
-            (!options.vinylMode || options.autoHideVinyl),
+            (!hasVinylMode || options.autoHideVinyl),
     })
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         updateWrapperRef()
+        updateVinyl()
     }, [JSON.stringify(state.playerRect)])
 
     useEffect(() => {
-        if (!options.autoResize && !options.vinylMode) {
+        if (hasVinylMode && !Object.keys(vinyl).length) {
+            updateVinyl()
+        }
+        resetIdle()
+    }, [hasVinylMode, JSON.stringify(vinyl)])
+
+    useLayoutEffect(() => {
+        if (!options.autoResize && !hasVinylMode) {
             setSettings({ playerRect: options.playerSize })
             return
         }
@@ -111,9 +127,9 @@ export default ({ config, media: track, ...props }) => {
         ])
         setSettings({ playerRect: [Math.floor(w), Math.floor(h)] })
     }, [
-        container,
+        JSON.stringify(container),
         options.autoResize,
-        options.vinylMode,
+        hasVinylMode,
         JSON.stringify(options.playerSize),
         JSON.stringify(state.mediaRect),
     ])
@@ -181,136 +197,10 @@ export default ({ config, media: track, ...props }) => {
         state.immersive,
     ])
 
-    useListener(
-        media,
-        'error',
-        e => {
-            setSettings({ error: true, loaded: true, duration: 0, time: 0 })
-        },
-        []
-    )
-
-    useListener(
-        media,
-        'progress',
-        e => {
-            const media = e.currentTarget
-            if (media.buffered.length > 0) {
-                const bufferedEnd = media.buffered.end(
-                    media.buffered.length - 1
-                )
-                const duration = media.duration
-                if (duration > 0) {
-                    setSettings({ progress: bufferedEnd / duration })
-                }
-            }
-        },
-        []
-    )
-
-    useListener(
-        media,
-        'pause',
-        e => {
-            if (state.wasPlaying) {
-                setSettings({ wasPlaying: false })
-                media.play()
-            } else if (state.playing) {
-                setSettings({ playing: false })
-            }
-        },
-        [state.wasPlaying, state.playing]
-    )
-
-    useListener(
-        media,
-        'play',
-        e => {
-            if (!state.playing) {
-                // if (
-                //     (state.analyser === false ||
-                //         Object.keys(state.analyser).length === 0) &&
-                //     options.hasAnalyser
-                // ) {
-                //     setSettings({
-                //         analyser: new Analyser({
-                //             mediaElem: 'rs1-media-player-element',
-                //             mediaType: metadata.video ? 'video' : 'audio',
-                //             ...options.analyserSetup,
-                //         }),
-                //         playing: true,
-                //     })
-                // } else {
-                setSettings({ playing: true })
-                // }
-            }
-        },
-        [state.playing, state.analyser, options.hasAnalyser, metadata.video]
-    )
-
-    useListener(
-        media,
-        'loadedmetadata',
-        e => {
-            const media = e.currentTarget
-            const extra = {
-                mediaRect: options.vinylMode ? [1, 1] : options.playerSize,
-            }
-            if (media.tagName === 'VIDEO')
-                extra.mediaRect = [media.videoWidth, media.videoHeight]
-            setSettings({ duration: media.duration, loaded: true, ...extra })
-            if (state.playing && media.paused) media.play()
-            else if (!state.playing && !media.paused) media.pause()
-        },
-        [state.playing, options.vinylMode, JSON.stringify(options.playerSize)]
-    )
-
-    useListener(
-        media,
-        'timeupdate',
-        e => {
-            const media = e.currentTarget
-            if (media.duration && media.currentTime >= media.duration) {
-                setSettings({ wasPlaying: true })
-                next()
-                return
-            }
-            const time = media.currentTime / media.duration || 0
-            setSettings({ time: time, loaded: true })
-        },
-        [actions.onNext, icons.next, options.loop, options.isPlaylist]
-    )
-
-    /* useListener(media, 'ended', next, [
-        actions.onNext,
-        icons.next,
-        options.loop,
-        options.isPlaylist,
-    ]) */
-
-    useListener(
-        media,
-        'seeking',
-        e => {
-            setSettings({ loaded: false })
-        },
-        []
-    )
-
-    useListener(
-        media,
-        'waiting',
-        e => {
-            setSettings({ loaded: false })
-            resetIdle()
-        },
-        []
-    )
-
     const togglePlay = useCallback(
         e => {
             if (state.playing) {
-                media.pause()
+                media.current.pause()
                 setFlashIcon(icons.pause)
             } else {
                 if (
@@ -323,19 +213,16 @@ export default ({ config, media: track, ...props }) => {
                         mediaType: metadata.video ? 'video' : 'audio',
                         ...options.analyserSetup,
                     })
-                    // console.log('new analyser')
                     setSettings({
                         analyser,
                     })
                 }
-                media.play()
+                media.current.play()
                 setFlashIcon(icons.play)
             }
             resetIdle()
-            // setSettings({ toggle: 'playing' });
         },
         [
-            media,
             state.playing,
             state.immersive,
             icons.pause,
@@ -352,44 +239,41 @@ export default ({ config, media: track, ...props }) => {
             e && e.preventDefault()
             togglePlay()
         },
-        [media, state.playing, state.immersive, icons.pause, icons.play],
+        [state.playing, state.immersive, icons.pause, icons.play],
         false
     )
 
     const previous = useCallback(() => {
         setFlashIcon(icons.previous)
-        setSettings({ time: 0 })
-        media.currentTime = 0
+        const needsPrevious = state.time * state.duration <= 10
+        media.current.seekTo(0)
         if (!options.isPlaylist) return
-        if (state.time * state.duration <= 5) {
-            setSettings({ reset: 'reset' })
+        if (needsPrevious) {
             actions.onPrevious()
         }
     }, [
-        media,
         state.time,
         state.duration,
         actions.onPrevious,
         icons.previous,
         options.isPlaylist,
     ])
-    const semiPrevious = useCallback(() => {
-        if (state.time * state.duration <= 10) return previous()
-        const toTime = state.time * state.duration - 10
-        setSettings({
-            time: toTime / state.duration,
-        })
-        media.currentTime = toTime || 0
-        setFlashIcon(icons.backward10)
-    }, [
-        media,
-        state.time,
-        state.duration,
-        actions.onPrevious,
-        icons.backward10,
-        icons.previous,
-        options.isPlaylist,
-    ])
+    const semiPrevious = useCallback(
+        e => {
+            const skipTime = e?.seekOffset || 10
+            if (state.time * state.duration <= skipTime) return previous()
+            media.current.skip(-skipTime)
+            setFlashIcon(icons.backward10)
+        },
+        [
+            state.time,
+            state.duration,
+            actions.onPrevious,
+            icons.backward10,
+            icons.previous,
+            options.isPlaylist,
+        ]
+    )
     useKeyAction(
         37 /* <- left */,
         e => {
@@ -397,7 +281,6 @@ export default ({ config, media: track, ...props }) => {
             semiPrevious()
         },
         [
-            media,
             state.time,
             state.duration,
             actions.onPrevious,
@@ -410,32 +293,32 @@ export default ({ config, media: track, ...props }) => {
 
     const next = useCallback(() => {
         setFlashIcon(icons.next)
-        if (!options.loop && !options.isPlaylist) return
-        media.currentTime = 0
-        setSettings({ time: 0 })
+        if (!options.loop && !options.isPlaylist) {
+            media.current.pause()
+        }
+        media.current.seekTo(0)
         if (options.isPlaylist) {
-            setSettings({ reset: 'reset' })
             actions.onNext()
         }
-    }, [media, actions.onNext, icons.next, options.loop, options.isPlaylist])
-    const semiNext = useCallback(() => {
-        const toTime = state.time * state.duration + 10
-        if (toTime >= state.duration) return next()
-        setSettings({
-            time: toTime / state.duration,
-        })
-        media.currentTime = toTime || 0
-        setFlashIcon(icons.forward10)
-    }, [
-        media,
-        state.time,
-        state.duration,
-        actions.onNext,
-        icons.forward10,
-        icons.next,
-        options.loop,
-        options.isPlaylist,
-    ])
+    }, [actions.onNext, icons.next, options.loop, options.isPlaylist])
+    const semiNext = useCallback(
+        e => {
+            const skipTime = e?.seekOffset || 10
+            const toTime = state.time * state.duration + skipTime
+            if (toTime >= state.duration) return next()
+            media.current.skip(skipTime)
+            setFlashIcon(icons.forward10)
+        },
+        [
+            state.time,
+            state.duration,
+            actions.onNext,
+            icons.forward10,
+            icons.next,
+            options.loop,
+            options.isPlaylist,
+        ]
+    )
     useKeyAction(
         39 /* -> right */,
         e => {
@@ -443,7 +326,6 @@ export default ({ config, media: track, ...props }) => {
             semiNext()
         },
         [
-            media,
             state.time,
             state.duration,
             actions.onNext,
@@ -454,6 +336,20 @@ export default ({ config, media: track, ...props }) => {
         ],
         false
     )
+
+    useEffect(() => {
+        if (!state.loaded || !media.current) return
+        setSettings({
+            mediaRect: hasVinylMode
+                ? [1, 1]
+                : media.current.node.tagName === 'VIDEO'
+                ? [
+                      media.current.node.videoWidth,
+                      media.current.node.videoHeight,
+                  ]
+                : options.playerSize,
+        })
+    }, [state.loaded, options.playerSize, hasVinylMode])
 
     const controlsAnim = {
         hide: { opacity: 0, scaleY: 0, originY: 1 },
@@ -470,27 +366,40 @@ export default ({ config, media: track, ...props }) => {
             <Wrapper
                 ref={wrapperRef}
                 isImmersive={state.immersive}
-                isVinyl={options.vinylMode}
+                isVinyl={hasVinylMode}
                 widthRatio={
-                    !state.fullscreen &&
-                    !options.vinylMode &&
-                    state.playerRect[0]
+                    !state.fullscreen && !hasVinylMode && state.playerRect[0]
                 }
                 heightRatio={
-                    !state.fullscreen &&
-                    !options.vinylMode &&
-                    state.playerRect[1]
+                    !state.fullscreen && !hasVinylMode && state.playerRect[1]
                 }
                 id='rs1-media-player-wrapper'
             >
                 <Media
-                    ref={metadata.video ? videoRef : audioRef}
-                    as={
-                        options.singleMediaTag ||
-                        (metadata.video ? 'video' : 'audio')
-                    }
+                    as={MediaElement}
+                    ref={media}
                     src={metadata.src}
-                    poster={metadata.poster}
+                    tag={metadata.video ? 'video' : 'audio'}
+                    metadata={{ ...metadata }}
+                    actions={{
+                        onFinish: next,
+                        onNextTrack: next,
+                        onPrevTrack: previous,
+                    }}
+                    onChange={s => {
+                        setSettings({
+                            time: s.error ? 0 : s.currentTime / s.duration,
+                            duration: s.error ? 0 : s.duration,
+                            loaded: s.error
+                                ? true
+                                : s.loaded &&
+                                  (s.loadeddata || s.loadedmetadata) &&
+                                  !s.waiting,
+                            error: s.error,
+                            playing: s.playing,
+                            progress: s.progress,
+                        })
+                    }}
                     preload='metadata'
                     muted={state.muted}
                     onClick={
@@ -508,7 +417,7 @@ export default ({ config, media: track, ...props }) => {
                     }
                     id='rs1-media-player-element'
                 />
-                {!metadata.video && options.vinylMode && (
+                {hasVinylMode && (
                     <Vinyl
                         ref={vinylRef}
                         onClick={togglePlay}
@@ -517,6 +426,7 @@ export default ({ config, media: track, ...props }) => {
                         isPlaying={state.playing && state.loaded}
                         aspectRatio={vinyl.width / vinyl.height}
                         vinylSize={Math.min(vinyl.width, vinyl.height)}
+                        playerRect={state.playerRect}
                         id='rs1-media-player-vinyl'
                     >
                         <img src={metadata.poster} />
@@ -536,7 +446,7 @@ export default ({ config, media: track, ...props }) => {
                     />
                 ) : (
                     <AnimatePresence>
-                        {!metadata.video && !options.vinylMode && (
+                        {!hasVinylMode && !metadata.video && (
                             <Poster
                                 onClick={togglePlay}
                                 bg={metadata.poster}
@@ -564,7 +474,7 @@ export default ({ config, media: track, ...props }) => {
                                 next={next}
                                 semiNext={semiNext}
                                 container={wrapper}
-                                mediaElem={media}
+                                mediaElem={media.current}
                                 initial={controlsAnim.hide}
                                 animate={controlsAnim.show}
                                 exit={controlsAnim.hide}
@@ -574,7 +484,7 @@ export default ({ config, media: track, ...props }) => {
                     </AnimatePresence>
                 )}
                 <IconFlasher
-                    size={options.vinylMode ? vinyl.height : 0}
+                    size={hasVinylMode ? vinyl.height : 0}
                     icon={flashIcon}
                     onEnd={setFlashIcon}
                     id='rs1-media-player-iconflasher'
@@ -593,7 +503,7 @@ const playerRotate = keyframes`
     }
 `
 
-const Media = styled.video`
+const Media = styled.div`
     position: absolute;
     top: 0;
     left: 0;
@@ -648,15 +558,15 @@ const Vinyl = styled(MediaBg)`
     flex: 80%;
     & img {
         position: absolute;
+        width: ${props => props.vinylSize}px;
+        height: ${props => props.vinylSize}px;
         ${props =>
             props.aspectRatio > 1
                 ? `
                     top: 0;
-                    height: 100%;
                 `
                 : `
                     left: 0;
-                    width: 100%;
                 `}
         background-color: #eeeeee;
         border-radius: 100%;
@@ -666,6 +576,8 @@ const Vinyl = styled(MediaBg)`
             transparent 99%,
             black 100%
         );
+        object-fit: cover;
+        object-position: center;
         transition: transform 0.3s linear;
         transform: ${props =>
             props.isImmersive
