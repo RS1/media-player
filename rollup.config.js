@@ -1,56 +1,122 @@
-/*
- * *****************************************************************************
- * File: rollup.config.js (/rollup.config.js) | @rs1/media-player
- * Written by Andrea Corsini <andrea@rs1.it>
- * =============================================================
- * Created on Monday, 9th November 2020 10:51:38 am
- *
- * Copyright (c) 2020 RS1 Project
- * License: Apache License 2.0
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Modified on Thursday, 12th November 2020 11:36:47 am
- * *****************************************************************************
- */
+/* ┐
+   │ File: rollup.config.js [/rollup.config.js]
+   │ Package: @rs1/media-player | RS1 Project
+   │ Author: Andrea Corsini
+   │ Created: January 6th, 2021 - 12:29:37
+   │ Modified: April 28th, 2023 - 9:51:06
+   │
+   │ Copyright (c) 2021 - 2023 Andrea Corsini T/A RS1 Project.
+   │ This work is licensed under the terms of the MIT License.
+   │ For a copy, see https://opensource.org/licenses/MIT
+   │ or the LICENSE file in the root of this project.
+   └ */
+import alias from '@rollup/plugin-alias'
+import commonjs from '@rollup/plugin-commonjs'
+import { nodeResolve } from '@rollup/plugin-node-resolve'
+import replace from '@rollup/plugin-replace'
+import path from 'path'
+import postcss from 'rollup-plugin-postcss'
+import { string } from 'rollup-plugin-string'
+import { terser } from 'rollup-plugin-terser'
+import ts from 'rollup-plugin-ts'
+import tailwindcss from 'tailwindcss'
 
-import { nodeResolve } from '@rollup/plugin-node-resolve';
-import { string } from "rollup-plugin-string";
-import commonjs from '@rollup/plugin-commonjs';
-import babel from '@rollup/plugin-babel';
-import replace from '@rollup/plugin-replace';
-import { terser } from "rollup-plugin-terser";
-import pkg from './package.json';
+import pkg from './package.json'
+
+// @ts-ignore
+const twConfig = require('./tailwind.js')
+
+const aliases = {
+    '@assets': 'src/assets',
+    '@css': 'src/assets/css',
+    '@icons': 'src/assets/icons',
+    '@bits': 'src/bits',
+    '@media': 'src/media',
+    '@utils': 'src/utils',
+    '@hooks': 'src/hooks',
+    '@': 'src',
+}
 
 export default {
-    input: 'src/index.js',
+    input: 'src/index.ts',
+    context: 'window',
     output: [
-      {
-        file: pkg.main,
-        format: 'es',
-        exports: 'named',
-        sourcemap: process.env.NODE_ENV !== 'production',
-        strict: false
-      }
+        {
+            file: pkg.main,
+            format: 'es',
+            exports: 'named',
+            sourcemap: process.env.NODE_ENV !== 'production',
+            strict: false,
+        },
     ],
+    watch: {
+        include: ['src/**', 'assets/*.svg', 'tsconfig.json', 'tailwind.js', 'rollup.config.js', 'node_modules/**'],
+    },
     plugins: [
-        nodeResolve({ extensions: ['.jsx', '.js'] }),
+        alias({
+            entries: Object.fromEntries(Object.entries(aliases).map(([k, v]) => [k, path.resolve(__dirname, v)])),
+        }),
+        nodeResolve({ extensions: ['.jsx', '.js', '.ts', '.tsx'] }),
         string({
-          include: '**/*.svg',
-          exclude: 'node_modules/**'
+            include: '**/*.svg',
+            exclude: 'node_modules/**',
+        }),
+        postcss({
+            extensions: ['.css'],
+            minimize: true,
+            inject: {
+                insertAt: 'top',
+            },
+            // extract: 'index.css',
+            plugins: [
+                tailwindcss(twConfig),
+                require('autoprefixer'),
+                require('postcss-import'),
+                require('cssnano')({
+                    preset: ['default', { discardComments: { removeAll: true } }],
+                }),
+            ],
         }),
         commonjs({
-            exclude: 'src/**',
+            exclude: ['dist/**', 'src/assets/**'],
         }),
-        babel({
-            extensions: ['.jsx', '.js'],
+        replace({
+            'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
             exclude: 'node_modules/**',
-            babelHelpers: 'bundled',
         }),
-		replace({
-			'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
+        ts({
+            tsconfig: './tsconfig.json',
+            declaration: true,
             exclude: 'node_modules/**',
-		}),
-        terser(),
+            external: ['react', 'react-dom'],
+            transpiler: 'babel',
+            include: ['src/**/*.ts', 'src/**/*.tsx'],
+            babelConfig: {
+                presets: [
+                    [
+                        '@babel/preset-env',
+                        {
+                            targets: '> 0.5%, last 2 versions, Firefox ESR, not dead',
+                            useBuiltIns: 'usage',
+                            corejs: 3,
+                        },
+                    ],
+                    '@babel/preset-typescript',
+                    '@babel/preset-react',
+                ],
+                plugins: [
+                    '@babel/plugin-transform-runtime',
+                    [
+                        'module-resolver',
+                        {
+                            root: ['./src'],
+                            alias: Object.fromEntries(Object.entries(aliases).map(([k, v]) => [k, `./${v}`])),
+                        },
+                    ],
+                ],
+            },
+        }),
+        process.env.NODE_ENV === 'production' && terser(),
     ],
-    external: [ ...Object.keys(pkg.peerDependencies), ...Object.keys(pkg.dependencies) ],
-  }
+    external: [...Object.keys(pkg.peerDependencies ?? {}), ...Object.keys(pkg.dependencies ?? {})],
+}

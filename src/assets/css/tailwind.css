@@ -1,0 +1,19 @@
+/* ┐
+   │ File: tailwind.css [/src/assets/css/tailwind.css]
+   │ Package: @rs1/media-player | RS1 Project
+   │ Author: Andrea Corsini
+   │ Created: April 19th, 2023 - 11:14:55
+   │ Modified: April 27th, 2023 - 21:19:40
+   │ 
+   │ Copyright (c) 2023 Andrea Corsini T/A RS1 Project.
+   │ This work is licensed under the terms of the MIT License.
+   │ For a copy, see https://opensource.org/licenses/MIT
+   │ or the LICENSE file in the root of this project.
+   └ */
+
+@import './preflight.css';
+@import './extra.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
