@@ -1,10 +1,24 @@
 {
-  "singleQuote": true,
-  "jsxSingleQuote": true,
-  "semi": false,
-  "tabWidth": 4,
-  "bracketSpacing": true,
-  "jsxBracketSameLine": false,
-  "arrowParens": "avoid",
-  "trailingComma": "es5"
+    "semi": false,
+    "tabWidth": 4,
+    "printWidth": 120,
+    "singleQuote": true,
+    "trailingComma": "all",
+    "jsxSingleQuote": true,
+    "arrowParens": "avoid",
+    "bracketSpacing": true,
+    "importOrder": [
+        "^(react(.*)|clsx)$",
+        "<THIRD_PARTY_MODULES>",
+        "^@bits/(.*)?$",
+        "^(@media/(.*)?|@/media)$",
+        "^(@hooks/(.*)?|@/hooks)$",
+        "^(@utils/(.*)?|@/utils)$",
+        "^@icons/(.*)?$",
+        "^@css/(.*)?$",
+        "^@assets/(.*)?$",
+        "^@/(.*)",
+        "^[./]"
+    ],
+    "importOrderSeparation": true
 }

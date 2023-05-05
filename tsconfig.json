@@ -1,0 +1,30 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "allowJs": true,
+        "jsx": "react",
+        "removeComments": false,
+        "module": "ESNext",
+        "moduleResolution": "node",
+        "noEmitOnError": false,
+        "lib": ["ES2019", "DOM"],
+        "strict": true,
+        "esModuleInterop": true,
+        "outDir": "./dist/",
+        "rootDir": "./src/",
+        "allowSyntheticDefaultImports": true,
+        "declaration": true,
+        "baseUrl": ".",
+        "paths": {
+            "@assets/*": ["src/assets/*"],
+            "@css/*": ["src/assets/css/*"],
+            "@icons/*": ["src/assets/icons/*"],
+            "@bits/*": ["src/bits/*"],
+            "@media/*": ["src/media/*"],
+            "@utils/*": ["src/utils/*"],
+            "@hooks/*": ["src/hooks/*"],
+            "@/*": ["src/*"]
+        }
+    },
+    "include": ["./src/**/*"]
+}

@@ -1,0 +1,50 @@
+/* ┐
+   │ File: extra.css [/src/assets/css/extra.css]
+   │ Package: @rs1/media-player | RS1 Project
+   │ Author: Andrea Corsini
+   │ Created: April 19th, 2023 - 11:14:55
+   │ Modified: May 2nd, 2023 - 11:42:03
+   │ 
+   │ Copyright (c) 2023 Andrea Corsini T/A RS1 Project.
+   │ This work is licensed under the terms of the MIT License.
+   │ For a copy, see https://opensource.org/licenses/MIT
+   │ or the LICENSE file in the root of this project.
+   └ */
+
+.rmp-relative {
+    position: relative;
+}
+.rmp-w-full {
+    width: 100%;
+}
+.rmp-h-full {
+    height: 100%;
+}
+
+#rmp-root .rmp-vinyl-hole {
+    mask-image: radial-gradient(circle, transparent 4%, #000000 4.1%);
+}
+#rmp-root .rmp-vinyl-outer-border {
+    background-image: radial-gradient(circle, transparent 69%, #eeeeee 69.1%, #000000 72%);
+    opacity: 0.25;
+}
+#rmp-root .rmp-vinyl-inner-border {
+    background: radial-gradient(circle, #000000 0%, #eeeeee 50%);
+    opacity: 0.5;
+}
+#rmp-root .rmp-vinyl-spin {
+    animation: vinyl-spin 5s linear infinite;
+    animation-play-state: paused;
+}
+#rmp-root .rmp-vinyl-spinning {
+    animation-play-state: running;
+}
+
+@keyframes vinyl-spin {
+    from {
+        transform: rotate(0deg) translate3d(0, 0, 0);
+    }
+    to {
+        transform: rotate(360deg) translate3d(0, 0, 0);
+    }
+}
