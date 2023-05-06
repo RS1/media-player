@@ -3,7 +3,7 @@
    │ Package: @rs1/media-player | RS1 Project
    │ Author: Andrea Corsini
    │ Created: May 2nd, 2023 - 9:55:46
-   │ Modified: May 6th, 2023 - 21:24:36
+   │ Modified: May 6th, 2023 - 21:30:12
    │ 
    │ Copyright (c) 2023 Andrea Corsini T/A RS1 Project.
    │ This work is licensed under the terms of the MIT License.
@@ -64,8 +64,8 @@ function MediaUIStack() {
             )}
             style={containerSize ? { width: containerSize } : undefined}
         >
-            {isVinylPlayer && <MediaVinyl stackRef={stackRef} />}
-            {isArtworkPlayer && <MediaArtwork stackRef={stackRef} />}
+            {isVinylPlayer && <MediaVinyl />}
+            {isArtworkPlayer && <MediaArtwork />}
             <MediaLayerStack />
         </div>
     )
