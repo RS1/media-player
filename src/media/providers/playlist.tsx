@@ -3,7 +3,7 @@
    │ Package: @rs1/media-player | RS1 Project
    │ Author: Andrea Corsini
    │ Created: April 20th, 2023 - 14:29:27
-   │ Modified: May 3rd, 2023 - 13:44:00
+   │ Modified: May 6th, 2023 - 15:35:18
    │ 
    │ Copyright (c) 2023 Andrea Corsini T/A RS1 Project.
    │ This work is licensed under the terms of the MIT License.
@@ -16,7 +16,7 @@ import { clamp, shuffleArray } from '@utils/math'
 import { guessSrcMimeType, guessSrcType } from '@utils/mime-type'
 import { Either } from '@utils/types'
 
-import { MediaTrack, PlaylistControls, PlaylistState, RawMediaTrack } from '../types'
+import { MediaPlaylist, MediaTrack, PlaylistControls, PlaylistState, RawMediaPlaylist, RawMediaTrack } from '../types'
 import { ConfigContext } from './config'
 
 /**
@@ -31,15 +31,59 @@ export interface PlaylistProviderValue {
      */
     track: [
         MediaTrack | null,
-        (track: RawMediaTrack | number | null | ((track: MediaTrack | null) => RawMediaTrack | number | null)) => void,
+        (
+            track:
+                | RawMediaTrack
+                | string
+                | number
+                | null
+                | ((track: MediaTrack | null) => RawMediaTrack | string | number | null),
+        ) => void,
     ]
     /**
      * The current playlist returned as a tuple. (mimics the `useState` hook)
      * The first element is the current playlist, the second element is a function to update the playlist.
-     * The setter function accepts a `MediaTrack[]` or a function that given the current playlist returns the new playlist.
+     * The setter function accepts a `MediaPlaylist` or a function that given the current playlist returns the new playlist.
      * Both the playlist and the setter function are memoized.
      */
-    playlist: [MediaTrack[], (newPlaylist: RawMediaTrack[] | ((playlist: MediaTrack[]) => RawMediaTrack[])) => void]
+    playlist: [
+        MediaPlaylist | null,
+        (
+            playlist:
+                | RawMediaPlaylist
+                | string
+                | number
+                | null
+                | ((
+                      playlist: MediaPlaylist | null,
+                      track: MediaTrack | null,
+                  ) => RawMediaPlaylist | string | number | null),
+            track:
+                | RawMediaTrack
+                | string
+                | number
+                | null
+                | ((
+                      playlist: MediaPlaylist | null,
+                      track: MediaTrack | null,
+                  ) => RawMediaTrack | string | number | null),
+        ) => void,
+    ]
+    /**
+     * The current collection of playlists returned as a tuple. (mimics the `useState` hook)
+     * The first element is the current collection of playlists, the second element is a function to update the collection.
+     * The setter function accepts a `MediaPlaylist` array or a function that given the current collection returns the new collection.
+     * Both the collection and the setter function are memoized.
+     */
+    collection: [
+        MediaPlaylist[],
+        (
+            collection:
+                | RawMediaPlaylist[]
+                | RawMediaPlaylist
+                | ((collection: MediaPlaylist[]) => RawMediaPlaylist[] | RawMediaPlaylist),
+        ) => void,
+    ]
     /**
      * An object containing the current state of the playlist.
      * The state is memoized.
@@ -66,7 +110,7 @@ export interface MultiTrackProviderProps extends React.PropsWithChildren {
      * The initial playlist.
      * @default []
      */
-    playlist: RawMediaTrack[]
+    playlist: RawMediaPlaylist | RawMediaPlaylist[]
 }
 export interface SingleTrackProviderProps extends React.PropsWithChildren {
     /**
@@ -87,15 +131,15 @@ export const PlaylistContext = createContext<PlaylistProviderValue | null>(null)
  */
 interface PlaylistInternalState {
     /**
-     * The current playlist.
-     * This could be the original playlist or a filtered/shuffled version of it.
+     * A collection of playlists.
+     * Each playlist is a collection of tracks.
      */
-    playlist: MediaTrack[]
+    playlistCollection: MediaPlaylist[]
     /**
-     * The original playlist.
-     * This is used to reset the playlist.
+     * The current tracklist.
+     * This could be the original tracklist or a filtered/shuffled version of it.
      */
-    originalPlaylist: MediaTrack[]
+    tracklist: MediaTrack[]
     /**
      * The playing mode of the playlist.
      * `repeat` means that the playlist is repeated.
@@ -110,7 +154,12 @@ interface PlaylistInternalState {
      * The index of the active track in the playlist.
      * If `null`, no track is active.
      */
-    active: number | null
+    activeTrack: number | null
+    /**
+     * The index of the active playlist in the playlist collection.
+     * If `null`, no playlist is active.
+     */
+    activePlaylist: number | null
 }
 
 function normalizeTrack(track: RawMediaTrack, index: number): MediaTrack {
@@ -153,63 +202,59 @@ function normalizeTrack(track: RawMediaTrack, index: number): MediaTrack {
     }
 }
 
+function normalizePlaylist(playlist: RawMediaPlaylist, index: number): MediaPlaylist {
+    const id = typeof playlist.id !== 'undefined' ? `${playlist.id}` : `playlist-${index}`
+
+    return {
+        ...playlist,
+        id: id,
+        tracks: playlist.tracks?.map(normalizeTrack) ?? [],
+    }
+}
+
 export function PlaylistProvider(props: PlaylistProviderProps) {
-    const { children, playlist: initialPlaylist = [], track: initialTrack } = props
+    const { children, playlist: initialPlaylist, track: initialTrack } = props
 
     const config = useContext(ConfigContext)
 
     const [state, _setState] = useState<PlaylistInternalState>(() => {
-        const playlist = initialPlaylist.map(normalizeTrack)
-        if (initialTrack && !initialPlaylist.length) {
-            const p = [normalizeTrack(initialTrack, 0)]
+        if (initialTrack && !initialPlaylist) {
+            const c = [normalizePlaylist({ id: 'playlist-0', tracks: [initialTrack] }, 0)]
             return {
-                playlist: p,
-                originalPlaylist: p,
+                playlistCollection: c,
+                tracklist: c[0].tracks,
+
                 mode: config.loop ? 'repeat-one' : 'repeat',
                 shuffle: false,
-                active: 0,
+
+                activeTrack: 0,
+                activePlaylist: 0,
             }
         }
 
-        let index = -1
+        const collection = (
+            !initialPlaylist ? [] : Array.isArray(initialPlaylist) ? initialPlaylist : [initialPlaylist]
+        ).map(normalizePlaylist)
+        let activePlaylist = -1
+        let activeTrack = -1
         if (initialTrack) {
             const track = normalizeTrack(initialTrack, 0)
-            index = playlist.findIndex(t => t.id === track.id)
+            activePlaylist = collection.findIndex(p => p.tracks.some(t => t.id === track.id))
+            if (activePlaylist !== -1) {
+                activeTrack = collection[activePlaylist].tracks.findIndex(t => t.id === track.id)
+            }
         }
+        const tracklist = collection[activePlaylist !== -1 ? activePlaylist : 0].tracks
 
         return {
-            playlist: playlist,
-            originalPlaylist: playlist,
+            playlistCollection: collection,
+            tracklist: tracklist,
             mode: config.loop ? 'repeat-one' : 'repeat',
             shuffle: false,
-            active: !playlist.length ? null : clamp(index, 0, playlist.length - 1),
+            activePlaylist: !collection.length ? null : clamp(activePlaylist, 0, collection.length - 1),
+            activeTrack: !tracklist.length ? null : clamp(activeTrack, 0, tracklist.length - 1),
         }
     })
-
-    /**
-     * Setter function for returned `playlist` tuple.
-     * Works like the `setState` function returned by the `useState` hook.
-     */
-    const updatePlaylist = useCallback(
-        (newPlaylist: RawMediaTrack[] | ((playlist: MediaTrack[]) => RawMediaTrack[])) => {
-            _setState(s => {
-                const p = typeof newPlaylist === 'function' ? newPlaylist(s.playlist) : newPlaylist
-                const a = s.active !== null ? s.playlist[s.active] : null
-
-                const original = p.map(normalizeTrack)
-                const playlist = s.shuffle ? shuffleArray(original) : original
-                const active = a ? playlist.findIndex(t => t.id === a.id) : playlist.length ? 0 : null
-
-                return {
-                    ...s,
-                    playlist: playlist,
-                    originalPlaylist: original,
-                    active: active,
-                }
-            })
-        },
-        [],
-    )
 
     const loop = useCallback(() => {
         _setState(s => ({
@@ -226,14 +271,14 @@ export function PlaylistProvider(props: PlaylistProviderProps) {
 
     const shuffle = useCallback(() => {
         _setState(s => {
-            const a = s.active !== null ? s.playlist[s.active] : null
-            const p = shuffleArray(s.originalPlaylist)
+            const p = s.activePlaylist !== null ? shuffleArray(s.playlistCollection[s.activePlaylist].tracks) : []
+            const a = p.length && s.activeTrack !== null ? s.tracklist[s.activeTrack] : null
             const active = a ? p.findIndex(t => t.id === a.id) : null
 
             return {
                 ...s,
-                playlist: p,
-                active,
+                tracklist: p,
+                activeTrack: active,
                 shuffle: true,
             }
         })
@@ -241,17 +286,148 @@ export function PlaylistProvider(props: PlaylistProviderProps) {
 
     const unshuffle = useCallback(() => {
         _setState(s => {
-            const a = s.active !== null ? s.playlist[s.active] : null
-            const active = a ? s.originalPlaylist.findIndex(t => t.id === a.id) : null
+            const a = s.activeTrack !== null ? s.tracklist[s.activeTrack] : null
+            const active =
+                a && s.activePlaylist
+                    ? s.playlistCollection[s.activePlaylist].tracks.findIndex(t => t.id === a.id)
+                    : null
 
             return {
                 ...s,
-                playlist: s.originalPlaylist,
-                active,
+                tracklist: s.activePlaylist !== null ? s.playlistCollection[s.activePlaylist].tracks : [],
+                activeTrack: active,
                 shuffle: false,
             }
         })
     }, [])
+
+    const setPlaylistCollection = useCallback(
+        (
+            collection:
+                | RawMediaPlaylist[]
+                | RawMediaPlaylist
+                | ((collection: MediaPlaylist[]) => RawMediaPlaylist[] | RawMediaPlaylist),
+        ) => {
+            _setState(s => {
+                const _c = typeof collection === 'function' ? collection(s.playlistCollection) : collection
+                const c = (Array.isArray(_c) ? _c : [_c]).map(normalizePlaylist)
+
+                const currentPlaylist = s.activePlaylist !== null ? s.playlistCollection[s.activePlaylist] : null
+                const currentTrack = s.activeTrack !== null ? s.tracklist[s.activeTrack] : null
+
+                let activePlaylist = currentPlaylist ? c.findIndex(p => p.id === currentPlaylist.id) : null
+                activePlaylist = activePlaylist === -1 ? null : activePlaylist
+                const tracklist =
+                    activePlaylist === null
+                        ? []
+                        : s.shuffle
+                        ? shuffleArray(c[activePlaylist].tracks)
+                        : c[activePlaylist].tracks
+                let activeTrack =
+                    currentTrack && activePlaylist ? tracklist.findIndex(t => t.id === currentTrack.id) : null
+                activeTrack = activeTrack === -1 ? null : activeTrack
+
+                return {
+                    ...s,
+                    playlistCollection: c,
+                    tracklist: tracklist,
+                    activePlaylist: activePlaylist,
+                    activeTrack: activeTrack,
+                }
+            })
+        },
+        [_setState],
+    )
+
+    /**
+     * Setter function for returned `playlist` tuple.
+     * Works like the `setState` function returned by the `useState` hook.
+     */
+    const setPlaylist = useCallback(
+        (
+            playlist:
+                | RawMediaPlaylist
+                | string
+                | number
+                | null
+                | ((
+                      playlist: MediaPlaylist | null,
+                      track: MediaTrack | null,
+                  ) => RawMediaPlaylist | string | number | null),
+            track:
+                | RawMediaTrack
+                | string
+                | number
+                | null
+                | ((
+                      playlist: MediaPlaylist | null,
+                      track: MediaTrack | null,
+                  ) => RawMediaTrack | string | number | null) = 0,
+        ) => {
+            _setState(s => {
+                const activeTrack = s.activeTrack === null ? null : s.tracklist[s.activeTrack]
+                const activePlaylist = s.activePlaylist === null ? null : s.playlistCollection[s.activePlaylist]
+                const p = typeof playlist === 'function' ? playlist(activePlaylist, activeTrack) : playlist
+                const t = typeof track === 'function' ? track(activePlaylist, activeTrack) : track
+                if (p === s.activePlaylist) return s
+
+                let index: number | null = null
+                if (typeof p === 'number') {
+                    index = clamp(p, 0, s.playlistCollection.length - 1)
+                } else if (typeof p === 'string') {
+                    const match = s.playlistCollection.findIndex(pl => pl.id === p)
+                    if (match !== -1) {
+                        index = match
+                    }
+                } else if (p !== null) {
+                    const normalP = normalizePlaylist(p, s.playlistCollection.length)
+                    const match = s.playlistCollection.findIndex(pl => pl.id === normalP.id)
+                    if (match !== -1) {
+                        index = match
+                    } else {
+                        index = s.playlistCollection.length
+                    }
+                }
+
+                if (index === null) {
+                    return {
+                        ...s,
+                        tracklist: [],
+                        activePlaylist: null,
+                        activeTrack: null,
+                    }
+                }
+
+                const collection =
+                    index < s.playlistCollection.length
+                        ? s.playlistCollection
+                        : [...s.playlistCollection, normalizePlaylist(p as RawMediaPlaylist, index)]
+                const tracklist = collection[index].tracks
+                const shuffled = s.shuffle ? shuffleArray(tracklist) : tracklist
+                // Find the index in shuffled of the track `0` in tracklist
+                const selectedTrack =
+                    t === null
+                        ? 0
+                        : shuffled.findIndex(
+                              t =>
+                                  t.id ===
+                                  (typeof t === 'number'
+                                      ? tracklist[clamp(t, 0, tracklist.length)].id
+                                      : typeof t === 'string'
+                                      ? t
+                                      : t.id),
+                          )
+                return {
+                    ...s,
+                    playlistCollection: collection,
+                    tracklist: shuffled,
+                    activePlaylist: index,
+                    activeTrack: selectedTrack,
+                }
+            })
+        },
+        [],
+    )
 
     /**
      * Setter function for returned `track` tuple.
@@ -267,39 +443,94 @@ export function PlaylistProvider(props: PlaylistProviderProps) {
                 | ((track: MediaTrack | null) => RawMediaTrack | string | number | null),
         ) =>
             _setState(s => {
-                const t = typeof track === 'function' ? track(s.active === null ? null : s.playlist[s.active]) : track
+                const t =
+                    typeof track === 'function'
+                        ? track(s.activeTrack === null ? null : s.tracklist[s.activeTrack])
+                        : track
                 if (t === null) {
-                    return { ...s, active: null }
+                    return { ...s, activeTrack: null }
                 }
 
                 if (typeof t === 'number') {
                     // find the track in the original playlist
-                    const original = s.originalPlaylist[clamp(t, 0, s.playlist.length - 1)]
+                    const original =
+                        s.activePlaylist === null
+                            ? null
+                            : s.playlistCollection[s.activePlaylist].tracks[clamp(t, 0, s.tracklist.length - 1)]
+                    if (!original) return { ...s, activeTrack: null }
                     // find the track in the current playlist
-                    const index = s.playlist.findIndex(_t => _t.id === original.id)
-                    return { ...s, active: index }
+                    const index = s.tracklist.findIndex(_t => _t.id === original.id)
+                    return { ...s, activeTrack: index < 0 ? null : index }
                 }
 
                 if (typeof t === 'string') {
                     // find the track in the original playlist
-                    const original = s.originalPlaylist.find(_t => _t.id === t)
-                    if (!original) return { ...s, active: null }
-                    // find the track in the current playlist
-                    const index = s.playlist.findIndex(_t => _t.id === original.id)
-                    return { ...s, active: index < 0 ? null : index }
-                }
+                    const original =
+                        s.activePlaylist === null
+                            ? null
+                            : s.playlistCollection[s.activePlaylist].tracks.find(_t => _t.id === t)
+                    let playlist, track, tracklist
+                    if (!original) {
+                        // search in other playlists
+                        const match = s.playlistCollection.findIndex(pl => pl.tracks.find(_t => _t.id === t))
+                        if (match === -1) return { ...s, activeTrack: null }
 
-                const nT = normalizeTrack(t, s.playlist.length)
-                const index = s.playlist.findIndex(t => t.id === nT.id)
-                if (index === -1) {
+                        playlist = match
+                        tracklist = s.playlistCollection[match].tracks
+                        if (s.shuffle) tracklist = shuffleArray(tracklist)
+                        track = tracklist.findIndex(_t => _t.id === t)
+                    } else {
+                        playlist = s.activePlaylist
+                        tracklist = s.tracklist
+                        track = s.tracklist.findIndex(_t => _t.id === t)
+                    }
                     return {
                         ...s,
-                        playlist: [...s.playlist, nT],
-                        originalPlaylist: [...s.originalPlaylist, nT],
-                        active: s.playlist.length,
+                        tracklist,
+                        activePlaylist: playlist,
+                        activeTrack: track < 0 ? null : track,
                     }
                 }
-                return { ...s, active: index }
+
+                const nT = normalizeTrack(t, s.tracklist.length)
+                const index = s.tracklist.findIndex(t => t.id === nT.id)
+                if (index === -1) {
+                    // search in other playlists
+                    const match = s.playlistCollection.findIndex(pl => pl.tracks.find(_t => _t.id === nT.id))
+                    if (match >= 0) {
+                        const playlist = match
+                        let tracklist = s.playlistCollection[match].tracks
+                        if (s.shuffle) tracklist = shuffleArray(tracklist)
+                        const track = tracklist.findIndex(_t => _t.id === nT.id)
+                        return {
+                            ...s,
+                            tracklist,
+                            activePlaylist: playlist,
+                            activeTrack: track < 0 ? null : track,
+                        }
+                    }
+                    // add to current playlist
+                    const collection = [...s.playlistCollection]
+                    if (s.activePlaylist === null) {
+                        return {
+                            ...s,
+                            activeTrack: null,
+                        }
+                    }
+                    const playlist = s.playlistCollection[s.activePlaylist]
+                    playlist.tracks = [...playlist.tracks, nT]
+                    const tracklist = s.shuffle ? shuffleArray(playlist.tracks) : playlist.tracks
+                    const track = tracklist.findIndex(_t => _t.id === nT.id)
+                    collection[s.activePlaylist] = playlist
+
+                    return {
+                        ...s,
+                        playlistCollection: collection,
+                        tracklist,
+                        activeTrack: track < 0 ? null : track,
+                    }
+                }
+                return { ...s, activeTrack: index }
             }),
         [],
     )
@@ -309,10 +540,10 @@ export function PlaylistProvider(props: PlaylistProviderProps) {
      */
     const skipTrackBy = useCallback((offset: number) => {
         _setState(s => {
-            const base = s.active === null ? 0 : s.active
+            const base = s.activeTrack === null ? 0 : s.activeTrack
             return {
                 ...s,
-                active: (base + offset) % s.playlist.length,
+                active: (base + offset) % s.tracklist.length,
             }
         })
     }, [])
@@ -329,8 +560,12 @@ export function PlaylistProvider(props: PlaylistProviderProps) {
 
     const value: PlaylistProviderValue = useMemo(
         () => ({
-            track: [state.active === null ? null : state.playlist[state.active], setTrack],
-            playlist: [state.originalPlaylist, updatePlaylist],
+            track: [state.activeTrack === null ? null : state.tracklist[state.activeTrack], setTrack],
+            playlist: [
+                state.activePlaylist === null ? null : state.playlistCollection[state.activePlaylist],
+                setPlaylist,
+            ],
+            collection: [state.playlistCollection, setPlaylistCollection],
             state: {
                 mode: state.mode,
                 shuffle: state.shuffle,
@@ -354,12 +589,15 @@ export function PlaylistProvider(props: PlaylistProviderProps) {
             loop,
             unloop,
             setTrack,
+            setPlaylist,
+            setPlaylistCollection,
             skipTrackBy,
             previousTrack,
             nextTrack,
-            JSON.stringify(state.playlist),
-            JSON.stringify(state.originalPlaylist),
-            state.active,
+            JSON.stringify(state.tracklist),
+            JSON.stringify(state.playlistCollection),
+            state.activeTrack,
+            state.activePlaylist,
             state.mode,
             state.shuffle,
         ],

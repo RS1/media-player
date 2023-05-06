@@ -3,7 +3,7 @@
    │ Package: @rs1/media-player | RS1 Project
    │ Author: Andrea Corsini
    │ Created: April 20th, 2023 - 16:45:13
-   │ Modified: May 5th, 2023 - 14:34:15
+   │ Modified: May 6th, 2023 - 21:25:10
    │ 
    │ Copyright (c) 2023 Andrea Corsini T/A RS1 Project.
    │ This work is licensed under the terms of the MIT License.
@@ -28,7 +28,7 @@ function Player(props: React.PropsWithChildren) {
     const playerBackground = usePlayerBackground()
 
     const { intrinsicSize, isFullscreen } = useMediaState()
-    const { setContainerRef } = useMediaElement()
+    // const { setContainerRef } = useMediaElement()
 
     const playerMode = usePlayerMode()
 
@@ -47,36 +47,29 @@ function Player(props: React.PropsWithChildren) {
                 'select-none font-sans',
                 'text-controls-color',
                 'max-w-full max-h-full m-auto',
+                isFullscreen ? 'fixed inset-0 z-50 bg-media-bg' : 'relative',
                 isVideoPlayer
                     ? {
-                          'overflow-hidden': true,
+                          // Sizing
+                          'w-full h-full overflow-hidden': true,
                           // Aspect ratio
                           [`aspect-${getAspectRatio(aspectRatio)}`]: hasSpecificAspectRatio,
-                          // Sizing
-                          'h-auto': aspectRatio === 'auto',
-                          'h-full': aspectRatio === 'stretch',
-                          'w-auto': !hasSpecificAspectRatio && !isFullscreen,
-                          'w-full h-full': hasSpecificAspectRatio,
-                          // Positioning
-                          absolute: aspectRatio === 'auto' && !isFullscreen,
-                          relative: aspectRatio === 'stretch' && !isFullscreen,
                           // Fullscreen
                           'rounded-sm': !isFullscreen,
-                          'fixed inset-0 z-50 p-0 bg-media-bg': isFullscreen,
+                          'p-0': isFullscreen,
                       }
                     : {
                           'items-center justify-center': true,
-                          'flex flex-col': !isMiniPlayer,
-                          'grid grid-cols-[25%_75%]': isMiniPlayer,
+                          'grid grid-cols-1 grid-rows-[minmax(0,1fr)_auto]': !isMiniPlayer,
+                          'grid grid-cols-[minmax(0,_25fr)_minmax(0,_75fr)]': isMiniPlayer,
                           // Padding & sizing
                           'w-full': true,
                           'p-6': !isMiniPlayer && playerBackground !== 'none' && !isControlsPlayer && !isFullscreen,
                           'p-4': isMiniPlayer && playerBackground !== 'none' && !isControlsPlayer && !isFullscreen,
-                          'h-auto': !isMiniPlayer,
-                          'h-44': isMiniPlayer,
+                          'h-auto': !isMiniPlayer && !isFullscreen,
+                          'h-44': isMiniPlayer && !isFullscreen,
                           // Positioning & fullscreen
-                          relative: !isFullscreen,
-                          'fixed inset-0 z-50 p-12 bg-media-bg': isFullscreen,
+                          'p-12': isFullscreen,
                       },
             )}
             style={
@@ -86,7 +79,7 @@ function Player(props: React.PropsWithChildren) {
                       }
                     : undefined
             }
-            ref={setContainerRef}
+            // ref={setContainerRef}
         >
             {children}
         </div>

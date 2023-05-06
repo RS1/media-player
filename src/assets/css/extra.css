@@ -3,7 +3,7 @@
    │ Package: @rs1/media-player | RS1 Project
    │ Author: Andrea Corsini
    │ Created: April 19th, 2023 - 11:14:55
-   │ Modified: May 2nd, 2023 - 11:42:03
+   │ Modified: May 6th, 2023 - 15:50:51
    │ 
    │ Copyright (c) 2023 Andrea Corsini T/A RS1 Project.
    │ This work is licensed under the terms of the MIT License.
@@ -11,14 +11,20 @@
    │ or the LICENSE file in the root of this project.
    └ */
 
-.rmp-relative {
+:is(.rmp-relative) {
     position: relative;
 }
-.rmp-w-full {
+:is(.rmp-w-full) {
     width: 100%;
 }
-.rmp-h-full {
+:is(.rmp-h-full) {
     height: 100%;
+}
+:is(.rmp-w-auto) {
+    width: auto;
+}
+:is(.rmp-m-auto) {
+    margin: auto;
 }
 
 #rmp-root .rmp-vinyl-hole {

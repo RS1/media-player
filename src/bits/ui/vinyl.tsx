@@ -3,7 +3,7 @@
    │ Package: @rs1/media-player | RS1 Project
    │ Author: Andrea Corsini
    │ Created: April 20th, 2023 - 15:30:29
-   │ Modified: May 3rd, 2023 - 16:03:21
+   │ Modified: May 6th, 2023 - 21:29:54
    │ 
    │ Copyright (c) 2023 Andrea Corsini T/A RS1 Project.
    │ This work is licensed under the terms of the MIT License.
@@ -23,7 +23,7 @@ function MediaVinyl() {
         <div
             id='rmp-media-vinyl'
             className={clsx(
-                'relative w-full pt-[100%] drop-shadow-lg rounded-full overflow-hidden',
+                'relative drop-shadow-lg rounded-full overflow-hidden w-full pt-[100%]',
                 'rmp-vinyl-hole',
                 'rmp-vinyl-spin',
                 {

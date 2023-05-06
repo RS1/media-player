@@ -3,7 +3,7 @@
    │ Package: @rs1/media-player | RS1 Project
    │ Author: Andrea Corsini
    │ Created: May 2nd, 2023 - 9:55:46
-   │ Modified: May 5th, 2023 - 14:23:38
+   │ Modified: May 6th, 2023 - 21:30:12
    │ 
    │ Copyright (c) 2023 Andrea Corsini T/A RS1 Project.
    │ This work is licensed under the terms of the MIT License.
@@ -15,7 +15,7 @@ import React from 'react'
 
 import MediaLayerStack from '@bits/layers'
 
-import { usePlayerMode } from '@/media'
+import { useMediaState, usePlayerMode } from '@/media'
 
 import MediaArtwork from './artwork'
 import MediaVinyl from './vinyl'
@@ -23,21 +23,46 @@ import MediaVinyl from './vinyl'
 const supportedModes = ['vinyl', 'vinyl-mini', 'artwork', 'artwork-mini'] as const
 
 function MediaUIStack() {
+    const stackRef = React.useRef<HTMLDivElement>(null)
     const playerMode = usePlayerMode()
+    const { isFullscreen } = useMediaState()
     const isArtworkPlayer = playerMode === 'artwork' || playerMode === 'artwork-mini'
     const isVinylPlayer = playerMode === 'vinyl' || playerMode === 'vinyl-mini'
-    const isMiniPlayer = playerMode === 'vinyl-mini' || playerMode === 'artwork-mini'
+    // const isMiniPlayer = playerMode === 'vinyl-mini' || playerMode === 'artwork-mini'
+    const [containerSize, setContainerSize] = React.useState<false | number>(false)
+
+    React.useEffect(() => {
+        if (!stackRef.current || !isFullscreen || (playerMode !== 'vinyl' && playerMode !== 'artwork')) {
+            setContainerSize(false)
+            return
+        }
+
+        const calculateSize = () => {
+            if (!stackRef.current) return
+            stackRef.current.style.width = '100%'
+            const { width, height } = stackRef.current.getBoundingClientRect()
+            const size = Math.min(width, height)
+            stackRef.current.style.width = `${size}px`
+
+            setContainerSize(size)
+        }
+        document.addEventListener('resize', calculateSize)
+        calculateSize()
+
+        return () => document.removeEventListener('resize', calculateSize)
+    }, [stackRef, isFullscreen, playerMode])
 
     if (!supportedModes.some(m => m === playerMode)) return null
 
     return (
         <div
             id='rmp-media-ui-stack'
-            className={clsx('relative max-w-full max-h-full z-0 m-auto aspect-1/1', {
-                'w-full': !isMiniPlayer,
-                'w-full h-full': isMiniPlayer,
-                'flex items-center justify-center': isMiniPlayer,
-            })}
+            ref={stackRef}
+            className={clsx(
+                'relative z-0 m-auto h-full aspect-1/1 flex items-center justify-center',
+                !containerSize && 'w-full',
+            )}
+            style={containerSize ? { width: containerSize } : undefined}
         >
             {isVinylPlayer && <MediaVinyl />}
             {isArtworkPlayer && <MediaArtwork />}

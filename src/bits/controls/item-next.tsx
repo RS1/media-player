@@ -3,7 +3,7 @@
    │ Package: @rs1/media-player | RS1 Project
    │ Author: Andrea Corsini
    │ Created: April 28th, 2023 - 15:39:52
-   │ Modified: May 4th, 2023 - 16:25:37
+   │ Modified: May 6th, 2023 - 14:57:02
    │ 
    │ Copyright (c) 2023 Andrea Corsini T/A RS1 Project.
    │ This work is licensed under the terms of the MIT License.
@@ -26,7 +26,7 @@ export default function Next() {
     const [playlist] = usePlaylist()
     const controls = useMediaControls()
 
-    if (!playlist || playlist.length <= 1) return null
+    if (!playlist || playlist.tracks.length <= 1) return null
 
     return (
         <ControlButton

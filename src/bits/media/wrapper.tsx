@@ -3,7 +3,7 @@
    │ Package: @rs1/media-player | RS1 Project
    │ Author: Andrea Corsini
    │ Created: April 20th, 2023 - 15:30:29
-   │ Modified: May 3rd, 2023 - 17:15:35
+   │ Modified: May 6th, 2023 - 16:20:47
    │ 
    │ Copyright (c) 2023 Andrea Corsini T/A RS1 Project.
    │ This work is licensed under the terms of the MIT License.
@@ -27,9 +27,9 @@ function MediaWrapper(props: React.PropsWithChildren) {
     return (
         <div
             id='rmp-media-wrapper'
-            className={clsx('absolute z-0 bg-media-bg', {
-                'inset-0': playerMode === 'video',
-                'w-0 h-0': playerMode !== 'video',
+            className={clsx('bg-media-bg', {
+                'relative w-full h-full': playerMode === 'video',
+                'absolute z-0 w-0 h-0': playerMode !== 'video',
             })}
         >
             {children}
