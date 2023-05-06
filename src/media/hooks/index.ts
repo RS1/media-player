@@ -3,7 +3,7 @@
    │ Package: @rs1/media-player | RS1 Project
    │ Author: Andrea Corsini
    │ Created: April 27th, 2023 - 11:56:05
-   │ Modified: May 5th, 2023 - 12:53:16
+   │ Modified: May 6th, 2023 - 15:39:02
    │ 
    │ Copyright (c) 2023 Andrea Corsini T/A RS1 Project.
    │ This work is licensed under the terms of the MIT License.
@@ -19,6 +19,7 @@ export { useMediaControls } from './use-media-controls'
 export { useMediaState } from './use-media-state'
 export { useMediaTime } from './use-media-time'
 export { useMediaTheme } from './use-media-theme'
+export { usePlaylistCollection } from './use-playlist-collection'
 export { usePlaylist } from './use-playlist'
 export { usePlaylistState } from './use-playlist-state'
 export { usePlaylistControls } from './use-playlist-controls'

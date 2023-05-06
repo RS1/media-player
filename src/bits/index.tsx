@@ -3,13 +3,14 @@
    │ Package: @rs1/media-player | RS1 Project
    │ Author: Andrea Corsini
    │ Created: April 20th, 2023 - 16:45:13
-   │ Modified: May 5th, 2023 - 13:55:56
+   │ Modified: May 6th, 2023 - 18:39:58
    │ 
    │ Copyright (c) 2023 Andrea Corsini T/A RS1 Project.
    │ This work is licensed under the terms of the MIT License.
    │ For a copy, see https://opensource.org/licenses/MIT
    │ or the LICENSE file in the root of this project.
    └ */
+import clsx from 'clsx'
 import React from 'react'
 
 import MediaLayerStack from '@bits/layers'
@@ -19,7 +20,7 @@ import MediaUIStack from '@bits/ui'
 import MediaBackground from '@bits/ui/background'
 import MediaControls from '@bits/ui/controls'
 
-import { usePlayerMode, useMediaTheme, themeToCSSVars } from '@/media'
+import { usePlayerMode, useMediaTheme, themeToCSSVars, useMediaConfig, useMediaElement } from '@/media'
 
 import '@css/tailwind.css'
 
@@ -28,24 +29,44 @@ type Props = {
     className?: string
 } & Exclude<React.HTMLAttributes<HTMLDivElement>, 'id' | 'style' | 'className'>
 
-function MediaPlayer(props: Props, forwardedRef: React.Ref<HTMLDivElement>) {
+function MediaPlayer(props: Props, forwardedRef: React.ForwardedRef<HTMLDivElement>) {
     const { style, className, ...rest } = props
+    const { aspectRatio } = useMediaConfig()
     const theme = useMediaTheme()
     const playerMode = usePlayerMode()
+    const { setContainerRef } = useMediaElement()
+    const wrapperRef = React.useCallback((node: HTMLDivElement) => {
+        if (forwardedRef) {
+            if (typeof forwardedRef === 'function') {
+                forwardedRef(node)
+            } else {
+                forwardedRef.current = node
+            }
+        }
+        setContainerRef?.(node)
+    }, [])
 
     const rmpStyle: React.CSSProperties = React.useMemo(
         () => ({
             ...(themeToCSSVars(theme) as React.CSSProperties),
             ...style,
+            width: aspectRatio === 'stretch' ? '100%' : 'auto',
+            margin: aspectRatio === 'stretch' ? 0 : 'auto',
             ...(playerMode === 'video' ? {} : { height: undefined }),
         }),
-        [JSON.stringify(theme), JSON.stringify(style), playerMode],
+        [JSON.stringify(theme), JSON.stringify(style), playerMode, aspectRatio],
     )
 
     return React.useMemo(
         () => (
-            <div {...rest} className={className} id='rmp-root' style={rmpStyle}>
-                <div id='rmp-wrapper' ref={forwardedRef} className={'w-full h-full relative'}>
+            <div
+                {...rest}
+                ref={wrapperRef}
+                className={clsx('rmp-w-auto rmp-m-auto', className)}
+                id='rmp-root'
+                style={rmpStyle}
+            >
+                <div id='rmp-wrapper' className={'w-full h-full relative flex'}>
                     <Player>
                         <MediaBackground />
                         <Media />

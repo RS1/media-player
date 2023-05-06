@@ -3,7 +3,7 @@
    │ Package: @rs1/media-player | RS1 Project
    │ Author: Andrea Corsini
    │ Created: January 6th, 2021 - 12:29:42
-   │ Modified: May 5th, 2023 - 13:06:03
+   │ Modified: May 6th, 2023 - 15:39:29
    │ 
    │ Copyright (c) 2021 - 2023 Andrea Corsini T/A RS1 Project.
    │ This work is licensed under the terms of the MIT License.
@@ -54,6 +54,7 @@ export { usePlayerBackground } from '@media/hooks/use-player-background'
 export { useMediaTheme } from '@media/hooks/use-media-theme'
 // Track, Playlist, PlaylistState, PlaylistControls
 export { useTrack } from '@media/hooks/use-track'
+export { usePlaylistCollection } from '@media/hooks/use-playlist-collection'
 export { usePlaylist } from '@media/hooks/use-playlist'
 export { usePlaylistState } from '@media/hooks/use-playlist-state'
 export { usePlaylistControls } from '@media/hooks/use-playlist-controls'

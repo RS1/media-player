@@ -3,7 +3,7 @@
    │ Package: @rs1/media-player | RS1 Project
    │ Author: Andrea Corsini
    │ Created: January 6th, 2021 - 12:29:37
-   │ Modified: April 28th, 2023 - 9:51:06
+   │ Modified: May 6th, 2023 - 15:02:35
    │
    │ Copyright (c) 2021 - 2023 Andrea Corsini T/A RS1 Project.
    │ This work is licensed under the terms of the MIT License.
@@ -43,6 +43,12 @@ export default {
     output: [
         {
             file: pkg.main,
+            format: 'cjs',
+            sourcemap: process.env.NODE_ENV !== 'production',
+            strict: false,
+        },
+        {
+            file: pkg.module,
             format: 'es',
             exports: 'named',
             sourcemap: process.env.NODE_ENV !== 'production',
@@ -50,7 +56,7 @@ export default {
         },
     ],
     watch: {
-        include: ['src/**', 'assets/*.svg', 'tsconfig.json', 'tailwind.js', 'rollup.config.js', 'node_modules/**'],
+        include: ['src/**', 'tsconfig.json', 'tailwind.js', 'rollup.config.js', 'node_modules/**'],
     },
     plugins: [
         alias({
@@ -113,6 +119,8 @@ export default {
                             alias: Object.fromEntries(Object.entries(aliases).map(([k, v]) => [k, `./${v}`])),
                         },
                     ],
+                    '@babel/plugin-proposal-nullish-coalescing-operator',
+                    '@babel/plugin-proposal-optional-chaining',
                 ],
             },
         }),

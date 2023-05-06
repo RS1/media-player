@@ -3,7 +3,7 @@
    │ Package: @rs1/media-player | RS1 Project
    │ Author: Andrea Corsini
    │ Created: April 28th, 2023 - 17:44:35
-   │ Modified: May 5th, 2023 - 12:10:04
+   │ Modified: May 6th, 2023 - 20:53:42
    │ 
    │ Copyright (c) 2023 Andrea Corsini T/A RS1 Project.
    │ This work is licensed under the terms of the MIT License.
@@ -45,7 +45,7 @@ export interface MediaConfig {
     /**
      * The aspect ratio of the player.
      *
-     * **Note:** this is considered only if the player mode is `video`.
+     * **Note:** Only `auto` and `stretch` are valid aspect ratios if the player mode is not `video`.
      * ```js
      * // It can be a specific ratio:
      * const squareRatio = '1:1'
@@ -689,7 +689,7 @@ export interface MediaTheme extends Partial<Record<ControlKey | keyof MediaTrack
  */
 export interface MediaTrack {
     /**
-     * The source(s) of the media track.
+     * The source(s) of the media track.\
      * If multiple sources are provided, the first one that is supported by the browser will be used.
      */
     src: string[]
@@ -698,13 +698,13 @@ export interface MediaTrack {
      */
     type: MediaType
     /**
-     * The MIME type of the media track.
-     * If multiple sources are provided, this should be an array of MIME types.
+     * The MIME type of the media track.\
+     * If multiple sources are provided, this should be an array of MIME types.\
      * If not provided, the MIME type will be inferred from the source(s) extension(s).
      */
     mimeType: string[]
     /**
-     * The unique ID of the media track.
+     * The unique ID of the media track.\
      * Useful for identifying the track in the playlist or setting the active track later on.
      */
     id: string | number
@@ -725,26 +725,37 @@ export interface MediaTrack {
      */
     album?: string
     /**
-     * An URL to the artwork of the media track.
-     * It will be used in the MediaSession API (Native media controls).
+     * An URL to the cover of the media track.\
+     * It will be used as the cover of the track in the `artwork`/`vinyl` mode.
+     */
+    cover?: string
+    /**
+     * An URL to the artwork of the media track.\
+     * It will be used in the MediaSession API (Native media controls).\
+     * It will serve as a fallback cover for the `artwork`/`vinyl` mode.
      */
     artwork?: string
     /**
-     * An URL to the poster of the media track.
-     * It will be used as the poster of the media player and as the fallback artwork for the MediaSession API.
+     * An URL to the poster of the media track.\
+     * It will be used as the poster of the media player.\
+     * It will serve as a fallback artwork for the MediaSession API.
      */
     poster?: string
     /**
-     * Optionally, a string representing the track side.
+     * Optionally, a string representing the track side.\
      * Useful for dual-sided vinyls. (A/B)
      */
     side?: string
     /**
-     * Optionally, a string or number representing the track position.
+     * Optionally, a string or number representing the track position.\
      * Useful for tracklists. (1, 2, 3, ...)
      */
     position?: string | number
-    crossOrigin: 'anonymous' | 'use-credentials' | undefined
+    /**
+     * If the track request should include CORS headers, set this to `anonymous` or `use-credentials`.\
+     * If not provided, the track will be requested without CORS headers.
+     */
+    crossOrigin?: 'anonymous' | 'use-credentials'
 }
 
 export type RawMediaTrack = Omit<MediaTrack, 'type' | 'src' | 'mimeType' | 'id' | 'index' | 'crossOrigin'> & {
@@ -753,6 +764,40 @@ export type RawMediaTrack = Omit<MediaTrack, 'type' | 'src' | 'mimeType' | 'id' 
     id?: string | number
     type?: MediaType
     crossOrigin?: 'anonymous' | 'use-credentials' | '' | boolean
+}
+
+/**
+ * @typedef {Object} MediaPlaylist - A representation of a media playlist.
+ */
+export interface MediaPlaylist {
+    /**
+     * The unique ID of the playlist.
+     */
+    id: string
+    /**
+     * The title of the playlist.
+     */
+    title?: string
+    /**
+     * The artist of the playlist.
+     */
+    artist?: string
+    /**
+     * The album of the playlist.
+     */
+    album?: string
+    /**
+     * An URL to the artwork of the playlist.
+     */
+    artwork?: string
+    /**
+     * An array of media tracks in the playlist.
+     */
+    tracks: MediaTrack[]
+}
+export type RawMediaPlaylist = Omit<MediaPlaylist, 'id' | 'tracks'> & {
+    id?: string
+    tracks: RawMediaTrack[]
 }
 
 /**

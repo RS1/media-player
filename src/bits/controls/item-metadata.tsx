@@ -3,7 +3,7 @@
    │ Package: @rs1/media-player | RS1 Project
    │ Author: Andrea Corsini
    │ Created: April 28th, 2023 - 16:57:37
-   │ Modified: May 5th, 2023 - 14:47:29
+   │ Modified: May 6th, 2023 - 15:44:15
    │ 
    │ Copyright (c) 2023 Andrea Corsini T/A RS1 Project.
    │ This work is licensed under the terms of the MIT License.
@@ -35,28 +35,26 @@ export default function Metadata() {
     if (!meta.title && !meta.artist && !meta.album) return null
 
     return (
-        <div>
-            <span
-                id='rmp-controls-metadata'
-                className={clsx(
-                    'text-xs text-controls-color py-1',
-                    'max-w-full whitespace-nowrap overflow-hidden text-ellipsis',
-                )}
-            >
-                {meta.title && (
-                    <span id='rmp-controls-metadata-title' className='font-bold'>
-                        {meta.title}
-                    </span>
-                )}
-                <span id='rmp-controls-metadata-group' className='opacity-50'>
-                    {meta.title && (meta.artist || meta.album) && (
-                        <span className='rmp-controls-metadata-separator'>{separator}</span>
-                    )}
-                    {meta.artist && <span id='rmp-controls-metadata-artist'>{meta.artist}</span>}
-                    {meta.artist && meta.album && <span className='rmp-controls-metadata-separator'>{separator}</span>}
-                    {meta.album && <span id='rmp-controls-metadata-album'>{meta.album}</span>}
+        <span
+            id='rmp-controls-metadata'
+            className={clsx(
+                'text-xs text-controls-color py-1',
+                'max-w-full whitespace-nowrap overflow-hidden text-ellipsis',
+            )}
+        >
+            {meta.title && (
+                <span id='rmp-controls-metadata-title' className='font-bold'>
+                    {meta.title}
                 </span>
+            )}
+            <span id='rmp-controls-metadata-group' className='opacity-50'>
+                {meta.title && (meta.artist || meta.album) && (
+                    <span className='rmp-controls-metadata-separator'>{separator}</span>
+                )}
+                {meta.artist && <span id='rmp-controls-metadata-artist'>{meta.artist}</span>}
+                {meta.artist && meta.album && <span className='rmp-controls-metadata-separator'>{separator}</span>}
+                {meta.album && <span id='rmp-controls-metadata-album'>{meta.album}</span>}
             </span>
-        </div>
+        </span>
     )
 }

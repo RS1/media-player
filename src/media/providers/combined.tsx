@@ -3,7 +3,7 @@
    │ Package: @rs1/media-player | RS1 Project
    │ Author: Andrea Corsini
    │ Created: April 24th, 2023 - 9:38:11
-   │ Modified: May 4th, 2023 - 14:34:45
+   │ Modified: May 6th, 2023 - 15:47:26
    │ 
    │ Copyright (c) 2023 Andrea Corsini T/A RS1 Project.
    │ This work is licensed under the terms of the MIT License.
@@ -24,9 +24,7 @@ export type CombinedProviderProps = ConfigProviderProps &
     PlaylistProviderProps &
     StateProviderProps &
     TimeProviderProps &
-    CoreProviderProps & {
-        somethingElse?: string
-    }
+    CoreProviderProps
 
 /**
  * This is the main provider for the Media Player.
@@ -43,10 +41,6 @@ export const CombinedProvider: React.FC<CombinedProviderProps> = ({
     theme,
     playlist = [],
     track = null,
-    /**
-     * This is just an example of how to add more props to the provider.
-     */
-    somethingElse = '',
     ...providerProps
 }) => (
     /**

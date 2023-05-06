@@ -3,7 +3,7 @@
    │ Package: @rs1/media-player | RS1 Project
    │ Author: Andrea Corsini
    │ Created: April 20th, 2023 - 16:45:13
-   │ Modified: May 3rd, 2023 - 16:11:17
+   │ Modified: May 6th, 2023 - 21:17:06
    │ 
    │ Copyright (c) 2023 Andrea Corsini T/A RS1 Project.
    │ This work is licensed under the terms of the MIT License.
@@ -35,6 +35,7 @@ function MediaLayerStack() {
         typeof autoHideControls === 'number' ? autoHideControls : 3000,
     )
 
+    const isMiniPlayer = playerMode === 'artwork-mini' || playerMode === 'vinyl-mini'
     const inImmersiveMode = isPlaying && !isWaiting && (!isInteracting || !autoHideControls) && !isPictureInPicture
 
     if (isPictureInPicture || playerMode === 'controls') return null
@@ -43,7 +44,8 @@ function MediaLayerStack() {
         <div
             id='rmp-media-layer-stack'
             className={clsx(
-                'absolute z-0 left-0 top-0 w-full',
+                'absolute z-0 left-0 w-full',
+                !isMiniPlayer && 'top-0',
                 playerMode === 'video' && 'h-full',
                 playerMode !== 'video' && 'pt-[100%]',
                 inImmersiveMode && 'cursor-none',

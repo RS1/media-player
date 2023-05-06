@@ -3,7 +3,7 @@
    │ Package: @rs1/media-player | RS1 Project
    │ Author: Andrea Corsini
    │ Created: May 3rd, 2023 - 9:23:06
-   │ Modified: May 5th, 2023 - 14:32:08
+   │ Modified: May 6th, 2023 - 14:58:18
    │ 
    │ Copyright (c) 2023 Andrea Corsini T/A RS1 Project.
    │ This work is licensed under the terms of the MIT License.
@@ -126,7 +126,7 @@ export default function Playlist() {
         [isMiniPlayer],
     )
 
-    if (playlist.length <= 1) return null
+    if (!playlist || playlist.tracks.length <= 1) return null
 
     return (
         <div id='rmp-controls-playlist-group' className='relative w-auto h-auto flex'>
@@ -152,7 +152,7 @@ export default function Playlist() {
                 aria-labelledby='rmp-controls-playlist'
                 style={bgStyle}
             >
-                {playlist.map(t => (
+                {playlist.tracks.map(t => (
                     <li key={t.id} style={dividerStyle}>
                         <button
                             className='flex flex-col items-stretch w-full py-2 px-4 text-left'

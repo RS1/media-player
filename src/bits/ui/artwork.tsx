@@ -3,7 +3,7 @@
    │ Package: @rs1/media-player | RS1 Project
    │ Author: Andrea Corsini
    │ Created: April 20th, 2023 - 15:30:29
-   │ Modified: May 4th, 2023 - 10:38:21
+   │ Modified: May 6th, 2023 - 21:20:32
    │ 
    │ Copyright (c) 2023 Andrea Corsini T/A RS1 Project.
    │ This work is licensed under the terms of the MIT License.
@@ -15,7 +15,7 @@ import React from 'react'
 
 import { useMediaState, useTrack } from '@/media'
 
-function MediaArtwork() {
+function MediaArtwork({ stackRef }: { stackRef: React.RefObject<HTMLDivElement> }) {
     const [track] = useTrack()
     const { isPlaying } = useMediaState()
 
@@ -23,9 +23,11 @@ function MediaArtwork() {
         <div
             id='rmp-media-artwork'
             className={clsx(
-                'relative w-full pt-[100%] bg-media-bg shadow-lg m-auto transition rounded-sm overflow-hidden',
+                'relative bg-media-bg shadow-lg m-auto transition rounded-sm overflow-hidden',
+                'w-full pt-[100%]',
                 !isPlaying && 'scale-95',
             )}
+            // style={containerSize ? { width: containerSize, height: containerSize } : undefined}
         >
             {track && (
                 <img
