@@ -3,7 +3,7 @@
    │ Package: @rs1/media-player | RS1 Project
    │ Author: Andrea Corsini
    │ Created: April 28th, 2023 - 15:39:52
-   │ Modified: May 6th, 2023 - 14:57:02
+   │ Modified: May 9th, 2023 - 10:45:07
    │ 
    │ Copyright (c) 2023 Andrea Corsini T/A RS1 Project.
    │ This work is licensed under the terms of the MIT License.
@@ -17,12 +17,13 @@ import { useMediaControls, usePlaylist } from '@/media'
 import svgNext from '@icons/next.svg'
 
 import ControlButton from './base-button'
+import { CustomControlProps } from './types'
 
 /**
  * A button that skips to the next track.\
  * Won't be rendered if there's no playlist or if it has only one item.
  */
-export default function Next() {
+export default function Next(props: CustomControlProps) {
     const [playlist] = usePlaylist()
     const controls = useMediaControls()
 
@@ -30,6 +31,7 @@ export default function Next() {
 
     return (
         <ControlButton
+            {...props}
             id='rmp-controls-next'
             controlKey='next'
             size='sm'

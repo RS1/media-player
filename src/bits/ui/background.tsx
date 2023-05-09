@@ -3,7 +3,7 @@
    │ Package: @rs1/media-player | RS1 Project
    │ Author: Andrea Corsini
    │ Created: May 3rd, 2023 - 11:28:14
-   │ Modified: May 5th, 2023 - 14:33:22
+   │ Modified: May 9th, 2023 - 10:18:33
    │ 
    │ Copyright (c) 2023 Andrea Corsini T/A RS1 Project.
    │ This work is licensed under the terms of the MIT License.
@@ -37,11 +37,14 @@ export default function MediaBackground() {
         >
             {playerBackground === 'blur' && (
                 <>
-                    <img
-                        src={track?.artwork || track?.poster}
-                        alt=''
-                        className='absolute top-0 left-0 w-full h-full object-cover object-center scale-110 blur-3xl'
-                    />
+                    {track?.artwork && (
+                        <img
+                            src={track.artwork}
+                            alt=''
+                            className='absolute top-0 left-0 w-full h-full object-cover object-center scale-110 blur-3xl'
+                            aria-hidden='true'
+                        />
+                    )}
                     {/* It used to have a `mix-blend-luminosity` filter, but it causes a weird bug in Safari iOS */}
                     <div className='absolute top-0 left-0 w-full h-full bg-controls-bg opacity-75 mix-blend-luminosity' />
                 </>

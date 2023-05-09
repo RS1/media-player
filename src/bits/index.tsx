@@ -3,7 +3,7 @@
    │ Package: @rs1/media-player | RS1 Project
    │ Author: Andrea Corsini
    │ Created: April 20th, 2023 - 16:45:13
-   │ Modified: May 6th, 2023 - 18:39:58
+   │ Modified: May 9th, 2023 - 15:00:57
    │ 
    │ Copyright (c) 2023 Andrea Corsini T/A RS1 Project.
    │ This work is licensed under the terms of the MIT License.
@@ -20,7 +20,7 @@ import MediaUIStack from '@bits/ui'
 import MediaBackground from '@bits/ui/background'
 import MediaControls from '@bits/ui/controls'
 
-import { usePlayerMode, useMediaTheme, themeToCSSVars, useMediaConfig, useMediaElement } from '@/media'
+import { usePlayerMode, useMediaTheme, themeToCSSVars, useMediaElement, usePlayerRatio } from '@/media'
 
 import '@css/tailwind.css'
 
@@ -31,7 +31,7 @@ type Props = {
 
 function MediaPlayer(props: Props, forwardedRef: React.ForwardedRef<HTMLDivElement>) {
     const { style, className, ...rest } = props
-    const { aspectRatio } = useMediaConfig()
+    const playerRatio = usePlayerRatio()
     const theme = useMediaTheme()
     const playerMode = usePlayerMode()
     const { setContainerRef } = useMediaElement()
@@ -50,11 +50,11 @@ function MediaPlayer(props: Props, forwardedRef: React.ForwardedRef<HTMLDivEleme
         () => ({
             ...(themeToCSSVars(theme) as React.CSSProperties),
             ...style,
-            width: aspectRatio === 'stretch' ? '100%' : 'auto',
-            margin: aspectRatio === 'stretch' ? 0 : 'auto',
+            width: playerRatio === 'stretch' ? '100%' : 'auto',
+            margin: playerRatio === 'stretch' ? 0 : 'auto',
             ...(playerMode === 'video' ? {} : { height: undefined }),
         }),
-        [JSON.stringify(theme), JSON.stringify(style), playerMode, aspectRatio],
+        [JSON.stringify(theme), JSON.stringify(style), playerMode, playerRatio],
     )
 
     return React.useMemo(

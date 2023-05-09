@@ -3,7 +3,7 @@
    │ Package: @rs1/media-player | RS1 Project
    │ Author: Andrea Corsini
    │ Created: April 20th, 2023 - 22:30:44
-   │ Modified: May 4th, 2023 - 14:00:28
+   │ Modified: May 9th, 2023 - 14:35:35
    │ 
    │ Copyright (c) 2023 Andrea Corsini T/A RS1 Project.
    │ This work is licensed under the terms of the MIT License.
@@ -16,7 +16,7 @@ import { useMediaControlsFactory } from '@media/factories/media-controls'
 import { AugmentedMediaElement, useAugmentedMediaRef } from '@media/hooks/use-augmented-media-ref'
 import { initMediaSession, MediaSessionMetadata } from '@media/utils/media-session'
 
-import { MediaControls } from '../types'
+import { MediaControls, PlaylistControls, PlaylistState, RawMediaTrack } from '../types'
 import { ConfigContext } from './config'
 import { PlaylistContext } from './playlist'
 import { StateContext, StateUpdaterContext } from './state'
@@ -47,16 +47,20 @@ export function CoreProvider(props: CoreProviderProps) {
     const updateTimeState = useContext(TimeUpdaterContext) ?? (() => {})
 
     const config = useContext(ConfigContext)
-    const playlist = useContext(PlaylistContext)
+    const {
+        track: [track = null] = [],
+        controls: playlistControls = {} as PlaylistControls,
+        state: { queue = [], mode: repeatMode = 'repeat-all' } = {} as PlaylistState,
+    } = useContext(PlaylistContext) ?? {}
 
-    const inPlaylist = !!playlist?.playlist?.length
+    const inPlaylist = queue.length > 1
 
     const handlePlaybackChange = useCallback((isPlaying: boolean) => {
         updateMediaState({ isPlaying })
     }, [])
     const handleTrackChange = useCallback(
-        (offset: number) => playlist?.controls?.skipTrackBy?.(offset),
-        [playlist?.controls?.skipTrackBy],
+        (offset: number) => playlistControls.skipTrackBy?.(offset),
+        [playlistControls.skipTrackBy],
     )
     const [media, setMedia] = useAugmentedMediaRef({
         onPlaybackChange: handlePlaybackChange,
@@ -64,18 +68,25 @@ export function CoreProvider(props: CoreProviderProps) {
     })
 
     const metadata: MediaSessionMetadata = useMemo(() => {
-        const [track] = playlist?.track || [null]
+        const t: Omit<RawMediaTrack, 'src'> = track || {}
         return {
-            title: track?.title,
-            artist: track?.artist,
-            album: track?.album,
-            artwork: track?.artwork || track?.poster,
+            ...(t.title ? { title: t.title } : {}),
+            ...(t.artist ? { artist: t.artist } : {}),
+            ...(t.album ? { album: t.album } : {}),
+            ...(t.artwork ? { artwork: t.artwork } : {}),
         }
-    }, [JSON.stringify(playlist?.track?.[0])])
-    const mediaSession = useMemo(() => initMediaSession(media, inPlaylist), [media, inPlaylist])
+    }, [JSON.stringify(track)])
+    const mediaSession = useMemo(
+        () =>
+            initMediaSession(media, {
+                forPlaylist: inPlaylist,
+                canSeek: config?.canSeek,
+                canPause: config?.canPause,
+            }),
+        [media, inPlaylist, config?.canSeek, config?.canPause],
+    )
 
     const mediaProps: MediaProps = useMemo(() => {
-        const [track] = playlist?.track || [null]
         return {
             onPlay: () => {
                 // console.log('[media-element] onPlay')
@@ -94,6 +105,7 @@ export function CoreProvider(props: CoreProviderProps) {
             },
             onPlaying: () => {
                 // console.log('[media-element] onPlaying')
+                mediaSession.setMetadata(metadata)
                 mediaSession.refreshPlaybackState()
                 updateMediaState({
                     isWaiting: false,
@@ -113,7 +125,7 @@ export function CoreProvider(props: CoreProviderProps) {
                 // console.log('[media-element] onEnded')
                 mediaSession.refreshPlaybackState()
                 updateMediaState({ isPlaying: false, wasPlaying: true })
-                if (playlist?.state.mode === 'repeat-one') {
+                if (repeatMode === 'repeat-one') {
                     media?.seekTo(0)
                 } else {
                     media?.next()
@@ -201,6 +213,7 @@ export function CoreProvider(props: CoreProviderProps) {
             onTimeUpdate: () => {
                 // console.log('[media-element] onTimeUpdate')
                 mediaSession.refreshPosition()
+                mediaSession.setMetadata(metadata)
                 const time = media?.getTime() || 0
                 updateTimeState({
                     time,
@@ -209,7 +222,7 @@ export function CoreProvider(props: CoreProviderProps) {
                 updateMediaState(s => (time > 0 && s.hasError ? { hasError: false } : s))
                 const duration = media?.getDuration() || 0
                 if (duration > 0 && time >= duration - 0.5) {
-                    if (playlist?.state.mode === 'repeat-one') {
+                    if (repeatMode === 'repeat-one') {
                         media?.seekTo(0)
                     } else {
                         media?.next()
@@ -254,26 +267,31 @@ export function CoreProvider(props: CoreProviderProps) {
                 mediaSession.refreshPosition()
                 updateMediaState({ playbackRate: media?.getPlaybackRate() ?? 1 })
             },
-            poster: track?.poster,
+            poster: track?.thumbnail,
             preload: 'metadata',
             playsInline: true,
             autoPlay: mediaState.wasPlaying,
             muted: config?.muted,
+            ['x-webkit-airplay']: config?.canAirPlay === false ? 'deny' : undefined,
+            ['x-webkit-wirelessvideoplaybackdisabled']: config?.canRemotePlay === false ? true : undefined,
+            disableRemotePlayback: config?.canRemotePlay === false ? true : undefined,
+            disablePictureInPicture: config?.canPictureInPicture === false ? true : undefined,
             crossOrigin: track?.crossOrigin,
         }
     }, [
         media,
         mediaSession,
-        config?.loop,
         config?.muted,
-        JSON.stringify(playlist?.track?.[0]),
+        config?.canAirPlay,
+        config?.canPictureInPicture,
+        JSON.stringify(track),
         mediaState.wasPlaying,
-        playlist?.state.mode,
+        repeatMode,
     ])
 
     useEffect(() => {
         media?.current?.load()
-    }, [JSON.stringify(playlist?.track?.[0])])
+    }, [JSON.stringify(track)])
 
     const containerRef = useRef<HTMLElement | null>(null)
     const setContainerRef = useCallback((ref: HTMLElement | null) => {

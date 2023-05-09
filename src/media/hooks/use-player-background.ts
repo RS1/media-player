@@ -3,17 +3,14 @@
    │ Package: @rs1/media-player | RS1 Project
    │ Author: Andrea Corsini
    │ Created: May 2nd, 2023 - 10:09:12
-   │ Modified: May 5th, 2023 - 12:52:37
+   │ Modified: May 9th, 2023 - 14:49:04
    │ 
    │ Copyright (c) 2023 Andrea Corsini T/A RS1 Project.
    │ This work is licensed under the terms of the MIT License.
    │ For a copy, see https://opensource.org/licenses/MIT
    │ or the LICENSE file in the root of this project.
    └ */
-import { useMemo } from 'react'
-
-import { Breakpoint, useBreakpoint } from '@/hooks'
-
+import { useConfigProperty } from './use-config-property'
 import { useMediaConfig } from './use-media-config'
 
 /**
@@ -25,17 +22,9 @@ import { useMediaConfig } from './use-media-config'
  * ```
  */
 export const usePlayerBackground = () => {
-    const { playerBackground, breakpoints } = useMediaConfig()
-    const neededBreakpoints =
-        typeof playerBackground === 'object' ? (Object.keys(playerBackground) as Breakpoint[]) : []
+    const { playerBackground } = useMediaConfig()
 
-    const breakpoint = useBreakpoint(breakpoints, neededBreakpoints)
-    const background = useMemo(() => {
-        const baseBg = playerBackground || 'none'
-        const breakpointBg =
-            typeof baseBg === 'object' ? (breakpoint ? baseBg[breakpoint] : Object.values(baseBg)[0]) : baseBg
-        return breakpointBg || 'none'
-    }, [playerBackground, breakpoint])
+    const background = useConfigProperty(playerBackground, 'none')
 
     return background
 }

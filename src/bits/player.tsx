@@ -3,7 +3,7 @@
    │ Package: @rs1/media-player | RS1 Project
    │ Author: Andrea Corsini
    │ Created: April 20th, 2023 - 16:45:13
-   │ Modified: May 6th, 2023 - 21:25:10
+   │ Modified: May 9th, 2023 - 14:59:32
    │ 
    │ Copyright (c) 2023 Andrea Corsini T/A RS1 Project.
    │ This work is licensed under the terms of the MIT License.
@@ -13,22 +13,15 @@
 import clsx from 'clsx'
 import React from 'react'
 
-import {
-    getAspectRatio,
-    usePlayerMode,
-    useMediaConfig,
-    useMediaElement,
-    useMediaState,
-    usePlayerBackground,
-} from '@/media'
+import { getAspectRatio, usePlayerMode, useMediaState, usePlayerBackground, usePlayerRatio } from '@/media'
+import { aspectRatios } from '@media/utils/aspect-ratio'
 
 function Player(props: React.PropsWithChildren) {
     const { children } = props
-    const { aspectRatio } = useMediaConfig()
+    const playerRatio = usePlayerRatio()
     const playerBackground = usePlayerBackground()
 
     const { intrinsicSize, isFullscreen } = useMediaState()
-    // const { setContainerRef } = useMediaElement()
 
     const playerMode = usePlayerMode()
 
@@ -36,9 +29,9 @@ function Player(props: React.PropsWithChildren) {
     const isMiniPlayer = playerMode === 'artwork-mini' || playerMode === 'vinyl-mini'
     const isControlsPlayer = playerMode === 'controls'
 
-    const hasSpecificAspectRatio = aspectRatio !== 'auto' && aspectRatio !== 'stretch'
-    const videoAspectRatio =
-        isVideoPlayer && aspectRatio === 'auto' ? (intrinsicSize[0] || 1) / (intrinsicSize[1] || 1) : false
+    const hasSpecificRatio = playerRatio !== 'auto' && playerRatio !== 'stretch' && aspectRatios.includes(playerRatio)
+    const hasIntrinsicRatio =
+        isVideoPlayer && playerRatio === 'auto' ? (intrinsicSize[0] || 1) / (intrinsicSize[1] || 1) : false
 
     return (
         <div
@@ -53,7 +46,7 @@ function Player(props: React.PropsWithChildren) {
                           // Sizing
                           'w-full h-full overflow-hidden': true,
                           // Aspect ratio
-                          [`aspect-${getAspectRatio(aspectRatio)}`]: hasSpecificAspectRatio,
+                          [`aspect-${getAspectRatio(playerRatio)}`]: hasSpecificRatio,
                           // Fullscreen
                           'rounded-sm': !isFullscreen,
                           'p-0': isFullscreen,
@@ -73,13 +66,12 @@ function Player(props: React.PropsWithChildren) {
                       },
             )}
             style={
-                videoAspectRatio
+                hasIntrinsicRatio
                     ? {
-                          aspectRatio: videoAspectRatio,
+                          aspectRatio: hasIntrinsicRatio,
                       }
                     : undefined
             }
-            // ref={setContainerRef}
         >
             {children}
         </div>

@@ -3,7 +3,7 @@
    │ Package: @rs1/media-player | RS1 Project
    │ Author: Andrea Corsini
    │ Created: April 21st, 2023 - 11:16:21
-   │ Modified: May 4th, 2023 - 16:32:36
+   │ Modified: May 9th, 2023 - 10:42:46
    │ 
    │ Copyright (c) 2023 Andrea Corsini T/A RS1 Project.
    │ This work is licensed under the terms of the MIT License.
@@ -17,14 +17,16 @@ import { useMediaConfig, useMediaControls, useMediaTheme, useMediaTime, useMedia
 
 import { useSlider } from '@/hooks'
 
-const barStyle = 'absolute top-0 left-0 h-full transition-width bg-controls-color rounded-full'
+import { CustomControlProps } from './types'
+
+const barStyle = 'absolute top-1/2 -translate-y-1/2 left-0 h-1 md:h-0.5 transition-width bg-controls-color rounded-full'
 
 /**
  * A seekbar that allows the user to seek through the current track.\
  * Will be rendered as a simple progress bar if the track is not seekable, not loaded or has an error.\
  * The seekbar is accessible via keyboard arrows when the handle is focused.
  */
-function SeekBar() {
+function SeekBar(props: CustomControlProps) {
     const { canSeek: _canSeek } = useMediaConfig()
     const { hasError, isLoaded } = useMediaState()
     const timeState = useMediaTime()
@@ -59,8 +61,9 @@ function SeekBar() {
 
     return (
         <div
+            {...props}
             id={'rmp-controls-seekbar'}
-            className={clsx('w-full h-1 md:h-0.5 relative', 'mx-3 md:mx-0', canSeek && 'cursor-pointer')}
+            className={clsx('w-full h-4 md:h-2 relative', 'mx-3 md:mx-0', canSeek && 'cursor-pointer', props.className)}
             {...(canSeek ? sliderProps : {})}
         >
             <div
@@ -84,9 +87,9 @@ function SeekBar() {
                 <div
                     id='rmp-controls-seekbar-handle'
                     className={clsx(
-                        'absolute top-1/2 w-1 h-4 md:w-0.5 md:h-2',
+                        'absolute top-0 w-1 h-full md:w-0.5',
                         'bg-controls-color shadow rounded-full hover:bg-accent-color',
-                        '-translate-x-1/2 -translate-y-1/2 transform-gpu',
+                        '-translate-x-1/2 transform-gpu',
                         'scale-100 transition hover:scale-125',
                         {
                             'cursor-grab': !isSliding,

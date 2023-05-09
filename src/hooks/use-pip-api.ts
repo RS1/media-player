@@ -3,7 +3,7 @@
    │ Package: @rs1/media-player | RS1 Project
    │ Author: Andrea Corsini
    │ Created: April 25th, 2023 - 14:12:46
-   │ Modified: April 27th, 2023 - 12:22:32
+   │ Modified: May 9th, 2023 - 11:26:31
    │ 
    │ Copyright (c) 2023 Andrea Corsini T/A RS1 Project.
    │ This work is licensed under the terms of the MIT License.
@@ -19,6 +19,10 @@ interface PiPAPI {
     element: Element | null
     enabled: boolean
 }
+
+export const isPiPEnabled = (() => {
+    return !!document?.pictureInPictureEnabled
+})()
 
 function getPiPElement(): Element | null {
     return document?.pictureInPictureElement ?? null
@@ -48,7 +52,7 @@ function usePiPAPI() {
         exit: exitPiP,
         toggle: togglePiP,
         element: null,
-        enabled: !!document?.pictureInPictureEnabled,
+        enabled: isPiPEnabled,
     })
 
     useEffect(() => {

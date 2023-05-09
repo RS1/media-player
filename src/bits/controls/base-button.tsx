@@ -3,7 +3,7 @@
    │ Package: @rs1/media-player | RS1 Project
    │ Author: Andrea Corsini
    │ Created: April 21st, 2023 - 16:18:51
-   │ Modified: May 4th, 2023 - 16:49:33
+   │ Modified: May 9th, 2023 - 14:16:46
    │ 
    │ Copyright (c) 2023 Andrea Corsini T/A RS1 Project.
    │ This work is licensed under the terms of the MIT License.
@@ -30,6 +30,14 @@ export const buttonSizes = {
     md: 6,
     lg: 8,
     xl: 10,
+} as const
+
+const activeSize = {
+    xs: 1,
+    sm: 3,
+    md: 5,
+    lg: 6,
+    xl: 9,
 } as const
 
 /**
@@ -110,10 +118,11 @@ export type BaseButtonProps = (WithLabel | WithIcon) & {
  * forwarded to the underlying `<button>` element.
  */
 function BaseButton(props: BaseButtonProps, ref: React.Ref<HTMLButtonElement>) {
-    const { controlKey, label, icon, size = 'md', loading = false, error = false, active = true, ...rest } = props
+    const { controlKey, label, icon, size = 'md', loading = false, error = false, active, ...rest } = props
     const theme = useMediaTheme()
     // Map the size to the TailwindCSS classes (e.g. `md` -> `w-6 h-6`)
     const clSize = `w-${buttonSizes[size]} h-${buttonSizes[size]}`
+    const clActiveSize = `w-${activeSize[size]} h-${activeSize[size]}`
     // Determine the color of the button, based on the control key and the error state.
     // If there's no control key, we use the default controls color.
     const btnColor = controlKey && theme[controlKey] ? theme[controlKey] : undefined
@@ -150,13 +159,18 @@ function BaseButton(props: BaseButtonProps, ref: React.Ref<HTMLButtonElement>) {
                     'hover:bg-accent-color': !btnColor && !rest.disabled,
                 },
                 icon && {
-                    'text-controls-color': !btnColor,
-                    'hover:text-accent-color': !btnColor && !rest.disabled,
+                    'text-center': true,
+                    'text-controls-color': !btnColor && !active,
+                    'hover:text-accent-color': !btnColor && !rest.disabled && !active,
+                    'bg-controls-color text-controls-bg': !btnColor && active,
+                    'hover:bg-accent-color': !btnColor && !rest.disabled && active,
+                    'p-0.5 rounded': active,
                 },
                 {
                     'hover:scale-105': !rest.disabled,
-                    'opacity-50': rest.disabled || !active,
+                    'opacity-50': rest.disabled || (active === false && !icon),
                 },
+                icon && clSize,
                 rest.className,
             )}
             title={icon ? label : undefined}
@@ -164,13 +178,18 @@ function BaseButton(props: BaseButtonProps, ref: React.Ref<HTMLButtonElement>) {
                 btnColor
                     ? {
                           ...rest.style,
-                          [icon ? 'color' : 'background']: btnColor,
+                          [icon && !active ? 'color' : 'background']: btnColor,
                       }
                     : rest.style
             }
         >
             {/* Show either the icon or the label, depending on which one is defined */}
-            {icon && (typeof icon === 'string' ? <SvgString className={clsx('svg-icon', clSize)} svg={icon} /> : icon)}
+            {icon &&
+                (typeof icon === 'string' ? (
+                    <SvgString className={clsx('svg-icon', active ? clActiveSize : clSize)} svg={icon} />
+                ) : (
+                    icon
+                ))}
             {!icon && label}
         </button>
     )

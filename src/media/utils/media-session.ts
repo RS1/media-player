@@ -3,7 +3,7 @@
    │ Package: @rs1/media-player | RS1 Project
    │ Author: Andrea Corsini
    │ Created: April 20th, 2023 - 10:12:12
-   │ Modified: April 27th, 2023 - 12:22:32
+   │ Modified: May 7th, 2023 - 13:35:10
    │ 
    │ Copyright (c) 2023 Andrea Corsini T/A RS1 Project.
    │ This work is licensed under the terms of the MIT License.
@@ -56,17 +56,32 @@ function setPosition(media: AugmentedMediaElement | null) {
     })
 }
 
-function setPlaybackActions(media: AugmentedMediaElement | null, forPlaylist: boolean) {
+function setPlaybackActions(
+    media: AugmentedMediaElement | null,
+    options: {
+        forPlaylist: boolean
+        canSeek: boolean
+        canPause: boolean
+    },
+) {
     setMediaSessionHandlers({
         play: () => media?.play(),
-        pause: () => media?.pause(),
+        pause: options?.canPause ? () => media?.pause() : null,
         stop: () => media?.pause(),
-        seekto: ({ seekTime = 0 }) => media?.seekTo(seekTime),
+        seekto: options?.canSeek ? ({ seekTime = 0 }) => media?.seekTo(seekTime) : null,
 
         /* macOS Safari nor iOS support these actions
         when used together with `nexttrack` and `previoustrack` */
-        seekbackward: (isIOS || isSafari) && forPlaylist ? null : ({ seekOffset }) => media?.skip(seekOffset || -10),
-        seekforward: (isIOS || isSafari) && forPlaylist ? null : ({ seekOffset }) => media?.skip(seekOffset || +10),
+        seekbackward: !options?.canSeek
+            ? null
+            : (isIOS || isSafari) && options?.forPlaylist
+            ? null
+            : ({ seekOffset }) => media?.skip(seekOffset || -10),
+        seekforward: !options?.canSeek
+            ? null
+            : (isIOS || isSafari) && options?.forPlaylist
+            ? null
+            : ({ seekOffset }) => media?.skip(seekOffset || +10),
         nexttrack: () => media?.next(),
         previoustrack: () => media?.previous(),
     })
@@ -75,20 +90,31 @@ function setPlaybackActions(media: AugmentedMediaElement | null, forPlaylist: bo
 export const setMediaSession = (
     media: AugmentedMediaElement | null,
     metadata: MediaSessionMetadata,
-    forPlaylist: boolean,
+    options: {
+        forPlaylist: boolean
+        canSeek: boolean
+        canPause: boolean
+    },
 ) => {
     if (!('mediaSession' in navigator)) return
     try {
         setMetadata(metadata)
         setPlaybackState(media)
         setPosition(media)
-        setPlaybackActions(media, forPlaylist)
+        setPlaybackActions(media, options)
     } catch (e) {
         console.error(e)
     }
 }
 
-export const initMediaSession = (media: AugmentedMediaElement | null, forPlaylist: boolean) => ({
+export const initMediaSession = (
+    media: AugmentedMediaElement | null,
+    options: {
+        forPlaylist: boolean
+        canSeek: boolean
+        canPause: boolean
+    },
+) => ({
     setMetadata(metadata: MediaSessionMetadata) {
         try {
             setMetadata(metadata)
@@ -112,7 +138,7 @@ export const initMediaSession = (media: AugmentedMediaElement | null, forPlaylis
     },
     refreshPlaybackActions() {
         try {
-            setPlaybackActions(media, forPlaylist)
+            setPlaybackActions(media, options)
         } catch (e) {
             console.error(e)
         }

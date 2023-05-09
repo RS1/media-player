@@ -3,7 +3,7 @@
    │ Package: @rs1/media-player | RS1 Project
    │ Author: Andrea Corsini
    │ Created: April 20th, 2023 - 14:29:27
-   │ Modified: May 6th, 2023 - 15:35:18
+   │ Modified: May 9th, 2023 - 13:58:33
    │ 
    │ Copyright (c) 2023 Andrea Corsini T/A RS1 Project.
    │ This work is licensed under the terms of the MIT License.
@@ -14,6 +14,7 @@ import React, { createContext, useCallback, useContext, useMemo, useState } from
 
 import { clamp, shuffleArray } from '@utils/math'
 import { guessSrcMimeType, guessSrcType } from '@utils/mime-type'
+import { capitalize, padZero } from '@utils/string'
 import { Either } from '@utils/types'
 
 import { MediaPlaylist, MediaTrack, PlaylistControls, PlaylistState, RawMediaPlaylist, RawMediaTrack } from '../types'
@@ -136,10 +137,11 @@ interface PlaylistInternalState {
      */
     playlistCollection: MediaPlaylist[]
     /**
-     * The current tracklist.
-     * This could be the original tracklist or a filtered/shuffled version of it.
+     * The current media-tracks queue.
+     * This could be the equivalent to the current playlist
+     * tracklist or a shuffled version of it.
      */
-    tracklist: MediaTrack[]
+    queue: MediaTrack[]
     /**
      * The playing mode of the playlist.
      * `repeat` means that the playlist is repeated.
@@ -162,7 +164,7 @@ interface PlaylistInternalState {
     activePlaylist: number | null
 }
 
-function normalizeTrack(track: RawMediaTrack, index: number): MediaTrack {
+function normalizeTrack(track: RawMediaTrack, playlist: Omit<RawMediaPlaylist, 'tracks'>, index: number): MediaTrack {
     const sources = Array.isArray(track.src) ? track.src : [track.src]
     const mimeTypes = sources.reduce<string[]>(
         (acc, src, idx) => {
@@ -174,6 +176,13 @@ function normalizeTrack(track: RawMediaTrack, index: number): MediaTrack {
     )
 
     const type = track.type ?? sources.length ? guessSrcType(sources[0]) : 'video'
+
+    const cover = track.cover || playlist.cover
+    const thumbnail = track.thumbnail || playlist.thumbnail
+    const artwork = track.artwork || playlist.artwork
+    const album = track.album ?? playlist.title ?? playlist.album
+    const artist = track.artist ?? playlist.artist
+    const title = track.title || `${album || capitalize(type)} ${padZero(index + 1)}`
 
     let id = typeof track.id !== 'undefined' ? `${track.id}` : undefined
     if (typeof id === 'undefined') {
@@ -191,24 +200,48 @@ function normalizeTrack(track: RawMediaTrack, index: number): MediaTrack {
             ? 'use-credentials'
             : 'anonymous'
 
+    const prefix = track.prefix || playlist.prefix || ''
+    const suffix = track.suffix || playlist.suffix || ''
+    const position = `${track.position ?? index + 1}`
+
     return {
         ...track,
         id: id,
         type: type,
+        title,
+        artist: artist || '',
+        album: album || '',
+        cover: cover || artwork || thumbnail,
+        artwork: artwork || cover || thumbnail,
+        thumbnail: thumbnail || artwork || cover,
         index: index,
         src: sources,
         mimeType: mimeTypes,
         crossOrigin: crossOrigin,
+        prefix: prefix,
+        suffix: suffix,
+        position: position,
     }
 }
 
 function normalizePlaylist(playlist: RawMediaPlaylist, index: number): MediaPlaylist {
     const id = typeof playlist.id !== 'undefined' ? `${playlist.id}` : `playlist-${index}`
 
-    return {
+    const cover = playlist.cover
+    const thumbnail = playlist.thumbnail
+    const artwork = playlist.artwork
+
+    const normalized = {
         ...playlist,
-        id: id,
-        tracks: playlist.tracks?.map(normalizeTrack) ?? [],
+        id,
+        cover: cover || artwork || thumbnail,
+        artwork: artwork || cover || thumbnail,
+        thumbnail: thumbnail || artwork || cover,
+    }
+
+    return {
+        ...normalized,
+        tracks: playlist.tracks?.map((t, i) => normalizeTrack(t, normalized, i)) ?? [],
     }
 }
 
@@ -222,7 +255,7 @@ export function PlaylistProvider(props: PlaylistProviderProps) {
             const c = [normalizePlaylist({ id: 'playlist-0', tracks: [initialTrack] }, 0)]
             return {
                 playlistCollection: c,
-                tracklist: c[0].tracks,
+                queue: c[0].tracks,
 
                 mode: config.loop ? 'repeat-one' : 'repeat',
                 shuffle: false,
@@ -238,21 +271,21 @@ export function PlaylistProvider(props: PlaylistProviderProps) {
         let activePlaylist = -1
         let activeTrack = -1
         if (initialTrack) {
-            const track = normalizeTrack(initialTrack, 0)
+            const track = normalizeTrack(initialTrack, {}, 0)
             activePlaylist = collection.findIndex(p => p.tracks.some(t => t.id === track.id))
             if (activePlaylist !== -1) {
                 activeTrack = collection[activePlaylist].tracks.findIndex(t => t.id === track.id)
             }
         }
-        const tracklist = collection[activePlaylist !== -1 ? activePlaylist : 0].tracks
+        const queue = collection[activePlaylist !== -1 ? activePlaylist : 0].tracks
 
         return {
             playlistCollection: collection,
-            tracklist: tracklist,
+            queue,
             mode: config.loop ? 'repeat-one' : 'repeat',
             shuffle: false,
             activePlaylist: !collection.length ? null : clamp(activePlaylist, 0, collection.length - 1),
-            activeTrack: !tracklist.length ? null : clamp(activeTrack, 0, tracklist.length - 1),
+            activeTrack: !queue.length ? null : clamp(activeTrack, 0, queue.length - 1),
         }
     })
 
@@ -272,12 +305,12 @@ export function PlaylistProvider(props: PlaylistProviderProps) {
     const shuffle = useCallback(() => {
         _setState(s => {
             const p = s.activePlaylist !== null ? shuffleArray(s.playlistCollection[s.activePlaylist].tracks) : []
-            const a = p.length && s.activeTrack !== null ? s.tracklist[s.activeTrack] : null
+            const a = p.length && s.activeTrack !== null ? s.queue[s.activeTrack] : null
             const active = a ? p.findIndex(t => t.id === a.id) : null
 
             return {
                 ...s,
-                tracklist: p,
+                queue: p,
                 activeTrack: active,
                 shuffle: true,
             }
@@ -286,16 +319,16 @@ export function PlaylistProvider(props: PlaylistProviderProps) {
 
     const unshuffle = useCallback(() => {
         _setState(s => {
-            const a = s.activeTrack !== null ? s.tracklist[s.activeTrack] : null
+            const a = s.activeTrack !== null ? s.queue[s.activeTrack] : null
             const active =
-                a && s.activePlaylist
+                a && s.activePlaylist !== null
                     ? s.playlistCollection[s.activePlaylist].tracks.findIndex(t => t.id === a.id)
                     : null
 
             return {
                 ...s,
-                tracklist: s.activePlaylist !== null ? s.playlistCollection[s.activePlaylist].tracks : [],
-                activeTrack: active,
+                queue: s.activePlaylist !== null ? s.playlistCollection[s.activePlaylist].tracks : [],
+                activeTrack: active !== null && active !== -1 ? active : null,
                 shuffle: false,
             }
         })
@@ -313,26 +346,25 @@ export function PlaylistProvider(props: PlaylistProviderProps) {
                 const c = (Array.isArray(_c) ? _c : [_c]).map(normalizePlaylist)
 
                 const currentPlaylist = s.activePlaylist !== null ? s.playlistCollection[s.activePlaylist] : null
-                const currentTrack = s.activeTrack !== null ? s.tracklist[s.activeTrack] : null
+                const currentTrack = s.activeTrack !== null ? s.queue[s.activeTrack] : null
 
                 let activePlaylist = currentPlaylist ? c.findIndex(p => p.id === currentPlaylist.id) : null
                 activePlaylist = activePlaylist === -1 ? null : activePlaylist
-                const tracklist =
+                const queue =
                     activePlaylist === null
                         ? []
                         : s.shuffle
                         ? shuffleArray(c[activePlaylist].tracks)
                         : c[activePlaylist].tracks
-                let activeTrack =
-                    currentTrack && activePlaylist ? tracklist.findIndex(t => t.id === currentTrack.id) : null
+                let activeTrack = currentTrack && activePlaylist ? queue.findIndex(t => t.id === currentTrack.id) : null
                 activeTrack = activeTrack === -1 ? null : activeTrack
 
                 return {
                     ...s,
                     playlistCollection: c,
-                    tracklist: tracklist,
-                    activePlaylist: activePlaylist,
-                    activeTrack: activeTrack,
+                    queue,
+                    activePlaylist,
+                    activeTrack,
                 }
             })
         },
@@ -365,7 +397,7 @@ export function PlaylistProvider(props: PlaylistProviderProps) {
                   ) => RawMediaTrack | string | number | null) = 0,
         ) => {
             _setState(s => {
-                const activeTrack = s.activeTrack === null ? null : s.tracklist[s.activeTrack]
+                const activeTrack = s.activeTrack === null ? null : s.queue[s.activeTrack]
                 const activePlaylist = s.activePlaylist === null ? null : s.playlistCollection[s.activePlaylist]
                 const p = typeof playlist === 'function' ? playlist(activePlaylist, activeTrack) : playlist
                 const t = typeof track === 'function' ? track(activePlaylist, activeTrack) : track
@@ -392,7 +424,7 @@ export function PlaylistProvider(props: PlaylistProviderProps) {
                 if (index === null) {
                     return {
                         ...s,
-                        tracklist: [],
+                        queue: [],
                         activePlaylist: null,
                         activeTrack: null,
                     }
@@ -402,9 +434,9 @@ export function PlaylistProvider(props: PlaylistProviderProps) {
                     index < s.playlistCollection.length
                         ? s.playlistCollection
                         : [...s.playlistCollection, normalizePlaylist(p as RawMediaPlaylist, index)]
-                const tracklist = collection[index].tracks
-                const shuffled = s.shuffle ? shuffleArray(tracklist) : tracklist
-                // Find the index in shuffled of the track `0` in tracklist
+                const queue = collection[index].tracks
+                const shuffled = s.shuffle ? shuffleArray(queue) : queue
+                // Find the index in shuffled of the track `0` in queue
                 const selectedTrack =
                     t === null
                         ? 0
@@ -412,7 +444,7 @@ export function PlaylistProvider(props: PlaylistProviderProps) {
                               t =>
                                   t.id ===
                                   (typeof t === 'number'
-                                      ? tracklist[clamp(t, 0, tracklist.length)].id
+                                      ? queue[clamp(t, 0, queue.length)].id
                                       : typeof t === 'string'
                                       ? t
                                       : t.id),
@@ -420,7 +452,7 @@ export function PlaylistProvider(props: PlaylistProviderProps) {
                 return {
                     ...s,
                     playlistCollection: collection,
-                    tracklist: shuffled,
+                    queue: shuffled,
                     activePlaylist: index,
                     activeTrack: selectedTrack,
                 }
@@ -444,9 +476,7 @@ export function PlaylistProvider(props: PlaylistProviderProps) {
         ) =>
             _setState(s => {
                 const t =
-                    typeof track === 'function'
-                        ? track(s.activeTrack === null ? null : s.tracklist[s.activeTrack])
-                        : track
+                    typeof track === 'function' ? track(s.activeTrack === null ? null : s.queue[s.activeTrack]) : track
                 if (t === null) {
                     return { ...s, activeTrack: null }
                 }
@@ -456,10 +486,10 @@ export function PlaylistProvider(props: PlaylistProviderProps) {
                     const original =
                         s.activePlaylist === null
                             ? null
-                            : s.playlistCollection[s.activePlaylist].tracks[clamp(t, 0, s.tracklist.length - 1)]
+                            : s.playlistCollection[s.activePlaylist].tracks[clamp(t, 0, s.queue.length - 1)]
                     if (!original) return { ...s, activeTrack: null }
                     // find the track in the current playlist
-                    const index = s.tracklist.findIndex(_t => _t.id === original.id)
+                    const index = s.queue.findIndex(_t => _t.id === original.id)
                     return { ...s, activeTrack: index < 0 ? null : index }
                 }
 
@@ -469,42 +499,42 @@ export function PlaylistProvider(props: PlaylistProviderProps) {
                         s.activePlaylist === null
                             ? null
                             : s.playlistCollection[s.activePlaylist].tracks.find(_t => _t.id === t)
-                    let playlist, track, tracklist
+                    let playlist, track, queue
                     if (!original) {
                         // search in other playlists
                         const match = s.playlistCollection.findIndex(pl => pl.tracks.find(_t => _t.id === t))
                         if (match === -1) return { ...s, activeTrack: null }
 
                         playlist = match
-                        tracklist = s.playlistCollection[match].tracks
-                        if (s.shuffle) tracklist = shuffleArray(tracklist)
-                        track = tracklist.findIndex(_t => _t.id === t)
+                        queue = s.playlistCollection[match].tracks
+                        if (s.shuffle) queue = shuffleArray(queue)
+                        track = queue.findIndex(_t => _t.id === t)
                     } else {
                         playlist = s.activePlaylist
-                        tracklist = s.tracklist
-                        track = s.tracklist.findIndex(_t => _t.id === t)
+                        queue = s.queue
+                        track = s.queue.findIndex(_t => _t.id === t)
                     }
                     return {
                         ...s,
-                        tracklist,
+                        queue,
                         activePlaylist: playlist,
                         activeTrack: track < 0 ? null : track,
                     }
                 }
 
-                const nT = normalizeTrack(t, s.tracklist.length)
-                const index = s.tracklist.findIndex(t => t.id === nT.id)
+                const nT = normalizeTrack(t, {}, s.queue.length)
+                const index = s.queue.findIndex(t => t.id === nT.id)
                 if (index === -1) {
                     // search in other playlists
                     const match = s.playlistCollection.findIndex(pl => pl.tracks.find(_t => _t.id === nT.id))
                     if (match >= 0) {
                         const playlist = match
-                        let tracklist = s.playlistCollection[match].tracks
-                        if (s.shuffle) tracklist = shuffleArray(tracklist)
-                        const track = tracklist.findIndex(_t => _t.id === nT.id)
+                        let queue = s.playlistCollection[match].tracks
+                        if (s.shuffle) queue = shuffleArray(queue)
+                        const track = queue.findIndex(_t => _t.id === nT.id)
                         return {
                             ...s,
-                            tracklist,
+                            queue,
                             activePlaylist: playlist,
                             activeTrack: track < 0 ? null : track,
                         }
@@ -518,15 +548,15 @@ export function PlaylistProvider(props: PlaylistProviderProps) {
                         }
                     }
                     const playlist = s.playlistCollection[s.activePlaylist]
-                    playlist.tracks = [...playlist.tracks, nT]
-                    const tracklist = s.shuffle ? shuffleArray(playlist.tracks) : playlist.tracks
-                    const track = tracklist.findIndex(_t => _t.id === nT.id)
+                    playlist.tracks = [...playlist.tracks, normalizeTrack(t, playlist, playlist.tracks.length)]
+                    const queue = s.shuffle ? shuffleArray(playlist.tracks) : playlist.tracks
+                    const track = queue.findIndex(_t => _t.id === nT.id)
                     collection[s.activePlaylist] = playlist
 
                     return {
                         ...s,
                         playlistCollection: collection,
-                        tracklist,
+                        queue,
                         activeTrack: track < 0 ? null : track,
                     }
                 }
@@ -543,7 +573,7 @@ export function PlaylistProvider(props: PlaylistProviderProps) {
             const base = s.activeTrack === null ? 0 : s.activeTrack
             return {
                 ...s,
-                active: (base + offset) % s.tracklist.length,
+                activeTrack: (base + offset) % s.queue.length,
             }
         })
     }, [])
@@ -560,7 +590,7 @@ export function PlaylistProvider(props: PlaylistProviderProps) {
 
     const value: PlaylistProviderValue = useMemo(
         () => ({
-            track: [state.activeTrack === null ? null : state.tracklist[state.activeTrack], setTrack],
+            track: [state.activeTrack === null ? null : state.queue[state.activeTrack], setTrack],
             playlist: [
                 state.activePlaylist === null ? null : state.playlistCollection[state.activePlaylist],
                 setPlaylist,
@@ -569,6 +599,7 @@ export function PlaylistProvider(props: PlaylistProviderProps) {
             state: {
                 mode: state.mode,
                 shuffle: state.shuffle,
+                queue: state.queue,
             },
             controls: {
                 shuffle,
@@ -594,7 +625,7 @@ export function PlaylistProvider(props: PlaylistProviderProps) {
             skipTrackBy,
             previousTrack,
             nextTrack,
-            JSON.stringify(state.tracklist),
+            JSON.stringify(state.queue),
             JSON.stringify(state.playlistCollection),
             state.activeTrack,
             state.activePlaylist,

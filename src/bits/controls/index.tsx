@@ -3,7 +3,7 @@
    │ Package: @rs1/media-player | RS1 Project
    │ Author: Andrea Corsini
    │ Created: April 21st, 2023 - 16:50:22
-   │ Modified: May 5th, 2023 - 14:30:24
+   │ Modified: May 9th, 2023 - 12:40:23
    │ 
    │ Copyright (c) 2023 Andrea Corsini T/A RS1 Project.
    │ This work is licensed under the terms of the MIT License.
@@ -16,10 +16,12 @@ import AirPlay from './item-airplay'
 import Album from './item-album'
 import Artist from './item-artist'
 import Backward10 from './item-backward10'
+import Cast from './item-cast'
 import Duration from './item-duration'
 import Error from './item-error'
 import Forward10 from './item-forward10'
 import Fullscreen from './item-fullscreen'
+import Index from './item-index'
 import Loading from './item-loading'
 import Metadata from './item-metadata'
 import Mute from './item-mute'
@@ -29,6 +31,8 @@ import PictureInPicture from './item-pictureinpicture'
 import Play from './item-play'
 import Playlist from './item-playlist'
 import PlayPause from './item-playpause'
+import Position from './item-position'
+import Prefix from './item-prefix'
 import Previous from './item-previous'
 import Remaining from './item-remaining'
 import Repeat from './item-repeat'
@@ -36,6 +40,7 @@ import SeekBar from './item-seekbar'
 import Shuffle from './item-shuffle'
 import Spacer from './item-spacer'
 import Stalled from './item-stalled'
+import Suffix from './item-suffix'
 import Time from './item-time'
 import Title from './item-title'
 import { ControlKey, CustomControlProps } from './types'
@@ -59,6 +64,7 @@ export const controls: Record<ControlKey, React.ComponentType<CustomControlProps
     shuffle: Shuffle,
     repeat: Repeat,
     airplay: AirPlay,
+    cast: Cast,
     playlist: Playlist,
     loading: Loading,
     stalled: Stalled,
@@ -72,5 +78,9 @@ export const controls: Record<ControlKey, React.ComponentType<CustomControlProps
     artist: Artist,
     album: Album,
     metadata: Metadata,
+    index: Index,
+    position: Position,
+    prefix: Prefix,
+    suffix: Suffix,
     empty: () => <div />,
 }

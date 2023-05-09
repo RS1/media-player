@@ -3,7 +3,7 @@
    │ Package: @rs1/media-player | RS1 Project
    │ Author: Andrea Corsini
    │ Created: May 4th, 2023 - 15:48:39
-   │ Modified: May 4th, 2023 - 15:50:27
+   │ Modified: May 9th, 2023 - 12:40:33
    │ 
    │ Copyright (c) 2023 Andrea Corsini T/A RS1 Project.
    │ This work is licensed under the terms of the MIT License.
@@ -37,3 +37,8 @@ export { default as spacer } from './item-spacer'
 export { default as stalled } from './item-stalled'
 export { default as time } from './item-time'
 export { default as title } from './item-title'
+export { default as index } from './item-index'
+export { default as position } from './item-position'
+export { default as prefix } from './item-prefix'
+export { default as suffix } from './item-suffix'
+export { default as cast } from './item-cast'

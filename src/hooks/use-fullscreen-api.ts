@@ -3,7 +3,7 @@
    │ Package: @rs1/media-player | RS1 Project
    │ Author: Andrea Corsini
    │ Created: April 24th, 2023 - 15:08:44
-   │ Modified: April 27th, 2023 - 12:22:32
+   │ Modified: May 9th, 2023 - 11:22:39
    │ 
    │ Copyright (c) 2023 Andrea Corsini T/A RS1 Project.
    │ This work is licensed under the terms of the MIT License.
@@ -101,7 +101,7 @@ const currentAPI = ((): APISet => {
     if ('msFullscreenEnabled' in document) return 'explorer'
     return 'mdn'
 })()
-const isEnabled = (() => {
+export const isFullscreenEnabled = (() => {
     switch (currentAPI) {
         case 'mdn':
             return document.fullscreenEnabled
@@ -166,7 +166,7 @@ async function requestFullscreen(element: HTMLElement | null, fallback: HTMLMedi
     if (!element) return
 
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
-    if (fallback && !isEnabled && isIOS && fallback.tagName === 'VIDEO') {
+    if (fallback && !isFullscreenEnabled && isIOS && fallback.tagName === 'VIDEO') {
         const _fallback = fallback as FullscreenAPIHTMLMediaElement
         return _fallback?.['webkitEnterFullscreen' in _fallback ? 'webkitEnterFullscreen' : 'enterFullscreen']()
     }
@@ -217,7 +217,7 @@ function useFullscreenAPI() {
         exit: exitFullscreen,
         toggle: toggleFullscreen,
         element: null,
-        enabled: isEnabled,
+        enabled: isFullscreenEnabled,
     })
 
     useEffect(() => {

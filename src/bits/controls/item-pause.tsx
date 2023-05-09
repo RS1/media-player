@@ -3,7 +3,7 @@
    │ Package: @rs1/media-player | RS1 Project
    │ Author: Andrea Corsini
    │ Created: April 28th, 2023 - 15:39:52
-   │ Modified: May 4th, 2023 - 16:26:44
+   │ Modified: May 9th, 2023 - 10:44:56
    │ 
    │ Copyright (c) 2023 Andrea Corsini T/A RS1 Project.
    │ This work is licensed under the terms of the MIT License.
@@ -17,13 +17,14 @@ import { useMediaConfig, useMediaControls, useMediaState } from '@/media'
 import svgPause from '@icons/pause.svg'
 
 import ControlButton from './base-button'
+import { CustomControlProps } from './types'
 
 /**
  * A button that pauses the media.\
  * Won't be rendered if the media can't be paused.\
  * Will be disabled if the media is not loaded, is not playing or if there's an error.
  */
-export default function Pause() {
+export default function Pause(props: CustomControlProps) {
     const { canPause } = useMediaConfig()
     const { hasError, isLoaded, isPlaying } = useMediaState()
     const controls = useMediaControls()
@@ -32,6 +33,7 @@ export default function Pause() {
 
     return (
         <ControlButton
+            {...props}
             id='rmp-controls-pause'
             controlKey='pause'
             size='lg'

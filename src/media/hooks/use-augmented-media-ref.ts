@@ -3,7 +3,7 @@
    │ Package: @rs1/media-player | RS1 Project
    │ Author: Andrea Corsini
    │ Created: April 20th, 2023 - 11:11:06
-   │ Modified: May 4th, 2023 - 16:58:04
+   │ Modified: May 9th, 2023 - 14:30:33
    │ 
    │ Copyright (c) 2023 Andrea Corsini T/A RS1 Project.
    │ This work is licensed under the terms of the MIT License.
@@ -198,17 +198,6 @@ export function useAugmentedMediaRef(props: Props): UseAugmentedMediaRef {
     const setRef = useCallback(
         (node: HTMLMediaElement | null) => {
             if (node) {
-                /**
-                 * RemotePlayback API: work-in-progress
-                 */
-                // node.remote
-                //     .watchAvailability(available => {
-                //         console.log(`[use-augmented-media-ref] Availability changed: ${available}`)
-                //     })
-                //     .catch(err => {
-                //         console.error(`[use-augmented-media-ref] Error watching availability: ${err}`)
-                //     })
-
                 mediaRef.current = node
                 // console.log(`[use-augmented-media-ref] Setting media ref...`)
                 augmentedRef.current = {

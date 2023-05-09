@@ -3,7 +3,7 @@
    │ Package: @rs1/media-player | RS1 Project
    │ Author: Andrea Corsini
    │ Created: April 20th, 2023 - 22:33:55
-   │ Modified: May 6th, 2023 - 15:39:18
+   │ Modified: May 9th, 2023 - 14:55:57
    │ 
    │ Copyright (c) 2023 Andrea Corsini T/A RS1 Project.
    │ This work is licensed under the terms of the MIT License.
@@ -58,6 +58,7 @@ export { useMediaKeyboardControls } from './hooks/use-media-keyboard-controls'
 // Generic hooks
 export { useAugmentedMediaRef } from './hooks/use-augmented-media-ref'
 export { usePlayerMode } from './hooks/use-player-mode'
+export { usePlayerRatio } from './hooks/use-player-ratio'
 export { usePlayerControls } from './hooks/use-player-controls'
 export { usePlayerBackground } from './hooks/use-player-background'
 
