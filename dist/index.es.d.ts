@@ -5,11 +5,11 @@ declare const _default: React.ForwardRefExoticComponent<{
     className?: string | undefined;
 } & React.HTMLAttributes<HTMLDivElement> & React.RefAttributes<HTMLDivElement>>;
 /* ┐
-│ File: types.d.ts [/src/bits/controls/types.d.ts]
+│ File: types.ts [/src/bits/controls/types.ts]
 │ Package: @rs1/media-player | RS1 Project
 │ Author: Andrea Corsini
 │ Created: April 28th, 2023 - 17:47:45
-│ Modified: May 3rd, 2023 - 16:41:38
+│ Modified: May 9th, 2023 - 12:40:01
 │
 │ Copyright (c) 2023 Andrea Corsini T/A RS1 Project.
 │ This work is licensed under the terms of the MIT License.
@@ -17,11 +17,13 @@ declare const _default: React.ForwardRefExoticComponent<{
 │ or the LICENSE file in the root of this project.
 └ */
 type ControlKey = /* Buttons */
-"play" | "pause" | "playpause" | "backward10" | "forward10" | "previous" | "next" | "mute" | "fullscreen" | "pictureinpicture" | "shuffle" | "repeat" | "airplay" | "playlist" | "seekbar" | "time" | "duration" | "remaining" | "title" | "artist" | "album" | "metadata" | "loading" | "stalled" | "error" | "spacer" | "empty";
+"play" | "pause" | "playpause" | "backward10" | "forward10" | "previous" | "next" | "mute" | "fullscreen" | "pictureinpicture" | "shuffle" | "repeat" | "airplay" | "cast" | "playlist" | "seekbar" | "time" | "duration" | "remaining" | "title" | "artist" | "album" | "metadata" | "position" | "prefix" | "suffix" | "index" | "loading" | "stalled" | "error" | "spacer" | "empty";
 /**
  * The props the custom control receives.
  */
 type CustomControlProps = {
+    className?: string;
+    style?: React.CSSProperties;
     [key: string]: unknown;
 };
 /**
@@ -102,6 +104,21 @@ type BaseButtonProps = (WithLabel | WithIcon) & {
     active?: boolean;
 } & React.ButtonHTMLAttributes<HTMLButtonElement>;
 declare const _default: React.MemoExoticComponent<React.ForwardRefExoticComponent<BaseButtonProps & React.RefAttributes<HTMLButtonElement>>>;
+type BaseTagProps = {
+    /**
+     * The key of the control, used to determine if there's
+     * a theme color to use for this particular element.
+     */
+    controlKey?: ControlKey;
+    /**
+     * The text to display.
+     */
+    text?: string;
+} & React.HTMLAttributes<HTMLSpanElement>;
+declare const _default: React.MemoExoticComponent<React.ForwardRefExoticComponent<{
+    controlKey?: ControlKey | undefined;
+    text?: string | undefined;
+} & React.HTMLAttributes<HTMLSpanElement> & React.RefAttributes<HTMLSpanElement>>>;
 /* ┐
 │ File: aspect-ratio.ts [/src/media/utils/aspect-ratio.ts]
 │ Package: @rs1/media-player | RS1 Project
@@ -155,7 +172,9 @@ type WithBreakpoint<T> = T | {
  */
 interface MediaConfig {
     /**
-     * The aspect ratio of the player.
+     * The aspect ratio of the player.\
+     * It can be specified for each media type by using an array of tuples. (Format: `[[mediaType1, ratio1], [mediaType2, ratio2]]`)\
+     * It can be specified for each breakpoint by using a map. (Format: `{ [breakpoint1]: ratio1, [breakpoint2]: ratio2 }` or `{ [breakpoint1]: [[mediaType1, ratio1], [mediaType2, ratio2]], [breakpoint2]: [[mediaType1, ratio1], [mediaType2, ratio2]] }`)\
      *
      * **Note:** Only `auto` and `stretch` are valid aspect ratios if the player mode is not `video`.
      * ```js
@@ -182,7 +201,7 @@ interface MediaConfig {
      * ```
      * @default 'auto'
      */
-    aspectRatio: AspectRatio;
+    aspectRatio: WithBreakpoint<WithMediaType<AspectRatio>>;
     /**
      * The display mode of the player.\
      * It can be specified for each media type by using an array of tuples. (Format: `[[mediaType1, mode1], [mediaType2, mode2]]`)
@@ -222,7 +241,8 @@ interface MediaConfig {
     playerMode: WithBreakpoint<WithMediaType<"auto" | "video" | "artwork" | "vinyl" | "controls" | "artwork-mini" | "vinyl-mini">>;
     /**
      * The background of the player.\
-     * It can be specified for each breakpoint by using a map. (Format: `{ [breakpoint1]: bg1, [breakpoint2]: bg1 }`)
+     * It can be specified for each media type by using an array of tuples. (Format: `[[mediaType1, bg1], [mediaType2, bg2]]`)\
+     * It can be specified for each breakpoint by using a map. (Format: `{ [breakpoint1]: bg1, [breakpoint2]: bg1 }` or `{ [breakpoint1]: [[mediaType1, bg1], [mediaType2, bg2]], [breakpoint2]: [[mediaType1, bg1], [mediaType2, bg2]] }`)\
      *
      * Supported backgrounds:
      * - `none`: no background (default)
@@ -239,7 +259,7 @@ interface MediaConfig {
      * ```
      * @default 'none'
      */
-    playerBackground: WithBreakpoint<"none" | "flat" | "blur">;
+    playerBackground: WithBreakpoint<WithMediaType<"none" | "flat" | "blur">>;
     /**
      * A map of breakpoints to use for the player.\
      * The map is in the form of `{ [breakpointName]: minWindowWith }`.\
@@ -478,6 +498,11 @@ interface MediaConfig {
      * @default true
      */
     canAirPlay: boolean;
+    /**
+     * Whether the player can stream to remote devices via the UI/keyboard.
+     * @default true
+     */
+    canRemotePlay: boolean;
     /**
      * Whether the user should be able to tap/click on the player to toggle play/pause.
      * - For `vinyl`/`artwork` mode this means tapping on the artwork.
@@ -821,30 +846,36 @@ interface MediaTrack {
      */
     album?: string;
     /**
-     * An URL to the cover of the media track.\
-     * It will be used as the cover of the track in the `artwork`/`vinyl` mode.
+     * An URL to the cover image of the media track.\
+     * It will be used as the cover of the track in the `artwork`/`vinyl` player mode.
      */
     cover?: string;
     /**
-     * An URL to the artwork of the media track.\
+     * An URL to the artwork image of the media track.\
      * It will be used in the MediaSession API (Native media controls).\
-     * It will serve as a fallback cover for the `artwork`/`vinyl` mode.
+     * It will serve as a fallback cover image for the `artwork`/`vinyl` player mode.
      */
     artwork?: string;
     /**
-     * An URL to the poster of the media track.\
-     * It will be used as the poster of the media player.\
-     * It will serve as a fallback artwork for the MediaSession API.
+     * An URL to the thumbnail image of the media track.\
+     * It will be used as the preview thumbnail in the `video` player mode.\
+     * It will serve as a fallback artwork image for the MediaSession API.\
+     * It will serve as a fallback cover image for the `artwork`/`vinyl` player mode.
      */
-    poster?: string;
+    thumbnail?: string;
     /**
-     * Optionally, a string representing the track side.\
-     * Useful for dual-sided vinyls. (A/B)
+     * Optionally, a string to prefix the track position with.\
+     * Useful for dual-sided vinyls (A/B) or compilations (CD1/CD2).
      */
-    side?: string;
+    prefix?: string;
     /**
-     * Optionally, a string or number representing the track position.\
-     * Useful for tracklists. (1, 2, 3, ...)
+     * Optionally, a string to suffix the track position with.\
+     * Useful for dual-sided vinyls (A/B) or compilations (CD1/CD2).
+     */
+    suffix?: string;
+    /**
+     * Optionally, a string or number representing the track position in the playlist/album.\
+     * Useful for tracklists and albums. (1, 2, 3, ...)
      */
     position?: string | number;
     /**
@@ -869,21 +900,46 @@ interface MediaPlaylist {
      */
     id: string;
     /**
-     * The title of the playlist.
+     * The title of the whole playlist.\
+     * If no album is provided for a track, this will be used as the album name.
      */
     title?: string;
     /**
-     * The artist of the playlist.
+     * The artist of the whole playlist.\
+     * If no artist is provided for a track, this will be used as the artist name.
      */
     artist?: string;
     /**
-     * The album of the playlist.
+     * The album name of the playlist.
+     * If no album is provided for a track and no title is provided for the playlist,
+     * this will be used as the album name.
      */
     album?: string;
     /**
-     * An URL to the artwork of the playlist.
+     * An URL to the cover image to be used for the whole playlist.\
+     * If no cover is provided for a track, this will be used as the cover of the track.
+     */
+    cover?: string;
+    /**
+     * An URL to the artwork image to be used for the whole playlist.\
+     * If no artwork is provided for a track, this will be used as the artwork of the track.
      */
     artwork?: string;
+    /**
+     * An URL to the thumbnail image to be used for the whole playlist.\
+     * If no poster is provided for a track, this will be used as the poster of the track.
+     */
+    thumbnail?: string;
+    /**
+     * Optionally, a string to prefix all track positions with.\
+     * Useful for dual-sided vinyls (A/B) or compilations (CD1/CD2).
+     */
+    prefix?: string;
+    /**
+     * Optionally, a string to suffix all track positions with.\
+     * Useful for dual-sided vinyls (A/B) or compilations (CD1/CD2).
+     */
+    suffix?: string;
     /**
      * An array of media tracks in the playlist.
      */
@@ -1067,6 +1123,10 @@ interface PlaylistState {
      * (1 -> 1 -> 1 -> 1 -> ...)
      */
     mode: "repeat" | "repeat-one";
+    /**
+     * The current media-tracks queue.
+     */
+    queue: MediaTrack[];
 }
 /**
  * Media intrinsic size in pixels.
@@ -1231,46 +1291,86 @@ declare const _default: React.MemoExoticComponent<React.ForwardRefExoticComponen
     type?: "time" | "duration" | "remaining" | undefined;
 } & React.HTMLAttributes<HTMLSpanElement> & React.RefAttributes<HTMLSpanElement>>>;
 declare namespace controls {
+    /* ┐
+    │ File: types.ts [/src/bits/controls/types.ts]
+    │ Package: @rs1/media-player | RS1 Project
+    │ Author: Andrea Corsini
+    │ Created: April 28th, 2023 - 17:47:45
+    │ Modified: May 9th, 2023 - 12:40:01
+    │
+    │ Copyright (c) 2023 Andrea Corsini T/A RS1 Project.
+    │ This work is licensed under the terms of the MIT License.
+    │ For a copy, see https://opensource.org/licenses/MIT
+    │ or the LICENSE file in the root of this project.
+    └ */
+    type ControlKey = /* Buttons */
+    "play" | "pause" | "playpause" | "backward10" | "forward10" | "previous" | "next" | "mute" | "fullscreen" | "pictureinpicture" | "shuffle" | "repeat" | "airplay" | "cast" | "playlist" | "seekbar" | "time" | "duration" | "remaining" | "title" | "artist" | "album" | "metadata" | "position" | "prefix" | "suffix" | "index" | "loading" | "stalled" | "error" | "spacer" | "empty";
+    /**
+     * The props the custom control receives.
+     */
+    type CustomControlProps = {
+        className?: string;
+        style?: React.CSSProperties;
+        [key: string]: unknown;
+    };
+    /**
+     * A control is either a key of the ControlKey type or a React component that accepts CustomControlProps.
+     */
+    type GenericControlType = ControlKey | React.ComponentType<CustomControlProps>;
+    /**
+     * A controls-group is an array of controls (either keys or components).
+     */
+    type ControlsGroupType = GenericControlType[];
+    /**
+     * A controls-row is an array of controls (either keys or components) or control-groups.
+     * This allows nesting controls in a grid-like structure.
+     */
+    type ControlsRowType = (GenericControlType | ControlsGroupType)[];
+    /**
+     * A controls-grid is an array of controls-rows or a single controls-row.
+     * Again, this allows nesting controls in a grid-like structure.
+     */
+    type ControlsGridType = ControlsRowType[] | ControlsRowType;
     /**
      * A button that shows the AirPlay picker.\
      * Note: this button works only on Safari. It won't be rendered on other browsers.
      */
-    function AirPlay(): JSX.Element | null;
+    function AirPlay(props: CustomControlProps): JSX.Element | null;
     /**
      * A text label showing the current track's album.\
      * Won't be rendered if the track has no album.
      */
-    function Album(): JSX.Element;
+    function Album(props: CustomControlProps): JSX.Element;
     /**
      * A text label showing the current track's artist.\
      * Won't be rendered if the track has no artist.
      */
-    function Artist(): JSX.Element;
+    function Artist(props: CustomControlProps): JSX.Element;
     /**
      * A button that skips backward 10 seconds.\
      * Won't be rendered if the media can't be seeked.
      */
-    function Backward10(): JSX.Element | null;
+    function Backward10(props: CustomControlProps): JSX.Element | null;
     /**
      * A text label showing the current track's duration.\
      * Will be rendered as `--:--` if the track is not loaded.
      */
-    function Duration(): JSX.Element;
+    function Duration(props: CustomControlProps): JSX.Element;
     /**
      * An icon that shows when an error occurs while loading the media.\
      * Will render an empty div if there's no error.
      */
-    function Error(): JSX.Element;
+    function Error(props: CustomControlProps): JSX.Element;
     /**
      * A button that skips forward 10 seconds.\
      * Won't be rendered if the media can't be seeked.
      */
-    function Forward10(): JSX.Element | null;
+    function Forward10(props: CustomControlProps): JSX.Element | null;
     /**
      * A button that toggles fullscreen mode.\
      * Won't be rendered if fullscreen is not supported/allowed.
      */
-    function Fullscreen(): JSX.Element | null;
+    function Fullscreen(props: CustomControlProps): JSX.Element | null;
     /**
      * An icon that shows when the media is loading.\
      * Will render an empty div if the media is already loaded.\
@@ -1278,111 +1378,138 @@ declare namespace controls {
      * It means that the player is waiting for the media-source to load, and
      * this happens only once per playlist item.
      */
-    function Loading(): JSX.Element;
+    function Loading(props: CustomControlProps): JSX.Element;
     /**
      * A text label showing the current track's metadata (title, artist, album).\
      * The metadata will be separated with the `controlsMetadataSeparator` config value (default: ` — `).\
      * Won't be rendered if the track has no metadata.
      */
-    function Metadata(): JSX.Element | null;
+    function Metadata(props: CustomControlProps): JSX.Element | null;
     /**
      * A button that toggles the mute state of the media.\
      * Won't be rendered if muting is not supported/allowed.
      */
-    function Mute(): JSX.Element | null;
+    function Mute(props: CustomControlProps): JSX.Element | null;
     /**
      * A button that skips to the next track.\
      * Won't be rendered if there's no playlist or if it has only one item.
      */
-    function Next(): JSX.Element | null;
+    function Next(props: CustomControlProps): JSX.Element | null;
     /**
      * A button that pauses the media.\
      * Won't be rendered if the media can't be paused.\
      * Will be disabled if the media is not loaded, is not playing or if there's an error.
      */
-    function Pause(): JSX.Element | null;
+    function Pause(props: CustomControlProps): JSX.Element | null;
     /**
      * A button that toggles Picture-in-Picture mode.\
      * Won't be rendered if Picture-in-Picture is not supported/allowed or if the media is not a video.
      */
-    function PictureInPicture(): JSX.Element | null;
+    function PictureInPicture(props: CustomControlProps): JSX.Element | null;
     /**
      * A button that plays the media.\
      * Will be disabled if the media is not loaded, is already playing or if there's an error.
      */
-    function Play(): JSX.Element;
+    function Play(props: CustomControlProps): JSX.Element;
     /**
      * A button that opens a dropdown menu with the playlist.\
      * Won't be rendered if the playlist is empty.
      */
-    function Playlist(): JSX.Element | null;
+    function Playlist(props: CustomControlProps): JSX.Element | null;
     /**
      * A button that plays or pauses the media.\
      * Will be disabled if the media is not loaded, if there's an error, or if the media is playing and can't be paused.\
      * Will display a loading indicator if the media is not loaded and the player is in 'controls' mode.
      */
-    function PlayPause(): JSX.Element;
+    function PlayPause(props: CustomControlProps): JSX.Element;
     /**
      * A button that skips to the previous track.\
      * Won't be rendered if there's no playlist or if it has only one item.
      */
-    function Previous(): JSX.Element | null;
+    function Previous(props: CustomControlProps): JSX.Element | null;
     /**
      * A text label showing the current track's remaining time.\
      * Will be rendered as `--:--` if the track is not loaded.\
      * Remaining time is calculated as `duration - currentTime` and is shown as a negative value.
      */
-    function Remaining(): JSX.Element;
+    function Remaining(props: CustomControlProps): JSX.Element;
     /**
      * A button that toggles the repeat mode of the playlist.\
      * Won't be rendered if the playlist can't loop.
      */
-    function Repeat(): JSX.Element | null;
+    function Repeat(props: CustomControlProps): JSX.Element | null;
     /**
      * A seekbar that allows the user to seek through the current track.\
      * Will be rendered as a simple progress bar if the track is not seekable, not loaded or has an error.\
      * The seekbar is accessible via keyboard arrows when the handle is focused.
      */
-    function SeekBar(): JSX.Element;
+    function SeekBar(props: CustomControlProps): JSX.Element;
     /**
      * A button that toggles the shuffle mode of the playlist.\
      * Won't be rendered if the playlist can't shuffle.
      */
-    function Shuffle(): JSX.Element | null;
+    function Shuffle(props: CustomControlProps): JSX.Element | null;
     /**
      * A spacer that fills any remaining space in the controls bar.\
      * Useful to push the controls to the left/right.
      */
-    function Spacer(): JSX.Element;
+    function Spacer(props: CustomControlProps): JSX.Element;
     /**
      * A loading icon that shows when the media is stalled.\
      * Will render an empty div if the media is not stalled.\
      * **Note:** `stalled` is different from `loading`, it means that the player is expecting more data from the server, but it's not receiving it.
      */
-    function Stalled(): JSX.Element;
+    function Stalled(props: CustomControlProps): JSX.Element;
     /**
      * A text label showing the current track's time.\
      * Will be rendered as `--:--` if the track is not loaded.
      */
-    function Time(): JSX.Element;
+    function Time(props: CustomControlProps): JSX.Element;
     /**
      * A text label showing the current track's title.\
      * Won't be rendered if the track has no title.
      */
-    function Title(): JSX.Element;
+    function Title(props: CustomControlProps): JSX.Element;
+    /**
+     * A text label showing the current track's position (index-like).\
+     * Won't be rendered if the track has no position.
+     */
+    function Index(props: CustomControlProps): JSX.Element;
+    /**
+     * A text label showing the current track's position (with prefix/suffix).\
+     * Won't be rendered if the track has no prefix, suffix, and position.
+     */
+    function Position(props: CustomControlProps): JSX.Element;
+    /**
+     * A text label showing the current track's prefix.\
+     * Won't be rendered if the track has no prefix.
+     */
+    function Prefix(props: CustomControlProps): JSX.Element;
+    /**
+     * A text label showing the current track's suffix.\
+     * Won't be rendered if the track has no suffix.
+     */
+    function Suffix(props: CustomControlProps): JSX.Element;
+    /**
+     * A button that shows the remote playback devices picker.\
+     * Note: this button will be rendered only if the media can be streamed to a remote device.
+     *
+     * **WARNING:** this feature is still experimental and has a buggy behaviour, especially on iOS.
+     */
+    function Cast(props: CustomControlProps): JSX.Element | null;
     /* ┐
     │ File: export.ts [/src/bits/controls/export.ts]
     │ Package: @rs1/media-player | RS1 Project
     │ Author: Andrea Corsini
     │ Created: May 4th, 2023 - 15:48:39
-    │ Modified: May 4th, 2023 - 15:50:27
+    │ Modified: May 9th, 2023 - 12:40:33
     │
     │ Copyright (c) 2023 Andrea Corsini T/A RS1 Project.
     │ This work is licensed under the terms of the MIT License.
     │ For a copy, see https://opensource.org/licenses/MIT
     │ or the LICENSE file in the root of this project.
     └ */
-    export { AirPlay as airplay, Album as album, Artist as artist, Backward10 as backward10, Duration as duration, Error as error, Forward10 as forward10, Fullscreen as fullscreen, Loading as loading, Metadata as metadata, Mute as mute, Next as next, Pause as pause, PictureInPicture as pictureinpicture, Play as play, Playlist as playlist, PlayPause as playpause, Previous as previous, Remaining as remaining, Repeat as repeat, SeekBar as seekbar, Shuffle as shuffle, Spacer as spacer, Stalled as stalled, Time as time, Title as title };
+    export { AirPlay as airplay, Album as album, Artist as artist, Backward10 as backward10, Duration as duration, Error as error, Forward10 as forward10, Fullscreen as fullscreen, Loading as loading, Metadata as metadata, Mute as mute, Next as next, Pause as pause, PictureInPicture as pictureinpicture, Play as play, Playlist as playlist, PlayPause as playpause, Previous as previous, Remaining as remaining, Repeat as repeat, SeekBar as seekbar, Shuffle as shuffle, Spacer as spacer, Stalled as stalled, Time as time, Title as title, Index as index, Position as position, Prefix as prefix, Suffix as suffix, Cast as cast };
 }
 declare const controlGroups: Record<string, ControlsGroupType>;
 declare const controlsConfig: Record<string, ControlsGridType>;
@@ -1892,6 +2019,15 @@ declare const useMediaKeyboardControls: (ref?: React.RefObject<HTMLElement>) => 
  */
 declare const usePlayerMode: () => "video" | "artwork" | "vinyl" | "controls" | "artwork-mini" | "vinyl-mini";
 /**
+ * Use this hook anywhere within a `MediaProvider` to access the player aspect-ratio currently in use.
+ * @returns The current player aspect-ratio.
+ * @example
+ * ```js
+ * const playerRatio = usePlayerRatio()
+ * ```
+ */
+declare const usePlayerRatio: () => "1:1" | "2:1" | "1:2" | "3:1" | "1:3" | "2:3" | "3:2" | "4:3" | "3:4" | "16:9" | "9:16" | "21:9" | "9:21" | "auto" | "stretch";
+/**
  * Use this hook anywhere within a `MediaProvider` to access the player controls currently in use.
  * @returns The current player controls.
  * @example
@@ -1915,7 +2051,11 @@ type MediaSessionMetadata = {
     album?: string;
     artwork?: string;
 };
-declare const setMediaSession: (media: AugmentedMediaElement | null, metadata: MediaSessionMetadata, forPlaylist: boolean) => void;
+declare const setMediaSession: (media: AugmentedMediaElement | null, metadata: MediaSessionMetadata, options: {
+    forPlaylist: boolean;
+    canSeek: boolean;
+    canPause: boolean;
+}) => void;
 /**
  * Returns the current media provider configuration anywhere within the `MediaProvider`.
  * @see {@link MediaConfig}
@@ -2157,7 +2297,7 @@ declare global {
 declare function useTraceUpdate(props: {
     [key: string]: unknown;
 }): void;
-declare const __default$10: typeof useTraceUpdate;
+declare const __default$12: typeof useTraceUpdate;
 interface UseKeepAliveAudio {
     initStream: () => void;
     playStream: () => void;
@@ -2182,5 +2322,5 @@ declare function useKeepAliveAudio(): UseKeepAliveAudio;
  * @example timeToString(3600) // '1:00:00'
  */
 declare function timeToString(seconds: number, roundTop?: boolean): string;
-export { _default as MediaPlayer, _default as BaseControlButton, _default as BaseControlText, _default as BaseControlTime, controls, configs, controlGroups, controlsConfig, themes, CombinedProvider as MediaProvider, useMediaConfig, usePlayerMode, usePlayerControls, usePlayerBackground, useMediaTheme, useTrack, usePlaylistCollection, usePlaylist, usePlaylistState, usePlaylistControls, useMediaState, useMediaTime, useMediaElement, useMediaControls, useMediaKeyboardControls, useAugmentedMediaRef, __default$10 as useAirPlayAPI, __default$10 as useFullscreenAPI, __default$10 as usePiPAPI, __default$10 as useAutoRevertToggle, __default$10 as useDetectInteraction, __default$10 as useDoubleTap, __default$10 as useSlider, useBreakpoint, extendBreakpoints, baseBreakpoints, useKeepAliveAudio, setMediaSession, timeToString };
-export type { BaseButtonProps, BaseTextProps, BaseTimeProps, MediaConfig, MediaPlaybackRate, MediaTheme, MediaType, MediaTrack, RawMediaTrack, PlaylistState, PlaylistControls, MediaSize, MediaState, MediaTimeState, MediaControls, Breakpoint, BreakpointSizes, CustomBreakpoints };
+export { _default as MediaPlayer, _default as BaseControlButton, _default as BaseControlTag, _default as BaseControlText, _default as BaseControlTime, controls, configs, controlGroups, controlsConfig, themes, CombinedProvider as MediaProvider, useMediaConfig, usePlayerMode, usePlayerRatio, usePlayerControls, usePlayerBackground, useMediaTheme, useTrack, usePlaylistCollection, usePlaylist, usePlaylistState, usePlaylistControls, useMediaState, useMediaTime, useMediaElement, useMediaControls, useMediaKeyboardControls, useAugmentedMediaRef, __default$12 as useAirPlayAPI, __default$12 as useRemotePlaybackAPI, __default$12 as useFullscreenAPI, __default$12 as usePiPAPI, __default$12 as useAutoRevertToggle, __default$12 as useDetectInteraction, __default$12 as useDoubleTap, __default$12 as useSlider, useBreakpoint, extendBreakpoints, baseBreakpoints, useKeepAliveAudio, setMediaSession, timeToString };
+export type { BaseButtonProps, BaseTagProps, BaseTextProps, BaseTimeProps, MediaConfig, MediaPlaybackRate, MediaTheme, MediaType, MediaTrack, RawMediaTrack, PlaylistState, PlaylistControls, MediaSize, MediaState, MediaTimeState, MediaControls, Breakpoint, BreakpointSizes, CustomBreakpoints };

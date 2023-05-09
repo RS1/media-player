@@ -3,7 +3,7 @@
    │ Package: @rs1/media-player | RS1 Project
    │ Author: Andrea Corsini
    │ Created: April 24th, 2023 - 10:12:32
-   │ Modified: May 5th, 2023 - 14:49:24
+   │ Modified: May 9th, 2023 - 14:23:32
    │ 
    │ Copyright (c) 2023 Andrea Corsini T/A RS1 Project.
    │ This work is licensed under the terms of the MIT License.
@@ -80,6 +80,7 @@ const base: MediaConfig = {
     canFullscreen: true,
     canPictureInPicture: true,
     canAirPlay: true,
+    canRemotePlay: true,
     canTapToPause: true,
     canDoubleTapToSeek: true,
 }

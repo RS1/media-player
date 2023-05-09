@@ -3,7 +3,7 @@
    │ Package: @rs1/media-player | RS1 Project
    │ Author: Andrea Corsini
    │ Created: April 28th, 2023 - 17:44:35
-   │ Modified: May 6th, 2023 - 20:53:42
+   │ Modified: May 9th, 2023 - 14:42:22
    │ 
    │ Copyright (c) 2023 Andrea Corsini T/A RS1 Project.
    │ This work is licensed under the terms of the MIT License.
@@ -43,7 +43,9 @@ export type WithBreakpoint<T> =
  */
 export interface MediaConfig {
     /**
-     * The aspect ratio of the player.
+     * The aspect ratio of the player.\
+     * It can be specified for each media type by using an array of tuples. (Format: `[[mediaType1, ratio1], [mediaType2, ratio2]]`)\
+     * It can be specified for each breakpoint by using a map. (Format: `{ [breakpoint1]: ratio1, [breakpoint2]: ratio2 }` or `{ [breakpoint1]: [[mediaType1, ratio1], [mediaType2, ratio2]], [breakpoint2]: [[mediaType1, ratio1], [mediaType2, ratio2]] }`)\
      *
      * **Note:** Only `auto` and `stretch` are valid aspect ratios if the player mode is not `video`.
      * ```js
@@ -70,7 +72,7 @@ export interface MediaConfig {
      * ```
      * @default 'auto'
      */
-    aspectRatio: AspectRatio
+    aspectRatio: WithBreakpoint<WithMediaType<AspectRatio>>
     /**
      * The display mode of the player.\
      * It can be specified for each media type by using an array of tuples. (Format: `[[mediaType1, mode1], [mediaType2, mode2]]`)
@@ -112,7 +114,8 @@ export interface MediaConfig {
     >
     /**
      * The background of the player.\
-     * It can be specified for each breakpoint by using a map. (Format: `{ [breakpoint1]: bg1, [breakpoint2]: bg1 }`)
+     * It can be specified for each media type by using an array of tuples. (Format: `[[mediaType1, bg1], [mediaType2, bg2]]`)\
+     * It can be specified for each breakpoint by using a map. (Format: `{ [breakpoint1]: bg1, [breakpoint2]: bg1 }` or `{ [breakpoint1]: [[mediaType1, bg1], [mediaType2, bg2]], [breakpoint2]: [[mediaType1, bg1], [mediaType2, bg2]] }`)\
      *
      * Supported backgrounds:
      * - `none`: no background (default)
@@ -129,7 +132,7 @@ export interface MediaConfig {
      * ```
      * @default 'none'
      */
-    playerBackground: WithBreakpoint<'none' | 'flat' | 'blur'>
+    playerBackground: WithBreakpoint<WithMediaType<'none' | 'flat' | 'blur'>>
     /**
      * A map of breakpoints to use for the player.\
      * The map is in the form of `{ [breakpointName]: minWindowWith }`.\
@@ -368,6 +371,11 @@ export interface MediaConfig {
      * @default true
      */
     canAirPlay: boolean
+    /**
+     * Whether the player can stream to remote devices via the UI/keyboard.
+     * @default true
+     */
+    canRemotePlay: boolean
     /**
      * Whether the user should be able to tap/click on the player to toggle play/pause.
      * - For `vinyl`/`artwork` mode this means tapping on the artwork.
@@ -725,30 +733,36 @@ export interface MediaTrack {
      */
     album?: string
     /**
-     * An URL to the cover of the media track.\
-     * It will be used as the cover of the track in the `artwork`/`vinyl` mode.
+     * An URL to the cover image of the media track.\
+     * It will be used as the cover of the track in the `artwork`/`vinyl` player mode.
      */
     cover?: string
     /**
-     * An URL to the artwork of the media track.\
+     * An URL to the artwork image of the media track.\
      * It will be used in the MediaSession API (Native media controls).\
-     * It will serve as a fallback cover for the `artwork`/`vinyl` mode.
+     * It will serve as a fallback cover image for the `artwork`/`vinyl` player mode.
      */
     artwork?: string
     /**
-     * An URL to the poster of the media track.\
-     * It will be used as the poster of the media player.\
-     * It will serve as a fallback artwork for the MediaSession API.
+     * An URL to the thumbnail image of the media track.\
+     * It will be used as the preview thumbnail in the `video` player mode.\
+     * It will serve as a fallback artwork image for the MediaSession API.\
+     * It will serve as a fallback cover image for the `artwork`/`vinyl` player mode.
      */
-    poster?: string
+    thumbnail?: string
     /**
-     * Optionally, a string representing the track side.\
-     * Useful for dual-sided vinyls. (A/B)
+     * Optionally, a string to prefix the track position with.\
+     * Useful for dual-sided vinyls (A/B) or compilations (CD1/CD2).
      */
-    side?: string
+    prefix?: string
     /**
-     * Optionally, a string or number representing the track position.\
-     * Useful for tracklists. (1, 2, 3, ...)
+     * Optionally, a string to suffix the track position with.\
+     * Useful for dual-sided vinyls (A/B) or compilations (CD1/CD2).
+     */
+    suffix?: string
+    /**
+     * Optionally, a string or number representing the track position in the playlist/album.\
+     * Useful for tracklists and albums. (1, 2, 3, ...)
      */
     position?: string | number
     /**
@@ -775,21 +789,46 @@ export interface MediaPlaylist {
      */
     id: string
     /**
-     * The title of the playlist.
+     * The title of the whole playlist.\
+     * If no album is provided for a track, this will be used as the album name.
      */
     title?: string
     /**
-     * The artist of the playlist.
+     * The artist of the whole playlist.\
+     * If no artist is provided for a track, this will be used as the artist name.
      */
     artist?: string
     /**
-     * The album of the playlist.
+     * The album name of the playlist.
+     * If no album is provided for a track and no title is provided for the playlist,
+     * this will be used as the album name.
      */
     album?: string
     /**
-     * An URL to the artwork of the playlist.
+     * An URL to the cover image to be used for the whole playlist.\
+     * If no cover is provided for a track, this will be used as the cover of the track.
+     */
+    cover?: string
+    /**
+     * An URL to the artwork image to be used for the whole playlist.\
+     * If no artwork is provided for a track, this will be used as the artwork of the track.
      */
     artwork?: string
+    /**
+     * An URL to the thumbnail image to be used for the whole playlist.\
+     * If no poster is provided for a track, this will be used as the poster of the track.
+     */
+    thumbnail?: string
+    /**
+     * Optionally, a string to prefix all track positions with.\
+     * Useful for dual-sided vinyls (A/B) or compilations (CD1/CD2).
+     */
+    prefix?: string
+    /**
+     * Optionally, a string to suffix all track positions with.\
+     * Useful for dual-sided vinyls (A/B) or compilations (CD1/CD2).
+     */
+    suffix?: string
     /**
      * An array of media tracks in the playlist.
      */
@@ -975,6 +1014,10 @@ export interface PlaylistState {
      * (1 -> 1 -> 1 -> 1 -> ...)
      */
     mode: 'repeat' | 'repeat-one'
+    /**
+     * The current media-tracks queue.
+     */
+    queue: MediaTrack[]
 }
 
 /**

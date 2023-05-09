@@ -3,7 +3,7 @@
    │ Package: @rs1/media-player | RS1 Project
    │ Author: Andrea Corsini
    │ Created: January 6th, 2021 - 12:29:42
-   │ Modified: May 6th, 2023 - 15:39:29
+   │ Modified: May 9th, 2023 - 14:56:15
    │ 
    │ Copyright (c) 2021 - 2023 Andrea Corsini T/A RS1 Project.
    │ This work is licensed under the terms of the MIT License.
@@ -15,6 +15,8 @@
 export { default as MediaPlayer } from '@/bits'
 export { default as BaseControlButton } from '@bits/controls/base-button'
 export type { BaseButtonProps } from '@bits/controls/base-button'
+export { default as BaseControlTag } from '@bits/controls/base-tag'
+export type { BaseTagProps } from '@bits/controls/base-tag'
 export { default as BaseControlText } from '@bits/controls/base-text'
 export type { BaseTextProps } from '@bits/controls/base-text'
 export { default as BaseControlTime } from '@bits/controls/base-time'
@@ -48,6 +50,7 @@ export { CombinedProvider as MediaProvider } from '@media/providers/combined'
 // MediaConfig
 export { useMediaConfig } from '@media/hooks/use-media-config'
 export { usePlayerMode } from '@media/hooks/use-player-mode'
+export { usePlayerRatio } from '@media/hooks/use-player-ratio'
 export { usePlayerControls } from '@media/hooks/use-player-controls'
 export { usePlayerBackground } from '@media/hooks/use-player-background'
 // MediaTheme
@@ -74,6 +77,7 @@ export type { Breakpoint, BreakpointSizes, CustomBreakpoints } from '@/hooks'
 export {
     // API Wrappers
     useAirPlayAPI,
+    useRemotePlaybackAPI,
     useFullscreenAPI,
     usePiPAPI,
     // State

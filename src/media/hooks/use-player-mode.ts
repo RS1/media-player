@@ -3,7 +3,7 @@
    │ Package: @rs1/media-player | RS1 Project
    │ Author: Andrea Corsini
    │ Created: May 2nd, 2023 - 10:09:12
-   │ Modified: May 5th, 2023 - 12:25:38
+   │ Modified: May 9th, 2023 - 14:50:30
    │ 
    │ Copyright (c) 2023 Andrea Corsini T/A RS1 Project.
    │ This work is licensed under the terms of the MIT License.
@@ -12,9 +12,7 @@
    └ */
 import { useMemo } from 'react'
 
-// import { MediaPlayerMode } from '@media/types'
-import { Breakpoint, useBreakpoint } from '@/hooks'
-
+import { useConfigProperty } from './use-config-property'
 import { useMediaConfig } from './use-media-config'
 import { useTrack } from './use-track'
 
@@ -35,32 +33,18 @@ const existingModes = ['auto', 'video', 'artwork', 'vinyl', 'controls', 'artwork
  * ```
  */
 export const usePlayerMode = () => {
-    const { playerMode, breakpoints } = useMediaConfig()
-    const neededBreakpoints =
-        typeof playerMode === 'object' && !Array.isArray(playerMode) ? (Object.keys(playerMode) as Breakpoint[]) : []
-
-    const breakpoint = useBreakpoint(breakpoints, neededBreakpoints)
     const [track] = useTrack()
-    const _playerMode = useMemo(() => {
-        const baseMode = playerMode ?? 'auto'
-        const breakpointMode =
-            typeof baseMode === 'object' && !Array.isArray(baseMode)
-                ? breakpoint
-                    ? baseMode[breakpoint]
-                    : Object.values(baseMode)[0]
-                : baseMode
-        const mediaTypeMode = Array.isArray(breakpointMode)
-            ? breakpointMode.find(m => Array.isArray(m) && m[0] === track?.type)?.[1]
-            : breakpointMode
-        const mode = mediaTypeMode ?? 'auto'
+    const { playerMode } = useMediaConfig()
+    const mode = useConfigProperty(playerMode, 'auto')
 
+    const _playerMode = useMemo(() => {
         if (mode === 'auto') {
             if (track?.type === 'video') return 'video'
             if (track?.type === 'audio') return 'artwork'
         } else if (existingModes.includes(mode)) return mode
 
         return 'artwork'
-    }, [playerMode, track, breakpoint])
+    }, [mode, track?.type])
 
     return _playerMode
 }

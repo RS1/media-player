@@ -3,7 +3,7 @@
    │ Package: @rs1/media-player | RS1 Project
    │ Author: Andrea Corsini
    │ Created: April 27th, 2023 - 12:10:24
-   │ Modified: April 27th, 2023 - 12:22:32
+   │ Modified: May 9th, 2023 - 9:31:11
    │ 
    │ Copyright (c) 2023 Andrea Corsini T/A RS1 Project.
    │ This work is licensed under the terms of the MIT License.
@@ -18,6 +18,16 @@
  */
 export function padZero(value: number): string {
     return `${value < 10 ? '0' : ''}${value}`
+}
+
+/**
+ * Capitalize the first letter of a string
+ * @param {string} str the string to capitalize
+ * @returns {string} the capitalized string
+ */
+export function capitalize(str: string): string {
+    if (typeof str !== 'string') return ''
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase()
 }
 
 /**

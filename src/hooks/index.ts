@@ -3,7 +3,7 @@
    │ Package: @rs1/media-player | RS1 Project
    │ Author: Andrea Corsini
    │ Created: April 27th, 2023 - 11:04:41
-   │ Modified: May 5th, 2023 - 10:41:27
+   │ Modified: May 9th, 2023 - 14:00:29
    │ 
    │ Copyright (c) 2023 Andrea Corsini T/A RS1 Project.
    │ This work is licensed under the terms of the MIT License.
@@ -21,6 +21,7 @@ export { default as useAutoRevertToggle } from './use-auto-revert-toggle'
 export { default as useForwardedRef } from './use-forwarded-ref'
 
 // UI interactions
+export { default as useClickAway } from './use-click-away'
 export { default as useDetectInteraction } from './use-detect-interaction'
 export { default as useDoubleTap } from './use-double-tap'
 export { default as useSlider } from './use-slider'
@@ -33,6 +34,7 @@ export { useBreakpoint, extendBreakpoints, baseBreakpoints } from './use-breakpo
 export { default as useFullscreenAPI } from './use-fullscreen-api'
 export { default as usePiPAPI } from './use-pip-api'
 export { default as useAirPlayAPI } from './use-airplay-api'
+export { default as useRemotePlaybackAPI } from './use-remote-playback-api'
 
 // Debug
 export { default as useTraceUpdate } from './use-trace-update'

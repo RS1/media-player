@@ -3,7 +3,7 @@
    │ Package: @rs1/media-player | RS1 Project
    │ Author: Andrea Corsini
    │ Created: May 3rd, 2023 - 9:23:06
-   │ Modified: May 6th, 2023 - 14:58:18
+   │ Modified: May 9th, 2023 - 14:25:28
    │ 
    │ Copyright (c) 2023 Andrea Corsini T/A RS1 Project.
    │ This work is licensed under the terms of the MIT License.
@@ -13,13 +13,17 @@
 import clsx from 'clsx'
 import React, { useCallback, useMemo } from 'react'
 
-import { useMediaTheme, usePlaylist, useTrack, usePlayerMode } from '@/media'
+import { useMediaTheme, usePlaylist, useTrack, usePlayerMode, useMediaElement } from '@/media'
+
+import useClickAway from '@hooks/use-click-away'
 
 import { colorStringToRGBA } from '@utils/color'
 
 import svgPlaylist from '@icons/playlist.svg'
 
 import ControlButton from './base-button'
+import BaseTag from './base-tag'
+import { CustomControlProps } from './types'
 
 type DropdownRect = {
     bottom: number
@@ -27,6 +31,7 @@ type DropdownRect = {
     width: number
     height: number
     origin: 'left' | 'right'
+    small: boolean
     open: boolean
 }
 
@@ -34,8 +39,10 @@ type DropdownRect = {
  * A button that opens a dropdown menu with the playlist.\
  * Won't be rendered if the playlist is empty.
  */
-export default function Playlist() {
+export default function Playlist(props: CustomControlProps) {
     const buttonRef = React.useRef<HTMLButtonElement>(null)
+    const dropdownRef = React.useRef<HTMLDivElement>(null)
+    const { container } = useMediaElement()
     const [dropdownRect, setDropdownRect] = React.useState<DropdownRect | false>(false)
 
     const [track, setTrack] = useTrack()
@@ -61,7 +68,7 @@ export default function Playlist() {
                 typeof bgColor === 'string' ? bgColor : `rgba(${bgColor.r}, ${bgColor.g}, ${bgColor.b}, 0.9)`,
             bottom: dropdownRect === false ? 0 : dropdownRect.bottom,
             left: dropdownRect === false ? 0 : dropdownRect.left,
-            width: dropdownRect === false ? 0 : 'max-content',
+            width: dropdownRect === false ? 0 : dropdownRect.small ? dropdownRect.width : 'max-content',
             maxWidth: dropdownRect === false ? 0 : dropdownRect.width,
             maxHeight: dropdownRect === false ? 0 : dropdownRect.height,
         }
@@ -71,12 +78,18 @@ export default function Playlist() {
         (open?: boolean | React.MouseEvent) => {
             const _open = typeof open === 'boolean' ? open : undefined
             function updateDropwdonwRect(): Omit<DropdownRect, 'open'> {
-                const base: Omit<DropdownRect, 'open'> = { bottom: 0, left: 0, width: 196, height: 384, origin: 'left' }
+                const base: Omit<DropdownRect, 'open'> = {
+                    bottom: 0,
+                    left: 0,
+                    width: 256,
+                    height: 384,
+                    origin: 'left',
+                    small: false,
+                }
 
                 if (!buttonRef.current) return base
                 const buttonRect = buttonRef.current.getBoundingClientRect()
-                const playerRect = document.querySelector('#rmp-player')?.getBoundingClientRect()
-
+                const playerRect = container?.getBoundingClientRect()
                 if (!playerRect) return base
 
                 const isButtonLeft = buttonRect.left < playerRect.left + playerRect.width / 2
@@ -102,6 +115,12 @@ export default function Playlist() {
                     left = isButtonLeft ? 0 : 0 - width
                     bottom = buttonRect.height + 12
                 }
+
+                const isSmall = width < base.width
+                if (isSmall) {
+                    width = playerRect.width - 32
+                    left = playerRect.left - buttonRect.left + 16
+                }
                 // const top = isMiniPlayer ? playerRect.top - buttonRect.top + 16 : 0 - height - 12
 
                 const origin = isButtonLeft ? 'left' : 'right'
@@ -112,6 +131,7 @@ export default function Playlist() {
                     width,
                     height,
                     origin,
+                    small: isSmall,
                 }
             }
 
@@ -123,13 +143,32 @@ export default function Playlist() {
                     : { ...(d || updateDropwdonwRect()), open: false }
             })
         },
-        [isMiniPlayer],
+        [isMiniPlayer, container],
     )
+
+    const closeDropdown = useCallback(() => toggleDropdown(false), [toggleDropdown])
+
+    useClickAway(dropdownRef, closeDropdown)
 
     if (!playlist || playlist.tracks.length <= 1) return null
 
     return (
-        <div id='rmp-controls-playlist-group' className='relative w-auto h-auto flex'>
+        <div
+            {...props}
+            ref={dropdownRef}
+            id='rmp-controls-playlist-group'
+            className={clsx('relative w-auto h-auto flex', props.className)}
+        >
+            <ControlButton
+                ref={buttonRef}
+                id='rmp-controls-playlist'
+                controlKey='playlist'
+                size='sm'
+                aria-label='Choose a track from the playlist'
+                icon={svgPlaylist}
+                onClick={toggleDropdown}
+                active={dropdownRect !== false && dropdownRect.open}
+            />
             <ul
                 id='rmp-controls-playlist-dropdown'
                 className={clsx(
@@ -149,35 +188,32 @@ export default function Playlist() {
                     },
                 )}
                 aria-hidden={dropdownRect === false || !dropdownRect.open}
+                aria-expanded={dropdownRect !== false && dropdownRect.open}
                 aria-labelledby='rmp-controls-playlist'
                 style={bgStyle}
             >
                 {playlist.tracks.map(t => (
-                    <li key={t.id} style={dividerStyle}>
+                    <li key={t.id} style={dividerStyle} className={clsx(track?.id === t.id && 'bg-controls-bg')}>
                         <button
-                            className='flex flex-col items-stretch w-full py-2 px-4 text-left'
+                            className='flex items-start justify-start w-full py-2 px-4 text-left'
                             onClick={() => {
                                 setTrack(t)
                                 toggleDropdown(false)
                             }}
                         >
-                            <span className={clsx('text-sm', track?.id === t.id && 'font-bold')}>{`${t.side ?? ''}${
-                                t.position ?? t.index + 1
-                            }. ${t.title}`}</span>
-                            <span className='text-xs opacity-50'>{t.artist}</span>
+                            <BaseTag
+                                controlKey='position'
+                                className={clsx(track?.id !== t.id && 'opacity-50', 'mt-1 mr-2')}
+                                text={`${track?.prefix || ''}${track?.position || ''}${track?.suffix || ''}`}
+                            />
+                            <span className={clsx(track?.id === t.id && 'font-bold', 'text-sm')}>
+                                {t.title}
+                                <span className='block text-xs opacity-50 font-normal'>{t.artist}</span>
+                            </span>
                         </button>
                     </li>
                 ))}
             </ul>
-            <ControlButton
-                ref={buttonRef}
-                id='rmp-controls-playlist'
-                controlKey='playlist'
-                size='sm'
-                aria-label='Choose a track from the playlist'
-                icon={svgPlaylist}
-                onClick={toggleDropdown}
-            />
         </div>
     )
 }
