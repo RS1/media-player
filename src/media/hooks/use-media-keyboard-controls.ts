@@ -3,7 +3,7 @@
    │ Package: @rs1/media-player | RS1 Project
    │ Author: Andrea Corsini
    │ Created: April 21st, 2023 - 10:21:21
-   │ Modified: May 4th, 2023 - 12:41:18
+   │ Modified: June 16th, 2023 - 11:23:58
    │ 
    │ Copyright (c) 2023 Andrea Corsini T/A RS1 Project.
    │ This work is licensed under the terms of the MIT License.
@@ -55,6 +55,8 @@ export const useMediaKeyboardControls = (ref?: React.RefObject<HTMLElement>) => 
             // Ignore keypresses when the user is typing in an input field
             // https://developer.mozilla.org/en-US/docs/Web/API/Element/keydown_event
             if (e.isComposing || e.keyCode === 229) return
+            // Ignore keypresses when cmd, ctrl, alt, or shift are pressed
+            if (e.metaKey || e.ctrlKey || e.altKey || e.shiftKey) return
             switch (e.key) {
                 case ' ':
                     if (config.canPause) {
