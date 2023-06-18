@@ -3,7 +3,7 @@
    │ Package: @rs1/media-player | RS1 Project
    │ Author: Andrea Corsini
    │ Created: April 20th, 2023 - 15:30:29
-   │ Modified: May 9th, 2023 - 10:03:12
+   │ Modified: June 18th, 2023 - 14:20:15
    │ 
    │ Copyright (c) 2023 Andrea Corsini T/A RS1 Project.
    │ This work is licensed under the terms of the MIT License.
@@ -34,7 +34,7 @@ function MediaVinyl() {
             {track?.cover && (
                 <img
                     id='rmp-media-vinyl-artwork'
-                    src={track.artwork}
+                    src={track.cover}
                     alt={
                         [track.title, track.artist, track.album].filter(Boolean).join(' - ') ||
                         'Playing media vinyl artwork'
