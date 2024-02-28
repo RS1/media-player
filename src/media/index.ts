@@ -45,6 +45,7 @@ export { usePlaylistState } from './hooks/use-playlist-state'
 export { usePlaylistControls } from './hooks/use-playlist-controls'
 
 // State hooks
+export { useMediaStateUpdater } from './hooks/use-media-state-updater'
 export { useMediaState } from './hooks/use-media-state'
 
 // Time hooks

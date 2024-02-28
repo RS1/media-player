@@ -11,9 +11,9 @@
    │ or the LICENSE file in the root of this project.
    └ */
 import clsx from 'clsx'
-import React from 'react'
+import React, { useEffect } from 'react'
 
-import { usePlayerMode, useMediaConfig, useMediaElement, useMediaState } from '@/media'
+import { usePlayerMode, useMediaConfig, useMediaElement, useMediaState, useMediaStateUpdater } from '@/media'
 
 import useDetectInteraction from '@hooks/use-detect-interaction'
 
@@ -25,6 +25,7 @@ import LoadingLayer from './loading-layer'
 function MediaLayerStack() {
     const controlsLayer = React.useRef<HTMLDivElement>(null)
     const { autoHideControls } = useMediaConfig()
+    const updateState = useMediaStateUpdater()
     const { isPictureInPicture, isPlaying, isWaiting } = useMediaState()
     const playerMode = usePlayerMode()
     const { container } = useMediaElement()
@@ -37,6 +38,10 @@ function MediaLayerStack() {
 
     const isMiniPlayer = playerMode === 'artwork-mini' || playerMode === 'vinyl-mini'
     const inImmersiveMode = isPlaying && !isWaiting && (!isInteracting || !autoHideControls) && !isPictureInPicture
+
+    useEffect(() => {
+        updateState({ isImmersive: inImmersiveMode })
+    }, [inImmersiveMode, updateState])
 
     if (isPictureInPicture || playerMode === 'controls') return null
 

@@ -30,6 +30,7 @@ const initialState: MediaState = {
     isMuted: false,
     isFullscreen: false,
     isPictureInPicture: false,
+    isImmersive: false,
 
     isAirPlay: false,
 

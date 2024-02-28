@@ -16,6 +16,7 @@ export { useMediaElement } from './use-media-element'
 
 export { useMediaConfig } from './use-media-config'
 export { useMediaControls } from './use-media-controls'
+export { useMediaStateUpdater } from './use-media-state-updater'
 export { useMediaState } from './use-media-state'
 export { useMediaTime } from './use-media-time'
 export { useMediaTheme } from './use-media-theme'

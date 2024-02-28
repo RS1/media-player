@@ -1087,6 +1087,12 @@ export interface MediaState {
      * @default false
      */
     isAirPlay: boolean
+    /**
+     * Whether the media player is currently in immersive mode
+     * (playing a media, with last user interaction more than 5 seconds ago).
+     * @default false
+     */
+    isImmersive: boolean
 
     /**
      * Whether the media has encountered an error, and if so, the error message.
