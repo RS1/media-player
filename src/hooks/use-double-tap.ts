@@ -26,7 +26,7 @@ function useDoubleTap({
     onSingleTap?: () => void
     delay?: number
 }) {
-    const timeout = useRef<number | null>(null)
+    const timeout = useRef<NodeJS.Timeout | null>(null)
     const clickCount = useRef<number>(0)
 
     const handleTap = useCallback(() => {
@@ -38,7 +38,7 @@ function useDoubleTap({
             onDoubleTap()
         } else if (clickCount.current === 1) {
             timeout.current && clearTimeout(timeout.current)
-            timeout.current = window.setTimeout(() => {
+            timeout.current = setTimeout(() => {
                 timeout.current = null
                 clickCount.current = 0
                 onSingleTap?.()

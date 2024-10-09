@@ -1,6 +1,6 @@
 {
     "name": "@rs1/media-player",
-    "version": "2.0.8",
+    "version": "2.0.9",
     "keywords": [
         "react",
         "media",
@@ -38,8 +38,8 @@
     },
     "browserslist": "> 0.5%, last 2 versions, Firefox ESR, not dead",
     "peerDependencies": {
-        "react": "^16.8.0 || ^17.0.0 || ^18.0.0",
-        "react-dom": "^16.8.0 || ^17.0.0 || ^18.0.0"
+        "react": "^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0",
+        "react-dom": "^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0"
     },
     "devDependencies": {
         "@babel/core": "^7.21.4",

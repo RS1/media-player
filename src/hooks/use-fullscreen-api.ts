@@ -91,17 +91,18 @@ interface FullscreenAPI {
 
 type APISet = 'mdn' | 'webkit' | 'webkit-old' | 'firefox' | 'explorer'
 
-const document = window.document as FullscreenAPIDocument
+const document = window?.document as FullscreenAPIDocument | undefined
 
 const currentAPI = ((): APISet => {
-    if ('fullscreenEnabled' in document) return 'mdn'
-    if ('webkitFullscreenEnabled' in document) return 'webkit'
-    if ('webkitIsFullScreen' in document) return 'webkit-old'
-    if ('mozFullScreenEnabled' in document) return 'firefox'
-    if ('msFullscreenEnabled' in document) return 'explorer'
+    if (document && 'fullscreenEnabled' in document) return 'mdn'
+    if (document && 'webkitFullscreenEnabled' in document) return 'webkit'
+    if (document && 'webkitIsFullScreen' in document) return 'webkit-old'
+    if (document && 'mozFullScreenEnabled' in document) return 'firefox'
+    if (document && 'msFullscreenEnabled' in document) return 'explorer'
     return 'mdn'
 })()
 export const isFullscreenEnabled = (() => {
+    if (!document) return false
     switch (currentAPI) {
         case 'mdn':
             return document.fullscreenEnabled
@@ -148,6 +149,7 @@ const onFullscreenErrorEvent = (() => {
 
 function getFullscreenElement(): HTMLElement | null {
     let element: HTMLElement | null = null
+    if (!document) return element
     if (currentAPI === 'mdn') {
         element = document.fullscreenElement
     } else if (currentAPI === 'webkit') {
@@ -186,6 +188,7 @@ async function requestFullscreen(element: HTMLElement | null, fallback: HTMLMedi
 }
 
 async function exitFullscreen() {
+    if (!document) return
     if (currentAPI === 'mdn') {
         return document.exitFullscreen()
     } else if (currentAPI === 'webkit') {
@@ -227,12 +230,12 @@ function useFullscreenAPI() {
             setActive(element !== null)
         }
 
-        document.addEventListener(onFullscreenEvent, setFSActive)
-        document.addEventListener(onFullscreenErrorEvent, setFSActive)
+        document?.addEventListener(onFullscreenEvent, setFSActive)
+        document?.addEventListener(onFullscreenErrorEvent, setFSActive)
 
         return () => {
-            document.removeEventListener(onFullscreenEvent, setFSActive)
-            document.removeEventListener(onFullscreenErrorEvent, setFSActive)
+            document?.removeEventListener(onFullscreenEvent, setFSActive)
+            document?.removeEventListener(onFullscreenErrorEvent, setFSActive)
         }
     }, [])
 

@@ -34,14 +34,14 @@ function useAutoRevertToggle<T>(
         _timeout = timeout ?? 300
     }
 
-    const timer = useRef<number | undefined>(undefined)
+    const timer = useRef<NodeJS.Timeout | undefined>(undefined)
     const [value, setValue] = useState<T | boolean>(_initialValue)
 
     const toggle = useCallback(
         debounce((v?: T) => {
             setValue(v ?? !_initialValue)
             clearTimeout(timer.current)
-            timer.current = window.setTimeout(() => {
+            timer.current = setTimeout(() => {
                 setValue(_initialValue)
                 timer.current = undefined
             }, _timeout)

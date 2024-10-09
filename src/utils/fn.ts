@@ -37,11 +37,11 @@ export function throttle<T extends unknown[]>(callback: (...args: T) => void, de
  * @returns {(...args: T) => void} a debounced version of `callback` that can be called only after `delay` milliseconds have passed since the last call
  */
 export function debounce<T extends unknown[]>(callback: (...args: T) => void, delay = 250): (...args: T) => void {
-    let timeout: number | undefined = undefined
+    let timeout: NodeJS.Timeout | undefined = undefined
 
     return function (...args) {
         clearTimeout(timeout)
-        timeout = window.setTimeout(() => {
+        timeout = setTimeout(() => {
             callback(...args)
         }, delay)
     }
