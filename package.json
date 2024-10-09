@@ -24,7 +24,10 @@
     "author": "RS1 Project",
     "license": "MIT",
     "homepage": "https://rs1.github.io/media-player/",
-    "repository": "https://github.com/RS1/media-player",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/RS1/media-player.git"
+    },
     "main": "dist/index.js",
     "module": "dist/index.es.js",
     "types": "dist/index.d.ts",
