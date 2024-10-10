@@ -4,6 +4,13 @@ declare const _default: React.ForwardRefExoticComponent<{
     style?: React.CSSProperties | undefined;
     className?: string | undefined;
 } & React.HTMLAttributes<HTMLDivElement> & React.RefAttributes<HTMLDivElement>>;
+/**
+ * This component is responsible for rendering the media element
+ * composing the media components together.
+ * We do so to separate the rendering loop between `MediaWrapper`,
+ * `MediaElement` and `MediaSource` to avoid unnecessary re-renders.
+ */
+declare function Media(): JSX.Element;
 /* ┐
 │ File: types.ts [/src/bits/controls/types.ts]
 │ Package: @rs1/media-player | RS1 Project
@@ -2328,5 +2335,5 @@ declare function useKeepAliveAudio(): UseKeepAliveAudio;
  * @example timeToString(3600) // '1:00:00'
  */
 declare function timeToString(seconds: number, roundTop?: boolean): string;
-export { _default as MediaPlayer, _default as BaseControlButton, _default as BaseControlTag, _default as BaseControlText, _default as BaseControlTime, controls, configs, controlGroups, controlsConfig, themes, CombinedProvider as MediaProvider, useMediaConfig, usePlayerMode, usePlayerRatio, usePlayerControls, usePlayerBackground, useMediaTheme, useTrack, usePlaylistCollection, usePlaylist, usePlaylistState, usePlaylistControls, useMediaState, useMediaTime, useMediaElement, useMediaControls, useMediaKeyboardControls, useAugmentedMediaRef, __default$12 as useAirPlayAPI, __default$12 as useRemotePlaybackAPI, __default$12 as useFullscreenAPI, __default$12 as usePiPAPI, __default$12 as useAutoRevertToggle, __default$12 as useDetectInteraction, __default$12 as useDoubleTap, __default$12 as useSlider, useBreakpoint, extendBreakpoints, baseBreakpoints, useKeepAliveAudio, setMediaSession, timeToString };
+export { _default as MediaPlayer, _default as BaseControlButton, _default as BaseControlTag, _default as BaseControlText, _default as BaseControlTime, Media as MediaElement, controls, configs, controlGroups, controlsConfig, themes, CombinedProvider as MediaProvider, useMediaConfig, usePlayerMode, usePlayerRatio, usePlayerControls, usePlayerBackground, useMediaTheme, useTrack, usePlaylistCollection, usePlaylist, usePlaylistState, usePlaylistControls, useMediaState, useMediaTime, useMediaElement, useMediaControls, useMediaKeyboardControls, useAugmentedMediaRef, __default$12 as useAirPlayAPI, __default$12 as useRemotePlaybackAPI, __default$12 as useFullscreenAPI, __default$12 as usePiPAPI, __default$12 as useAutoRevertToggle, __default$12 as useDetectInteraction, __default$12 as useDoubleTap, __default$12 as useSlider, useBreakpoint, extendBreakpoints, baseBreakpoints, useKeepAliveAudio, setMediaSession, timeToString };
 export type { BaseButtonProps, BaseTagProps, BaseTextProps, BaseTimeProps, MediaConfig, MediaPlaybackRate, MediaTheme, MediaType, MediaTrack, RawMediaTrack, PlaylistState, PlaylistControls, MediaSize, MediaState, MediaTimeState, MediaControls, Breakpoint, BreakpointSizes, CustomBreakpoints };

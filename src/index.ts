@@ -13,6 +13,7 @@
 
 // Components
 export { default as MediaPlayer } from '@/bits'
+export { default as MediaElement } from '@/bits/media'
 export { default as BaseControlButton } from '@bits/controls/base-button'
 export type { BaseButtonProps } from '@bits/controls/base-button'
 export { default as BaseControlTag } from '@bits/controls/base-tag'
