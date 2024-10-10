@@ -37,7 +37,8 @@ function setMetadata(metadata: MediaSessionMetadata) {
             ? [{ src: metadata.artwork, type: guessSrcMimeType(metadata.artwork) ?? undefined }]
             : [],
     }
-    navigator.mediaSession.metadata = new window.MediaMetadata(msMetadata)
+    if (typeof window !== 'undefined')
+        navigator.mediaSession.metadata = new window.MediaMetadata(msMetadata)
     // console.log('setMetadata', msMetadata)
 }
 

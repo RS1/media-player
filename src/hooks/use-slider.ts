@@ -89,8 +89,8 @@ function getValue(e: SliderEvent, dir: SliderDirection): number {
 
     const value = axis === 'X' ? e.x : e.y
     const offset =
-        window[`page${axis}Offset`] ??
-        (document.documentElement || document.body.parentNode || document.body)[`scroll${scroll}`]
+        window?.[`page${axis}Offset`] ??
+        (document?.documentElement || document?.body.parentNode || document?.body || {})[`scroll${scroll}`]
 
     return clamp(0, (reverse ? 1 : -1) * (value - minValue + offset), maxValue) / maxValue
 }

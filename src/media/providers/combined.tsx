@@ -10,6 +10,8 @@
    │ For a copy, see https://opensource.org/licenses/MIT
    │ or the LICENSE file in the root of this project.
    └ */
+'use client'
+
 import React from 'react'
 
 import { ConfigProvider, ConfigProviderProps } from './config'

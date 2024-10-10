@@ -81,7 +81,7 @@ function useDetectInteraction(
 
         const handleMouseMove = () => setMoved(true)
 
-        const node = _node ?? window.document
+        const node = _node ?? window?.document
 
         // Detect interactions - mouse
         node.addEventListener('mousemove', handleMouseMove)

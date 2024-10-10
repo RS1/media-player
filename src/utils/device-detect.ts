@@ -30,14 +30,14 @@ declare global {
 declare const navigator: ExperimentalNavigator
 
 /** @see https://stackoverflow.com/questions/9038625/detect-if-device-is-ios/9039885#comment132097456_9039885 */
-const navigatorPlatform = navigator.userAgentData?.platform || navigator.platform
+const navigatorPlatform = typeof window !== 'undefined' ? navigator.userAgentData?.platform || navigator.platform : ''
 
 /** @see https://stackoverflow.com/a/23522755 */
-export const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
+export const isSafari = typeof window !== 'undefined' ? /^((?!chrome|android).)*safari/i.test(navigator.userAgent) : false
 
 /**
  * @see https://stackoverflow.com/a/9039885
  */
-export const isIOS =
+export const isIOS = typeof window !== 'undefined' ?
     /^(iPhone|iP[oa]d)(\sSimulator)?$/i.test(navigatorPlatform) ||
-    (navigator.userAgent.includes('Mac') && 'ontouchend' in document)
+    (navigator.userAgent.includes('Mac') && 'ontouchend' in document) : false

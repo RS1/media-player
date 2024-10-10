@@ -14,7 +14,7 @@ import React from 'react'
 
 import { useMediaConfig, useMediaControls, useMediaState, useTrack } from '@/media'
 
-import { isFullscreenEnabled } from '@hooks/use-fullscreen-api'
+import { useFullscreenActive } from '@hooks/use-fullscreen-api'
 
 import { isIOS } from '@utils/device-detect'
 
@@ -33,6 +33,7 @@ export default function Fullscreen(props: CustomControlProps) {
     const { canFullscreen } = useMediaConfig()
     const { isFullscreen } = useMediaState()
     const controls = useMediaControls()
+    const isFullscreenEnabled = useFullscreenActive()
 
     if (!canFullscreen || (!isFullscreenEnabled && (!isIOS || track?.type !== 'video'))) return null
 

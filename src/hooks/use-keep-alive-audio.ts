@@ -13,6 +13,7 @@
 import { useCallback, useRef } from 'react'
 
 function initSilentAudioStream(): HTMLAudioElement | null {
+    if (typeof window === 'undefined') return null
     // @ts-ignore
     const AudioContext = window.AudioContext || window.webkitAudioContext || false
     if (!AudioContext) return null

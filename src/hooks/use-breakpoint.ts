@@ -255,7 +255,7 @@ export function useBreakpoint(
 
     React.useEffect(() => {
         const onResize = () => {
-            const width = window.innerWidth
+            const width = window?.innerWidth
             let computed: Breakpoint | undefined = undefined
             for (const [id, minWidth] of bpState.breakpoints) {
                 // dont't consider this breakpoint if it's not included
@@ -276,12 +276,12 @@ export function useBreakpoint(
         // or an array of breakpoints where at least one of them is included
         // in the `breakpoints` state prop.
         if (bpState.needed === undefined || bpState.needed.some(bp => bpState.breakpoints.some(([id]) => id === bp))) {
-            window.addEventListener('resize', onResize)
+            window?.addEventListener('resize', onResize)
             onResize()
         }
 
         return () => {
-            window.removeEventListener('resize', onResize)
+            window?.removeEventListener('resize', onResize)
         }
     }, [bpState.breakpoints, bpState.needed])
 

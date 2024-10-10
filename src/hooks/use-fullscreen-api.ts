@@ -91,65 +91,78 @@ interface FullscreenAPI {
 
 type APISet = 'mdn' | 'webkit' | 'webkit-old' | 'firefox' | 'explorer'
 
-const document = window?.document as FullscreenAPIDocument | undefined
+export function getFullscreenAPI() {
+    const document = window?.document as FullscreenAPIDocument | undefined
 
-const currentAPI = ((): APISet => {
-    if (document && 'fullscreenEnabled' in document) return 'mdn'
-    if (document && 'webkitFullscreenEnabled' in document) return 'webkit'
-    if (document && 'webkitIsFullScreen' in document) return 'webkit-old'
-    if (document && 'mozFullScreenEnabled' in document) return 'firefox'
-    if (document && 'msFullscreenEnabled' in document) return 'explorer'
-    return 'mdn'
-})()
-export const isFullscreenEnabled = (() => {
-    if (!document) return false
-    switch (currentAPI) {
-        case 'mdn':
-            return document.fullscreenEnabled
-        case 'webkit':
-            return document.webkitFullscreenEnabled
-        case 'webkit-old':
-            return document.webkitIsFullScreen
-        case 'firefox':
-            return document.mozFullScreenEnabled
-        case 'explorer':
-            return document.msFullscreenEnabled
-        default:
-            return false
-    }
-})()
-const onFullscreenEvent = (() => {
-    switch (currentAPI) {
-        case 'webkit':
-        case 'webkit-old':
-            return 'webkitfullscreenchange'
-        case 'firefox':
-            return 'mozfullscreenchange'
-        case 'explorer':
-            return 'MSFullscreenChange'
-        case 'mdn':
-        default:
-            return 'fullscreenchange'
-    }
-})()
-const onFullscreenErrorEvent = (() => {
-    switch (currentAPI) {
-        case 'webkit':
-        case 'webkit-old':
-            return 'webkitfullscreenerror'
-        case 'firefox':
-            return 'mozfullscreenerror'
-        case 'explorer':
-            return 'MSFullscreenError'
-        case 'mdn':
-        default:
-            return 'fullscreenerror'
-    }
-})()
+    const currentAPI = ((): APISet => {
+        if (document && 'fullscreenEnabled' in document) return 'mdn'
+        if (document && 'webkitFullscreenEnabled' in document) return 'webkit'
+        if (document && 'webkitIsFullScreen' in document) return 'webkit-old'
+        if (document && 'mozFullScreenEnabled' in document) return 'firefox'
+        if (document && 'msFullscreenEnabled' in document) return 'explorer'
+        return 'mdn'
+    })()
+    const isFullscreenEnabled = (() => {
+        if (!document) return false
+        switch (currentAPI) {
+            case 'mdn':
+                return document.fullscreenEnabled
+            case 'webkit':
+                return document.webkitFullscreenEnabled
+            case 'webkit-old':
+                return document.webkitIsFullScreen
+            case 'firefox':
+                return document.mozFullScreenEnabled
+            case 'explorer':
+                return document.msFullscreenEnabled
+            default:
+                return false
+        }
+    })()
+    const onFullscreenEvent = (() => {
+        switch (currentAPI) {
+            case 'webkit':
+            case 'webkit-old':
+                return 'webkitfullscreenchange'
+            case 'firefox':
+                return 'mozfullscreenchange'
+            case 'explorer':
+                return 'MSFullscreenChange'
+            case 'mdn':
+            default:
+                return 'fullscreenchange'
+        }
+    })()
+    const onFullscreenErrorEvent = (() => {
+        switch (currentAPI) {
+            case 'webkit':
+            case 'webkit-old':
+                return 'webkitfullscreenerror'
+            case 'firefox':
+                return 'mozfullscreenerror'
+            case 'explorer':
+                return 'MSFullscreenError'
+            case 'mdn':
+            default:
+                return 'fullscreenerror'
+        }
+    })()
+
+    return {
+        document,
+        currentAPI,
+        isFullscreenEnabled,
+        onFullscreenEvent,
+        onFullscreenErrorEvent,
+    } as const
+}
 
 function getFullscreenElement(): HTMLElement | null {
     let element: HTMLElement | null = null
+
+    const { document, currentAPI } = getFullscreenAPI()
     if (!document) return element
+
     if (currentAPI === 'mdn') {
         element = document.fullscreenElement
     } else if (currentAPI === 'webkit') {
@@ -166,7 +179,7 @@ function getFullscreenElement(): HTMLElement | null {
 
 async function requestFullscreen(element: HTMLElement | null, fallback: HTMLMediaElement | null) {
     if (!element) return
-
+    const { currentAPI, isFullscreenEnabled } = getFullscreenAPI()
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
     if (fallback && !isFullscreenEnabled && isIOS && fallback.tagName === 'VIDEO') {
         const _fallback = fallback as FullscreenAPIHTMLMediaElement
@@ -188,6 +201,7 @@ async function requestFullscreen(element: HTMLElement | null, fallback: HTMLMedi
 }
 
 async function exitFullscreen() {
+    const { document, currentAPI } = getFullscreenAPI()
     if (!document) return
     if (currentAPI === 'mdn') {
         return document.exitFullscreen()
@@ -212,6 +226,14 @@ async function toggleFullscreen(element: HTMLElement | null, fallback: HTMLMedia
     }
 }
 
+export function useFullscreenActive() {
+    const [active, setActive] = useState(false)
+    useEffect(() => {
+        setActive(getFullscreenAPI().isFullscreenEnabled)
+    }, [])
+    return active
+}
+
 function useFullscreenAPI() {
     const [isActive, setActive] = useState(false)
 
@@ -220,10 +242,13 @@ function useFullscreenAPI() {
         exit: exitFullscreen,
         toggle: toggleFullscreen,
         element: null,
-        enabled: isFullscreenEnabled,
+        enabled: false,
     })
 
     useEffect(() => {
+        const { isFullscreenEnabled, onFullscreenEvent, onFullscreenErrorEvent } = getFullscreenAPI()
+        fsAPI.current.enabled = isFullscreenEnabled
+
         const setFSActive = () => {
             const element = getFullscreenElement()
             fsAPI.current.element = element
