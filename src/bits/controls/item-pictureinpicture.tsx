@@ -14,7 +14,7 @@ import React from 'react'
 
 import { useMediaConfig, useMediaControls, useMediaState, useTrack } from '@/media'
 
-import { isPiPEnabled } from '@hooks/use-pip-api'
+import { usePiPActive } from '@hooks/use-pip-api'
 
 import svgPictureInPictureOff from '@icons/picture-in-picture-off.svg'
 import svgPictureInPictureOn from '@icons/picture-in-picture-on.svg'
@@ -31,6 +31,7 @@ export default function PictureInPicture(props: CustomControlProps) {
     const [track] = useTrack()
     const { isPictureInPicture } = useMediaState()
     const controls = useMediaControls()
+    const isPiPEnabled = usePiPActive()
 
     if (!canPictureInPicture || track?.type !== 'video' || !isPiPEnabled) return null
 

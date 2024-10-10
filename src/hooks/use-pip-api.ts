@@ -20,9 +20,18 @@ interface PiPAPI {
     enabled: boolean
 }
 
-export const isPiPEnabled = (() => {
-    return !!document?.pictureInPictureEnabled
-})()
+
+export function getPiPAPI() {
+    let isPiPEnabled = false
+    if (window && document) {
+        isPiPEnabled = !!document.pictureInPictureEnabled
+    }
+
+
+    return {
+        isPiPEnabled
+    } as const
+}
 
 function getPiPElement(): Element | null {
     return document?.pictureInPictureElement ?? null
@@ -44,6 +53,14 @@ async function togglePiP(element: HTMLVideoElement | null) {
     else await requestPiP(element)
 }
 
+export function usePiPActive() {
+    const [active, setActive] = useState(false)
+    useEffect(() => {
+        setActive(getPiPAPI().isPiPEnabled)
+    }, [])
+    return active
+}
+
 function usePiPAPI() {
     const [isActive, setActive] = useState(false)
 
@@ -52,10 +69,13 @@ function usePiPAPI() {
         exit: exitPiP,
         toggle: togglePiP,
         element: null,
-        enabled: isPiPEnabled,
+        enabled: false,
     })
 
     useEffect(() => {
+        const { isPiPEnabled } = getPiPAPI()
+        pipAPI.current.enabled = isPiPEnabled
+
         const setPiPActive = () => {
             const element = getPiPElement()
             pipAPI.current.element = element
